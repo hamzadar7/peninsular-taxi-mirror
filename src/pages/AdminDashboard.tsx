@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -88,11 +87,11 @@ const AdminDashboard = () => {
               alt="Capelsound Taxi" 
               className="h-12 w-auto"
             />
-            <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+            <h1 className="text-2xl font-bold">Capelsound Taxi</h1>
           </div>
-          <Button onClick={handleLogout} variant="outline" className="text-white border-white hover:bg-white hover:text-black">
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
+          <Button onClick={handleLogout} variant="outline" className="text-white border-white hover:bg-white hover:text-black flex items-center gap-2">
+            <LogOut className="h-4 w-4" />
+            <span>Logout</span>
           </Button>
         </div>
       </div>
