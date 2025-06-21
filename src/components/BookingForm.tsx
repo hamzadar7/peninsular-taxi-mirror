@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -99,32 +98,51 @@ const BookingForm = () => {
     setMessage("");
 
     try {
+      console.log("Starting OTP send process...");
+      console.log("Form data:", {
+        name: formData.contactName,
+        email: formData.contactEmail,
+        phone: formData.contactPhone
+      });
+
+      // Validate email format before sending
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.contactEmail)) {
+        throw new Error("Please enter a valid email address.");
+      }
+
       // Generate and send OTP
       const generatedOTP = generateOTP();
       setSentOTP(generatedOTP);
       
       console.log("Attempting to send OTP to:", formData.contactEmail);
-      console.log("Generated OTP:", generatedOTP);
       
       const result = await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
       
       console.log("Email send result:", result);
       
-      setMessage("Verification code sent to your email! Please check your inbox.");
-      setShowOTP(true);
-      setRetryCount(0);
+      if (result && result.success) {
+        setMessage("✅ Verification code sent successfully! Please check your email inbox and spam folder.");
+        setShowOTP(true);
+        setRetryCount(0);
+      } else {
+        throw new Error("Failed to send verification email. Please try again.");
+      }
+      
     } catch (error) {
       console.error("Email sending error:", error);
       setRetryCount(prev => prev + 1);
       
+      let errorMessage = error.message || "Failed to send verification email.";
+      
       if (retryCount < 2) {
-        setMessage(`Failed to send verification email (attempt ${retryCount + 1}/3). Retrying...`);
-        // Auto-retry after 2 seconds
+        setMessage(`❌ ${errorMessage} Retrying... (Attempt ${retryCount + 1}/3)`);
+        // Auto-retry after 3 seconds
         setTimeout(() => {
           handleSubmit(e);
-        }, 2000);
+        }, 3000);
       } else {
-        setMessage("Failed to send verification email after multiple attempts. Please check your email address or call us directly at +61 408 202 034.");
+        setMessage(`❌ ${errorMessage} Please check your email address or call us directly at +61 408 202 034.`);
       }
     } finally {
       setIsSubmitting(false);
@@ -134,53 +152,65 @@ const BookingForm = () => {
   const handleOTPVerification = (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log("Verifying OTP:", { entered: otp, expected: sentOTP });
+    
     if (otp === sentOTP) {
       // Save booking
       const booking = saveBooking(formData);
-      setMessage("Booking confirmed! We'll contact you shortly to confirm details and pickup time.");
+      console.log("Booking saved:", booking);
       
-      // Reset form
-      setFormData({
-        pickupLocation: "",
-        destination: "",
-        date: "",
-        time: "",
-        passengers: "",
-        vehicleType: "",
-        specialRequests: "",
-        contactName: "",
-        contactPhone: "",
-        contactEmail: ""
-      });
-      setShowOTP(false);
-      setOtp("");
-      setSentOTP("");
-      setRetryCount(0);
+      setMessage("🎉 Booking confirmed! We'll contact you shortly to confirm details and pickup time.");
+      
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        setFormData({
+          pickupLocation: "",
+          destination: "",
+          date: "",
+          time: "",
+          passengers: "",
+          vehicleType: "",
+          specialRequests: "",
+          contactName: "",
+          contactPhone: "",
+          contactEmail: ""
+        });
+        setShowOTP(false);
+        setOtp("");
+        setSentOTP("");
+        setRetryCount(0);
+        setMessage("");
+      }, 3000);
     } else {
-      setMessage("Invalid verification code. Please check your email and try again.");
+      setMessage("❌ Invalid verification code. Please check your email and try again.");
     }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleResendOTP = async () => {
     setIsSubmitting(true);
-    setMessage("");
+    setMessage("Sending new verification code...");
     
     try {
       const generatedOTP = generateOTP();
       setSentOTP(generatedOTP);
       
-      await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
-      setMessage("New verification code sent to your email!");
+      const result = await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
+      
+      if (result && result.success) {
+        setMessage("✅ New verification code sent to your email!");
+      } else {
+        throw new Error("Failed to send verification code.");
+      }
     } catch (error) {
       console.error("Resend OTP error:", error);
-      setMessage("Failed to resend verification code. Please try again.");
+      setMessage("❌ Failed to resend verification code. Please try again or call +61 408 202 034.");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   if (showOTP) {
