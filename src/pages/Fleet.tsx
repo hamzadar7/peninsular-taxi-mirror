@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Car, Users, Shield, Wifi, Briefcase, Heart } from "lucide-react";
+import { Car, Users, Shield, Heart, Clock, Award } from "lucide-react";
 
 const Fleet = () => {
   const vehicles = [
@@ -36,12 +36,12 @@ const Fleet = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Our Fleet</h1>
+            <h1 className="text-4xl font-bold mb-4">Our Vehicle Fleet</h1>
             <p className="text-xl text-blue-100">
               Modern, comfortable, and well-maintained vehicles for every journey
             </p>
@@ -175,38 +175,26 @@ const Fleet = () => {
         </div>
       </section>
 
-      {/* Special Requirements */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-8 text-gray-800">Special Requirements</h2>
-            <p className="text-lg text-gray-600 mb-8">
-              We understand that every passenger has unique needs. Let us know about any special 
-              requirements when booking, and we'll ensure the right vehicle and accommodations are ready.
-            </p>
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="text-center">
-                <CardContent className="pt-6">
-                  <Briefcase className="h-8 w-8 mx-auto text-blue-600 mb-3" />
-                  <h3 className="font-semibold mb-2">Business Travel</h3>
-                  <p className="text-sm text-gray-600">Executive vehicles with professional service for corporate needs</p>
-                </CardContent>
-              </Card>
-              <Card className="text-center">
-                <CardContent className="pt-6">
-                  <Users className="h-8 w-8 mx-auto text-blue-600 mb-3" />
-                  <h3 className="font-semibold mb-2">Group Transportation</h3>
-                  <p className="text-sm text-gray-600">Larger vehicles available for groups and special events</p>
-                </CardContent>
-              </Card>
-              <Card className="text-center">
-                <CardContent className="pt-6">
-                  <Heart className="h-8 w-8 mx-auto text-blue-600 mb-3" />
-                  <h3 className="font-semibold mb-2">Medical Transport</h3>
-                  <p className="text-sm text-gray-600">Wheelchair accessible vehicles with trained, caring drivers</p>
-                </CardContent>
-              </Card>
-            </div>
+      {/* Call to Action */}
+      <section className="py-16 bg-blue-900 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">Ready to Experience Our Service?</h2>
+          <p className="text-xl mb-8 text-blue-100">
+            Book your ride today and experience the comfort and reliability of our professional fleet
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+              href="/booking" 
+              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-md transition-colors"
+            >
+              Book Your Ride
+            </a>
+            <a 
+              href="tel:0411000000" 
+              className="inline-flex items-center justify-center px-6 py-3 border border-white text-white hover:bg-white hover:text-blue-900 font-semibold rounded-md transition-colors"
+            >
+              Call 0411 000 000
+            </a>
           </div>
         </div>
       </section>

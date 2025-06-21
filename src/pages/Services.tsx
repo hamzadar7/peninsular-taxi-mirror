@@ -1,19 +1,19 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Car, Users, Briefcase, Plane, Clock, Shield, Building2 } from "lucide-react";
+import { Car, Users, Briefcase, Plane, Clock, Shield, Building2, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Services = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Our Services</h1>
+            <h1 className="text-4xl font-bold mb-4">Our Transport Services</h1>
             <p className="text-xl text-blue-100">
-              Professional transportation solutions for every need
+              Professional transportation solutions for every need across the Mornington Peninsula
             </p>
           </div>
         </div>
@@ -39,9 +39,9 @@ const Services = () => {
                 <ul className="space-y-2 text-gray-600 mb-6">
                   <li>• Door-to-door service</li>
                   <li>• Local area coverage</li>
-                  <li>• Competitive rates</li>
-                  <li>• Clean, comfortable vehicles</li>
                   <li>• GPS tracking for efficient routes</li>
+                  <li>• Clean, comfortable vehicles</li>
+                  <li>• Professional drivers</li>
                 </ul>
                 <Button asChild className="w-full">
                   <Link to="/booking">Book Local Taxi</Link>
@@ -49,14 +49,35 @@ const Services = () => {
               </CardContent>
             </Card>
 
+            {/* Airport Transfers */}
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="aspect-video bg-gradient-to-r from-purple-100 to-purple-50 flex items-center justify-center">
+                <Plane className="h-16 w-16 text-purple-600" />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-2xl">Airport Transfers</CardTitle>
+                <CardDescription className="text-lg">
+                  Reliable transport to Melbourne airports and beyond
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-gray-600 mb-6">
+                  <li>• Melbourne Airport (Tullamarine)</li>
+                  <li>• Avalon Airport transfers</li>
+                  <li>• Flight monitoring service</li>
+                  <li>• Meet and greet service</li>
+                  <li>• Fixed rate pricing</li>
+                </ul>
+                <Button asChild className="w-full">
+                  <Link to="/booking">Book Airport Transfer</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* Corporate Travel */}
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video overflow-hidden">
-                <img 
-                  src="/lovable-uploads/157b0943-ebed-45e8-9258-617bf21b7f02.png" 
-                  alt="Corporate Travel" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-video bg-gradient-to-r from-gray-100 to-gray-50 flex items-center justify-center">
+                <Briefcase className="h-16 w-16 text-gray-600" />
               </div>
               <CardHeader>
                 <CardTitle className="text-2xl">Corporate Travel</CardTitle>
@@ -67,10 +88,10 @@ const Services = () => {
               <CardContent>
                 <ul className="space-y-2 text-gray-600 mb-6">
                   <li>• Executive vehicle fleet</li>
-                  <li>• Airport transfers</li>
-                  <li>• Meeting transportation</li>
-                  <li>• Account billing available</li>
                   <li>• Professional, uniformed drivers</li>
+                  <li>• Account billing available</li>
+                  <li>• Meeting transportation</li>
+                  <li>• Corporate rates</li>
                 </ul>
                 <Button asChild className="w-full">
                   <Link to="/booking">Book Corporate Service</Link>
@@ -105,12 +126,8 @@ const Services = () => {
 
             {/* Hotel Transfers */}
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video overflow-hidden">
-                <img 
-                  src="/lovable-uploads/af3ef60c-5919-4c9a-ace8-04fdc8a7ba57.png" 
-                  alt="Hotel Transfers" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-video bg-gradient-to-r from-yellow-100 to-yellow-50 flex items-center justify-center">
+                <Building2 className="h-16 w-16 text-yellow-600" />
               </div>
               <CardHeader>
                 <CardTitle className="text-2xl">Hotel Transfers</CardTitle>
@@ -132,14 +149,10 @@ const Services = () => {
               </CardContent>
             </Card>
 
-            {/* Hospital Transfers */}
+            {/* Medical Transfers */}
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video overflow-hidden">
-                <img 
-                  src="/lovable-uploads/d293782e-907f-46c2-896b-0ef786a12d85.png" 
-                  alt="Medical Appointments" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-video bg-gradient-to-r from-red-100 to-red-50 flex items-center justify-center">
+                <Heart className="h-16 w-16 text-red-600" />
               </div>
               <CardHeader>
                 <CardTitle className="text-2xl">Medical Appointments</CardTitle>
@@ -157,31 +170,6 @@ const Services = () => {
                 </ul>
                 <Button asChild className="w-full">
                   <Link to="/booking">Book Medical Transfer</Link>
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Airport Transfers */}
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video bg-gradient-to-r from-purple-100 to-purple-50 flex items-center justify-center">
-                <Plane className="h-16 w-16 text-purple-600" />
-              </div>
-              <CardHeader>
-                <CardTitle className="text-2xl">Airport Transfers</CardTitle>
-                <CardDescription className="text-lg">
-                  Reliable transport to Melbourne airports and beyond
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 text-gray-600 mb-6">
-                  <li>• Melbourne Airport (Tullamarine)</li>
-                  <li>• Avalon Airport transfers</li>
-                  <li>• Flight monitoring service</li>
-                  <li>• Meet and greet service</li>
-                  <li>• Fixed rate pricing</li>
-                </ul>
-                <Button asChild className="w-full">
-                  <Link to="/booking">Book Airport Transfer</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -214,15 +202,20 @@ const Services = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16">
+      <section className="py-16 bg-blue-900 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-gray-800">Ready to Book?</h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <h2 className="text-3xl font-bold mb-4">Ready to Book?</h2>
+          <p className="text-xl mb-8 text-blue-100">
             Choose the service that fits your needs and book your ride today
           </p>
-          <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-            <Link to="/booking">Book Your Service Now</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-black">
+              <Link to="/booking">Book Your Service Now</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-900">
+              <a href="tel:0411000000">Call 0411 000 000</a>
+            </Button>
+          </div>
         </div>
       </section>
     </div>

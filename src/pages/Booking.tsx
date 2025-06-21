@@ -33,12 +33,12 @@ const Booking = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Book Your Ride</h1>
+            <h1 className="text-4xl font-bold mb-4">Book Your Taxi</h1>
             <p className="text-xl text-blue-100">
               Quick and easy online booking for all your transportation needs
             </p>
@@ -131,11 +131,11 @@ const Booking = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="local">Local Taxi</SelectItem>
-                          <SelectItem value="corporate">Corporate Travel</SelectItem>
                           <SelectItem value="airport">Airport Transfer</SelectItem>
+                          <SelectItem value="corporate">Corporate Travel</SelectItem>
                           <SelectItem value="group">Group Transportation</SelectItem>
                           <SelectItem value="hotel">Hotel Transfer</SelectItem>
-                          <SelectItem value="hospital">Hospital Transfer</SelectItem>
+                          <SelectItem value="medical">Medical Transfer</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -215,7 +215,7 @@ const Booking = () => {
 
                   <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-6">
                     <Car className="mr-2 h-5 w-5" />
-                    Book Your Ride Now
+                    Submit Booking Request
                   </Button>
                 </form>
               </CardContent>
@@ -224,6 +224,24 @@ const Booking = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Quick Contact */}
+            <Card className="bg-yellow-50 border-yellow-200">
+              <CardHeader>
+                <CardTitle className="text-lg">Need Immediate Service?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center">
+                  <p className="mb-4 text-gray-600">Call us now for instant booking</p>
+                  <Button asChild className="w-full bg-yellow-500 hover:bg-yellow-600 text-black">
+                    <a href="tel:0411000000">
+                      <Phone className="mr-2 h-4 w-4" />
+                      Call 0411 000 000
+                    </a>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Payment Methods */}
             <Card>
               <CardHeader>
@@ -236,10 +254,9 @@ const Booking = () => {
                 <ul className="space-y-2 text-sm text-gray-600">
                   <li>• Cash payments accepted</li>
                   <li>• Credit and debit cards</li>
-                  <li>• EFTPOS available</li>
-                  <li>• MPTP payment accepted</li>
-                  <li>• Cabcharge payment accepted</li>
+                  <li>• EFTPOS available in vehicles</li>
                   <li>• Corporate account billing</li>
+                  <li>• Insurance billing support</li>
                 </ul>
               </CardContent>
             </Card>
@@ -249,39 +266,17 @@ const Booking = () => {
               <CardHeader>
                 <div className="flex items-center gap-2">
                   <Shield className="h-6 w-6 text-blue-600" />
-                  <CardTitle>Booking Policies</CardTitle>
+                  <CardTitle>Booking Information</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• Free cancellation up to 2 hours before pickup</li>
-                  <li>• Pre-Book Fee: $2.70 Applied to all advance bookings</li>
                   <li>• 24/7 customer support available</li>
                   <li>• All vehicles are licensed and insured</li>
                   <li>• Professional, uniformed drivers</li>
+                  <li>• GPS tracking for efficient routes</li>
+                  <li>• Clean, comfortable vehicles</li>
                 </ul>
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm font-semibold text-red-800">Important Notice</p>
-                  <p className="text-sm text-red-700">No cancellation 2 hours before departure time</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Need Help?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm">0411 000 000</span>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Call us anytime for immediate booking or assistance
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </div>
