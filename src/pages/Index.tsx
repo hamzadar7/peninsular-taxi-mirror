@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Shield, Car, Phone, Star, Users, CheckCircle } from "lucide-react";
@@ -10,7 +11,7 @@ const Index = () => {
       <section 
         className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/lovable-uploads/55fa939c-e2d7-4101-8554-06404ad19112.png')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/lovable-uploads/d293782e-907f-46c2-896b-0ef786a12d85.png')`
         }}
       >
         <div className="container mx-auto px-4 text-center text-white">
