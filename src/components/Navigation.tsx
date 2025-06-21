@@ -33,25 +33,25 @@ const Navigation = () => {
 
   return (
     <>
-      {/* Top Yellow Bar - Split between phone and book now - STICKY */}
-      <div className="bg-yellow-400 h-12 flex sticky top-0 z-50">
+      {/* Top Blue Bar - Split between phone and book now - STICKY */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 h-12 flex sticky top-0 z-50 shadow-lg">
         <a 
           href="tel:+61408202034" 
-          className="flex-1 flex items-center justify-center text-black hover:bg-yellow-500 transition-colors border-r border-yellow-600"
+          className="flex-1 flex items-center justify-center text-white hover:bg-white/10 transition-colors border-r border-white/20"
         >
           <Phone className="h-4 w-4 mr-2" />
           <span className="font-medium">+61 408 202 034</span>
         </a>
         <button 
           onClick={handleBookNowClick}
-          className="flex-1 flex items-center justify-center bg-black text-yellow-400 font-medium hover:bg-gray-800 transition-colors"
+          className="flex-1 flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium hover:from-orange-600 hover:to-red-600 transition-all duration-300"
         >
           Book Now
         </button>
       </div>
 
       {/* Main Navigation */}
-      <nav className="bg-black shadow-lg sticky top-12 z-40">
+      <nav className="bg-white shadow-xl sticky top-12 z-40 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
@@ -69,7 +69,7 @@ const Navigation = () => {
             <div className="lg:hidden flex-1 mx-4">
               <button 
                 onClick={handleBookNowClick}
-                className="block text-center text-yellow-400 text-sm font-medium hover:text-yellow-300 transition-colors bg-yellow-400/10 rounded px-2 py-1 w-full"
+                className="block text-center text-blue-600 text-sm font-medium hover:text-blue-700 transition-colors bg-blue-50 rounded-lg px-3 py-2 w-full"
               >
                 Up to 10% off Airport Pickups!
               </button>
@@ -83,10 +83,10 @@ const Navigation = () => {
                   to={item.href}
                   onClick={() => window.scrollTo(0, 0)}
                   className={cn(
-                    "inline-flex items-center px-3 py-2 text-lg font-medium transition-colors",
+                    "inline-flex items-center px-4 py-2 text-lg font-medium transition-all duration-300 rounded-lg",
                     location.pathname === item.href
-                      ? "text-yellow-400"
-                      : "text-white hover:text-yellow-400"
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                   )}
                 >
                   {item.label}
@@ -98,7 +98,7 @@ const Navigation = () => {
             <div className="hidden lg:flex items-center">
               <a 
                 href="tel:+61408202034" 
-                className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition-colors text-lg font-medium"
+                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors text-lg font-medium bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100"
               >
                 <Phone className="h-5 w-5" />
                 +61 408 202 034
@@ -109,7 +109,7 @@ const Navigation = () => {
             <div className="lg:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-yellow-400 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-400"
+                className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors"
                 aria-expanded="false"
               >
                 <span className="sr-only">Open main menu</span>
@@ -128,7 +128,7 @@ const Navigation = () => {
           "lg:hidden transition-all duration-300 ease-in-out",
           isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
         )}>
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-gray-900 border-t border-gray-700">
+          <div className="px-4 pt-2 pb-3 space-y-1 bg-gray-50 border-t border-gray-200">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -138,10 +138,10 @@ const Navigation = () => {
                   window.scrollTo(0, 0);
                 }}
                 className={cn(
-                  "block px-3 py-2 rounded-md text-base font-medium transition-colors",
+                  "block px-4 py-3 rounded-lg text-base font-medium transition-colors",
                   location.pathname === item.href
-                    ? "text-yellow-400 bg-yellow-400/10"
-                    : "text-white hover:text-yellow-400 hover:bg-white/5"
+                    ? "text-blue-600 bg-blue-100"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
                 )}
               >
                 {item.label}
@@ -149,7 +149,7 @@ const Navigation = () => {
             ))}
             <a 
               href="tel:+61408202034" 
-              className="flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-yellow-400 hover:text-yellow-300 hover:bg-yellow-400/10 transition-colors border-t border-gray-700 mt-3 pt-3"
+              className="flex items-center gap-2 px-4 py-3 rounded-lg text-base font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-100 transition-colors border-t border-gray-300 mt-3 pt-6"
             >
               <Phone className="h-5 w-5" />
               +61 408 202 034
