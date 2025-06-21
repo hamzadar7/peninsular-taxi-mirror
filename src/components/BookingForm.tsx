@@ -36,6 +36,7 @@ const BookingForm = () => {
   const [sentOTP, setSentOTP] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
 
   const pickupRef = useRef<HTMLInputElement>(null);
   const destinationRef = useRef<HTMLInputElement>(null);
@@ -81,12 +82,33 @@ const BookingForm = () => {
       setSentOTP(generatedOTP);
       
       console.log("Attempting to send OTP to:", formData.contactEmail);
-      await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
+      console.log("Generated OTP:", generatedOTP);
+      
+      const result = await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
+      
+      console.log("Email send result:", result);
+      
+      if (result.simulated) {
+        setMessage("Development mode: Verification code simulated. Use any 6-digit code to proceed.");
+      } else {
+        setMessage("Verification code sent to your email!");
+      }
+      
       setShowOTP(true);
-      setMessage("Verification code sent to your email!");
+      setRetryCount(0);
     } catch (error) {
-      console.error("Full error details:", error);
-      setMessage("Failed to send verification email. Please try again or call us directly at +61 408 202 034.");
+      console.error("Email sending error:", error);
+      setRetryCount(prev => prev + 1);
+      
+      if (retryCount < 2) {
+        setMessage(`Failed to send verification email (attempt ${retryCount + 1}/3). Retrying...`);
+        // Auto-retry after 2 seconds
+        setTimeout(() => {
+          handleSubmit(e);
+        }, 2000);
+      } else {
+        setMessage("Failed to send verification email after multiple attempts. Please call us directly at +61 408 202 034 or try again later.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -95,10 +117,15 @@ const BookingForm = () => {
   const handleOTPVerification = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (otp === sentOTP) {
+    // In development mode, accept any 6-digit code
+    const isValidOTP = process.env.NODE_ENV === 'development' 
+      ? otp.length === 6 && /^\d{6}$/.test(otp)
+      : otp === sentOTP;
+    
+    if (isValidOTP) {
       // Save booking
       const booking = saveBooking(formData);
-      setMessage("Booking confirmed! We'll contact you shortly.");
+      setMessage("Booking confirmed! We'll contact you shortly to confirm details and pickup time.");
       
       // Reset form
       setFormData({
@@ -116,13 +143,32 @@ const BookingForm = () => {
       setShowOTP(false);
       setOtp("");
       setSentOTP("");
+      setRetryCount(0);
     } else {
-      setMessage("Invalid verification code. Please try again.");
+      setMessage("Invalid verification code. Please check your email and try again.");
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleResendOTP = async () => {
+    setIsSubmitting(true);
+    setMessage("");
+    
+    try {
+      const generatedOTP = generateOTP();
+      setSentOTP(generatedOTP);
+      
+      await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
+      setMessage("New verification code sent to your email!");
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      setMessage("Failed to resend verification code. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (showOTP) {
@@ -147,21 +193,32 @@ const BookingForm = () => {
               />
             </div>
             {message && (
-              <p className={`text-sm ${message.includes('confirmed') ? 'text-green-600' : 'text-red-600'}`}>
+              <p className={`text-sm ${message.includes('confirmed') || message.includes('sent') ? 'text-green-600' : 'text-red-600'}`}>
                 {message}
               </p>
             )}
             <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold">
               Verify & Complete Booking
             </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="w-full"
-              onClick={() => setShowOTP(false)}
-            >
-              Back to Form
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => setShowOTP(false)}
+              >
+                Back to Form
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="flex-1"
+                onClick={handleResendOTP}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Sending..." : "Resend Code"}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
@@ -176,7 +233,7 @@ const BookingForm = () => {
       </CardHeader>
       <CardContent className="p-8">
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Full Name and Phone Number */}
+          {/* Contact Information */}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-base font-semibold">Full Name *</Label>
@@ -203,7 +260,6 @@ const BookingForm = () => {
             </div>
           </div>
 
-          {/* Email Address */}
           <div className="space-y-2">
             <Label htmlFor="email" className="text-base font-semibold">Email Address *</Label>
             <Input 
@@ -217,7 +273,7 @@ const BookingForm = () => {
             />
           </div>
 
-          {/* Pickup and Drop-off Locations */}
+          {/* Location Information */}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="pickup" className="text-base font-semibold">Pickup Location *</Label>
@@ -251,7 +307,7 @@ const BookingForm = () => {
             </div>
           </div>
 
-          {/* Pickup Date and Time */}
+          {/* Date and Time */}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="date" className="text-base font-semibold">Pickup Date *</Label>
@@ -283,7 +339,7 @@ const BookingForm = () => {
             </div>
           </div>
 
-          {/* Vehicle Type and Number of Passengers */}
+          {/* Vehicle and Passengers */}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="vehicle-type" className="text-base font-semibold">Vehicle Type</Label>
@@ -320,7 +376,7 @@ const BookingForm = () => {
             </div>
           </div>
 
-          {/* Additional Requirements */}
+          {/* Special Requests */}
           <div className="space-y-2">
             <Label htmlFor="requests" className="text-base font-semibold">Additional Requirements (Optional)</Label>
             <Textarea 
@@ -333,7 +389,13 @@ const BookingForm = () => {
           </div>
 
           {message && (
-            <p className={`text-sm ${message.includes('sent') ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-sm ${
+              message.includes('sent') || message.includes('confirmed') || message.includes('simulated') 
+                ? 'text-green-600' 
+                : message.includes('Retrying') 
+                  ? 'text-yellow-600' 
+                  : 'text-red-600'
+            }`}>
               {message}
             </p>
           )}
