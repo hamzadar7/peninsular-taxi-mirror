@@ -7,6 +7,13 @@ import { Link } from "react-router-dom";
 const About = () => {
   return (
     <div className="min-h-screen bg-white">
+      {/* SEO Meta Tags */}
+      <head>
+        <title>About Capel Sound Taxi - Professional Taxi Service Since 2003 | Mornington Peninsula</title>
+        <meta name="description" content="Learn about Capel Sound Taxi, serving the Mornington Peninsula since 2003. Professional, reliable transportation with 20+ years experience." />
+        <meta name="keywords" content="about Capel Sound taxi, Mornington Peninsula taxi history, professional taxi service, reliable transport" />
+      </head>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-900 to-black text-white py-20">
         <div className="container mx-auto px-4">
@@ -15,9 +22,8 @@ const About = () => {
               About <span className="text-yellow-400">Capel Sound Taxi</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300">
-              Your trusted transportation partner on the Mornington Peninsula since 2003 – 
-              dedicated to providing quality services for professional, safe, 
-              comfortable and professional service.
+              Your trusted transportation partner on the Mornington Peninsula since our establishment. 
+              We pride ourselves on providing safe, reliable, and professional taxi services.
             </p>
           </div>
         </div>
@@ -32,71 +38,47 @@ const About = () => {
               <div>
                 <div className="prose prose-lg text-gray-600">
                   <p className="mb-6 text-lg leading-relaxed">
-                    Capel Sound Taxi has been serving the local community with dedication since 2003. 
-                    We have grown to become one of the peninsula's most trusted transport providers, 
-                    known for reliability, professionalism and customer service.
+                    Capel Sound Taxi has been serving the Mornington Peninsula community with dedication and professionalism. 
+                    We understand the unique transportation needs of our local area and are committed to providing safe, 
+                    reliable, and comfortable journeys for all our passengers.
                   </p>
                   <p className="mb-6 text-lg leading-relaxed">
-                    Our commitment to excellence has made us the preferred choice for local residents 
-                    and tourists alike. We provide a comprehensive range of transport solutions for 
-                    every need - from quick local trips to airport transfers and special events.
+                    Our fleet of modern vehicles and team of experienced drivers ensure that whether you're heading to the airport, 
+                    a medical appointment, or exploring the beautiful Peninsula, you'll arrive safely and on time.
                   </p>
                   <p className="text-lg leading-relaxed">
-                    With over two decades of experience serving this community, we understand the unique 
-                    transport needs of peninsula residents and visitors, ensuring every journey is 
-                    comfortable, safe and reliable.
+                    We're more than just a taxi service – we're part of the community, supporting local events and providing 
+                    essential transportation services 24 hours a day, 7 days a week.
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center p-6 bg-yellow-50 rounded-xl">
-                  <div className="text-4xl font-bold text-yellow-600 mb-2">20+</div>
-                  <div className="text-gray-700 font-medium">Years Experience</div>
-                </div>
-                <div className="text-center p-6 bg-blue-50 rounded-xl">
-                  <div className="text-4xl font-bold text-blue-600 mb-2">24/7</div>
-                  <div className="text-gray-700 font-medium">Service Available</div>
-                </div>
-                <div className="text-center p-6 bg-green-50 rounded-xl">
-                  <div className="text-4xl font-bold text-green-600 mb-2">1000+</div>
-                  <div className="text-gray-700 font-medium">Happy Customers</div>
-                </div>
-                <div className="text-center p-6 bg-purple-50 rounded-xl">
-                  <div className="text-4xl font-bold text-purple-600 mb-2">5★</div>
-                  <div className="text-gray-700 font-medium">Customer Rating</div>
-                </div>
+              
+              {/* Mission and Vision Cards */}
+              <div className="space-y-6">
+                <Card className="p-6 bg-blue-50 border-blue-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-2xl font-bold text-gray-800">Our Mission</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 leading-relaxed">
+                      To provide safe, reliable, and professional transportation services while maintaining 
+                      exceptional customer service, contributing positively to our local community on the Mornington Peninsula.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="p-6 bg-green-50 border-green-200">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-2xl font-bold text-gray-800">Our Vision</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 leading-relaxed">
+                      To be the most trusted and preferred taxi service on the Mornington Peninsula, 
+                      known for our exceptional customer service and community commitment.
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Mission */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Our Mission</h2>
-            <div className="text-center mb-12">
-              <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                To deliver exceptional, professional transportation services while 
-                maintaining the highest standards of safety, reliability and customer satisfaction. 
-                We are committed to serving our community with integrity and excellence.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Vision */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Our Vision</h2>
-            <div className="text-center mb-12">
-              <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                To be the peninsula's leading transport service, setting the benchmark 
-                for professional service excellence and community engagement across the region.
-              </p>
             </div>
           </div>
         </div>
@@ -107,7 +89,7 @@ const About = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Why Choose Capel Sound Taxi?</h2>
           <p className="text-center text-xl text-gray-600 mb-12">
-            We are committed to providing the best transportation experience in the Peninsula.
+            We're committed to providing the best transportation experience in the Peninsula.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="text-center p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-lg">
@@ -116,17 +98,17 @@ const About = () => {
                 <CardTitle className="text-xl font-bold">24/7 Service</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">Available around the clock, every day of the year. Reliable service you can count on.</p>
+                <p className="text-gray-600">Available around the clock, every day of the year. Reliable service you can count on most.</p>
               </CardContent>
             </Card>
 
             <Card className="text-center p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-lg">
               <CardHeader>
-                <Star className="h-16 w-16 mx-auto text-yellow-400 mb-4" />
+                <Shield className="h-16 w-16 mx-auto text-yellow-400 mb-4" />
                 <CardTitle className="text-xl font-bold">Safety First</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">Professional drivers with comprehensive background checks and ongoing training.</p>
+                <p className="text-gray-600">Licensed drivers, regularly maintained vehicles, and comprehensive insurance coverage.</p>
               </CardContent>
             </Card>
 
@@ -136,7 +118,7 @@ const About = () => {
                 <CardTitle className="text-xl font-bold">Local Knowledge</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">Expert knowledge of peninsula roads and the best routes to all destinations.</p>
+                <p className="text-gray-600">Our drivers know the Peninsula like the back of their hand, ensuring efficient routes.</p>
               </CardContent>
             </Card>
 
@@ -146,7 +128,7 @@ const About = () => {
                 <CardTitle className="text-xl font-bold">Professional Service</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">Committed to excellence with professional, courteous and reliable service standards.</p>
+                <p className="text-gray-600">Courteous, professional drivers committed to making your journey comfortable.</p>
               </CardContent>
             </Card>
           </div>
@@ -166,7 +148,9 @@ const About = () => {
                 "Capel Sound", "Rosebud", "Rye", "Sorrento",
                 "Portsea", "Blairgowrie", "Dromana", "Safety Beach", 
                 "McCrae", "Mount Martha", "Mornington", "Mount Eliza",
-                "Frankston", "Seaford", "Cranbourne", "Hastings"
+                "Frankston", "Seaford", "Cranbourne", "Hastings",
+                "Tootgarook", "Merricks", "HMAS Cerberus", "Stony Point",
+                "Fingal", "Cape Schanck", "Main Ridge", "Red Hill South", "Merricks North"
               ].map((area) => (
                 <div key={area} className="p-4 bg-blue-50 rounded-lg text-center font-medium text-gray-700 hover:shadow-md transition-shadow">
                   {area}

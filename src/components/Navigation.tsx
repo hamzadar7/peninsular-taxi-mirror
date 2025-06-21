@@ -19,20 +19,21 @@ const Navigation = () => {
 
   return (
     <>
-      {/* Top Yellow Bar */}
-      <div className="bg-yellow-400 h-12 flex items-center justify-between px-4">
-        <div className="flex items-center text-black">
+      {/* Top Yellow Bar - Split between phone and book now */}
+      <div className="bg-yellow-400 h-12 flex">
+        <a 
+          href="tel:+61408202034" 
+          className="flex-1 flex items-center justify-center text-black hover:bg-yellow-500 transition-colors border-r border-yellow-600"
+        >
           <Phone className="h-4 w-4 mr-2" />
           <span className="font-medium">+61 408 202 034</span>
-        </div>
-        <div className="hidden md:block">
-          <Link 
-            to="/booking" 
-            className="bg-black text-yellow-400 px-4 py-2 rounded font-medium hover:bg-gray-800 transition-colors"
-          >
-            Book Now
-          </Link>
-        </div>
+        </a>
+        <Link 
+          to="/booking" 
+          className="flex-1 flex items-center justify-center bg-black text-yellow-400 font-medium hover:bg-gray-800 transition-colors"
+        >
+          Book Now
+        </Link>
       </div>
 
       {/* Main Navigation */}

@@ -44,9 +44,13 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4 text-yellow-400">Contact Info</h4>
             <ul className="space-y-2 text-sm">
-              <li className="text-gray-400">📞 +61 408 202 034</li>
+              <li>
+                <a href="tel:+61408202034" className="text-gray-400 hover:text-white transition-colors">
+                  📞 +61 408 202 034
+                </a>
+              </li>
               <li className="text-gray-400">✉️ contact@capelsoundtaxi.com</li>
-              <li className="text-gray-400">📍 49 Wagtail Way Capel Sound</li>
+              <li className="text-gray-400">📍 Capel Sound VIC 3940</li>
               <li className="text-gray-400">🕒 24/7 Service</li>
             </ul>
           </div>

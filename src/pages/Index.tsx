@@ -7,6 +7,18 @@ import { Link } from "react-router-dom";
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
+      {/* SEO Meta Tags */}
+      <head>
+        <title>Capel Sound Taxi - Reliable Taxi Service on Mornington Peninsula | 24/7 Available</title>
+        <meta name="description" content="Professional taxi service on Mornington Peninsula. Airport transfers, corporate travel, hotel transfers. Available 24/7. Call +61 408 202 034 or book online." />
+        <meta name="keywords" content="taxi Mornington Peninsula, Capel Sound taxi, airport transfers, corporate travel, hotel transfers, taxi service Victoria, 24/7 taxi" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:title" content="Capel Sound Taxi - Reliable Taxi Service on Mornington Peninsula" />
+        <meta property="og:description" content="Professional, punctual, and affordable taxi service available 24/7 on the Mornington Peninsula." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="https://capelsoundtaxi.com" />
+      </head>
+
       {/* Hero Section with City Traffic Background */}
       <section 
         className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center"
@@ -181,7 +193,7 @@ const Index = () => {
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Our Services</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Our <span className="text-yellow-400">Services</span></h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Comprehensive taxi services for all your transportation needs
             </p>
