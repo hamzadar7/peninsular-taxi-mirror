@@ -15,7 +15,7 @@ const Fleet = () => {
     },
     {
       type: "SUV", 
-      capacity: "1-6",
+      capacity: "1-4",
       image: "/lovable-uploads/25d6e567-58a2-4884-94e4-e967d0d3d02a.png",
       features: ["Premium comfort", "Professional service", "Business amenities", "Group seating"],
       description: "Luxurious SUV designed with premium comfort for business and leisure travel.",
@@ -23,7 +23,7 @@ const Fleet = () => {
     },
     {
       type: "MAXI TAXI",
-      capacity: "1-8",
+      capacity: "1-11",
       image: "/lovable-uploads/db90f5df-7275-40c4-83b4-5ba0247c56ec.png",
       features: ["Group seating", "Extra luggage space", "Event transportation", "Competitive group rates"],
       description: "Large capacity vehicle when you need space for groups and events.",
@@ -31,15 +31,15 @@ const Fleet = () => {
     },
     {
       type: "WAGON",
-      capacity: "1-8",
-      image: "/lovable-uploads/706aa5eb-a40b-4504-9c4c-ed55d1012046.png",
+      capacity: "1-4",
+      image: "/lovable-uploads/5172dff6-8013-4dc3-ab7c-f2dc11dec705.png",
       features: ["Spacious interior", "Family friendly", "Luggage capacity", "Comfortable seating"],
       description: "Ideal choice for long drives with reliable luggage capacity for medium size groups.",
       luggage: "Large"
     },
     {
       type: "ACCESSIBLE TAXI",
-      capacity: "1-4",
+      capacity: "2 Wheel Chairs + 4 Passengers",
       image: "/lovable-uploads/9dba1764-3239-4966-a231-e277fe144a76.png",
       features: ["Wheelchair access", "Medical equipment space", "Trained drivers", "Insurance billing"],
       description: "Wheelchair accessible comfortable transportation for all adventures.",
@@ -61,7 +61,9 @@ const Fleet = () => {
       <section className="bg-gray-900 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Our Fleet</h1>
+            <h1 className="text-4xl font-bold mb-4">
+              Our <span className="text-yellow-400">Fleet</span>
+            </h1>
             <p className="text-xl text-gray-300">
               Modern, well-maintained vehicles to suit every transportation need. All our vehicles are regularly serviced and equipped with the latest safety features.
             </p>
@@ -92,7 +94,7 @@ const Fleet = () => {
                   {/* Passengers and Luggage Info with icons */}
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center">
-                      <User className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
+                      <Users className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
                       <div className="font-semibold text-sm text-gray-800">Passengers</div>
                       <div className="text-sm text-gray-600">{vehicle.capacity}</div>
                     </div>
@@ -174,10 +176,6 @@ const Fleet = () => {
               <ul className="space-y-3 text-gray-600">
                 <li className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-sm">Free cancellation up to 2 hours before pickup</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-sm">After 2 hours: full charge applies</span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -221,7 +219,7 @@ const Fleet = () => {
                 <Check className="h-10 w-10 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-gray-800">GPS Equipped</h3>
-              <p className="text-gray-600 text-sm">Real-time tracking and optimal route planning.</p>
+              <p className="text-gray-600 text-sm">Tracking is available via whatsapp live location.</p>
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
