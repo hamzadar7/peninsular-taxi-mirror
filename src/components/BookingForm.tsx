@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import { sendOTPEmail, generateOTP, sendTestOTP } from "@/utils/emailService";
+import { sendOTPEmail, generateOTP } from "@/utils/emailService";
 import { saveBooking } from "@/utils/bookingStorage";
 
 declare global {
@@ -442,9 +442,7 @@ const BookingForm = () => {
             <p className={`text-sm ${
               message.includes('sent') || message.includes('confirmed') || message.includes('✅')
                 ? 'text-green-600' 
-                : message.includes('🧪')
-                  ? 'text-blue-600'
-                  : 'text-red-600'
+                : 'text-red-600'
             }`}>
               {message}
             </p>
