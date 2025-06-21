@@ -19,28 +19,28 @@ const Index = () => {
         <link rel="canonical" href="https://capelsoundtaxi.com" />
       </head>
 
-      {/* Hero Section with City Traffic Background - Fixed Height */}
+      {/* Hero Section with better alignment - Fixed responsive height */}
       <section 
-        className="relative h-[80vh] bg-cover bg-center bg-no-repeat flex items-center"
+        className="relative h-[65vh] min-h-[500px] max-h-[700px] bg-cover bg-center bg-no-repeat flex items-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
         }}
       >
         <div className="container mx-auto px-4 text-center text-white">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          <div className="max-w-5xl mx-auto">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               Reliable Taxi Service on the{" "}
               <span className="text-yellow-400">Mornington Peninsula</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl lg:text-2xl mb-8 text-gray-200 max-w-4xl mx-auto leading-relaxed">
               Professional, punctual, and affordable taxi service available 24/7. Book your ride today 
               and experience the difference.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg rounded-lg">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8 items-center">
+              <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg rounded-lg shadow-lg">
                 <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-lg">
+              <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-lg shadow-lg">
                 <a href="tel:+61408202034">
                   <Phone className="h-5 w-5 mr-2" />
                   +61 408 202 034
@@ -51,54 +51,54 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Why Choose Capelsound Taxi Section */}
-      <section className="py-20 bg-gray-50">
+      {/* Why Choose Capelsound Taxi Section - Improved responsiveness */}
+      <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Why Choose Capelsound Taxi?</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-6">Why Choose Capelsound Taxi?</h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               We provide exceptional service with these key benefits
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            <Card className="text-center p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
               <CardHeader className="pb-4">
-                <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Clock className="h-10 w-10 text-black" />
+                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6">
+                  <Clock className="h-8 w-8 lg:h-10 lg:w-10 text-black" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-800 mb-4">24/7 Service</CardTitle>
+                <CardTitle className="text-xl lg:text-2xl font-bold text-gray-800 mb-3 lg:mb-4">24/7 Service</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
                   Available round the clock, every day of the year. No matter when you need us, we're here.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
+            <Card className="text-center p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
               <CardHeader className="pb-4">
-                <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Shield className="h-10 w-10 text-black" />
+                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6">
+                  <Shield className="h-8 w-8 lg:h-10 lg:w-10 text-black" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-800 mb-4">Licensed & Insured</CardTitle>
+                <CardTitle className="text-xl lg:text-2xl font-bold text-gray-800 mb-3 lg:mb-4">Licensed & Insured</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
                   All our drivers are fully licensed and our vehicles are comprehensively insured for your safety.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
+            <Card className="text-center p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
               <CardHeader className="pb-4">
-                <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Car className="h-10 w-10 text-black" />
+                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6">
+                  <Car className="h-8 w-8 lg:h-10 lg:w-10 text-black" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-800 mb-4">Modern Fleet</CardTitle>
+                <CardTitle className="text-xl lg:text-2xl font-bold text-gray-800 mb-3 lg:mb-4">Modern Fleet</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
                   Clean, comfortable, and well-maintained vehicles to ensure a pleasant journey every time.
                 </p>
               </CardContent>
@@ -107,33 +107,33 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Fleet Section */}
-      <section className="py-20 bg-white">
+      {/* Our Fleet Section - Improved image and text alignment */}
+      <section className="py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-6">
               Our <span className="text-yellow-400">Fleet</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               Modern vehicles to suit every transportation need
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
             <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-200">
-              <div className="h-48 bg-gray-50 flex items-center justify-center p-4">
+              <div className="h-40 md:h-48 bg-gray-50 flex items-center justify-center p-4">
                 <img 
                   src="/lovable-uploads/ada7f635-6c64-4449-a05e-5e9e4c9a9ef4.png" 
                   alt="Sedan"
                   className="h-full w-full object-contain"
                 />
               </div>
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl font-bold">SEDAN</CardTitle>
+              <CardHeader className="text-center pb-2">
+                <CardTitle className="text-lg lg:text-xl font-bold">SEDAN</CardTitle>
                 <CardDescription className="text-gray-600">1-4 Passengers</CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Comfortable and economical choice for standard trips</p>
+              <CardContent className="text-center pt-2 pb-6">
+                <p className="text-gray-600 mb-4 text-sm lg:text-base">Comfortable and economical choice for standard trips</p>
                 <Button asChild className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
                   <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
                 </Button>
@@ -141,19 +141,19 @@ const Index = () => {
             </Card>
 
             <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-200">
-              <div className="h-48 bg-gray-50 flex items-center justify-center p-4">
+              <div className="h-40 md:h-48 bg-gray-50 flex items-center justify-center p-4">
                 <img 
                   src="/lovable-uploads/25d6e567-58a2-4884-94e4-e967d0d3d02a.png" 
                   alt="SUV"
                   className="h-full w-full object-contain"
                 />
               </div>
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl font-bold">SUV</CardTitle>
+              <CardHeader className="text-center pb-2">
+                <CardTitle className="text-lg lg:text-xl font-bold">SUV</CardTitle>
                 <CardDescription className="text-gray-600">1-4 Passengers</CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Spacious and comfortable for families with extra luggage</p>
+              <CardContent className="text-center pt-2 pb-6">
+                <p className="text-gray-600 mb-4 text-sm lg:text-base">Spacious and comfortable for families with extra luggage</p>
                 <Button asChild className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
                   <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
                 </Button>
@@ -161,19 +161,19 @@ const Index = () => {
             </Card>
 
             <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-200">
-              <div className="h-48 bg-gray-50 flex items-center justify-center p-4">
+              <div className="h-40 md:h-48 bg-gray-50 flex items-center justify-center p-4">
                 <img 
                   src="/lovable-uploads/db90f5df-7275-40c4-83b4-5ba0247c56ec.png" 
                   alt="Maxi Taxi"
                   className="h-full w-full object-contain"
                 />
               </div>
-              <CardHeader className="text-center">
-                <CardTitle className="text-xl font-bold">MAXI-TAXI</CardTitle>
+              <CardHeader className="text-center pb-2">
+                <CardTitle className="text-lg lg:text-xl font-bold">MAXI-TAXI</CardTitle>
                 <CardDescription className="text-gray-600">1-11 Passengers</CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Perfect for larger groups and airport transfers</p>
+              <CardContent className="text-center pt-2 pb-6">
+                <p className="text-gray-600 mb-4 text-sm lg:text-base">Perfect for larger groups and airport transfers</p>
                 <Button asChild className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
                   <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
                 </Button>
@@ -189,17 +189,17 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Services Section */}
-      <section className="py-20 bg-gray-50">
+      {/* Our Services Section - Better image alignment */}
+      <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Our <span className="text-yellow-400">Services</span></h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-6">Our <span className="text-yellow-400">Services</span></h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               Comprehensive taxi services for all your transportation needs
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
             {/* Airport Transfers */}
             <Card className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="aspect-[4/3] overflow-hidden">
@@ -209,29 +209,29 @@ const Index = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
+              <CardContent className="p-4 lg:p-6">
+                <h3 className="text-lg lg:text-xl font-bold text-gray-800 mb-3 flex items-center">
                   <Star className="h-5 w-5 text-yellow-400 mr-2" />
                   Airport Transfers
                 </h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                   Reliable and comfortable transfers to and from Melbourne airports. Our professional drivers ensure you arrive on time for your flights.
                 </p>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                <ul className="space-y-2 mb-4 lg:mb-6">
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Flight monitoring
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Meet & greet service
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Luggage assistance
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Fixed pricing
                   </li>
                 </ul>
@@ -250,29 +250,29 @@ const Index = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
+              <CardContent className="p-4 lg:p-6">
+                <h3 className="text-lg lg:text-xl font-bold text-gray-800 mb-3 flex items-center">
                   <Users className="h-5 w-5 text-yellow-400 mr-2" />
                   Corporate Travel
                 </h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                   Professional transportation solutions for business clients, with executive accounts available with monthly billing options.
                 </p>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                <ul className="space-y-2 mb-4 lg:mb-6">
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Executive accounts
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Monthly billing
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Business with style
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Priority booking
                   </li>
                 </ul>
@@ -291,29 +291,29 @@ const Index = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
+              <CardContent className="p-4 lg:p-6">
+                <h3 className="text-lg lg:text-xl font-bold text-gray-800 mb-3 flex items-center">
                   <CheckCircle className="h-5 w-5 text-yellow-400 mr-2" />
                   Hotel Transfers
                 </h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                   Seamless transfers between hotels, airports, and other destinations. Let your accommodation change plans flow smoothly.
                 </p>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                <ul className="space-y-2 mb-4 lg:mb-6">
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Door to door service
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Luggage handling
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Hotel coordination
                   </li>
-                  <li className="flex items-center text-sm">
-                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                  <li className="flex items-center text-xs lg:text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2 flex-shrink-0" />
                     Local bookings
                   </li>
                 </ul>
@@ -332,84 +332,84 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Payment Methods Section */}
-      <section className="py-20 bg-white">
+      {/* Payment Methods Section - Better image sizing */}
+      <section className="py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Payment Methods</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-6">Payment Methods</h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               We accept multiple payment methods for your convenience
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-4">
-                <div className="h-20 flex items-center justify-center mb-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 max-w-6xl mx-auto">
+            <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-3 lg:pb-4">
+                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
                   <img 
                     src="/lovable-uploads/e53452ae-5660-4c00-aa4a-ef8355711874.png" 
                     alt="Cab Charge"
-                    className="h-12 w-auto object-contain"
+                    className="h-10 lg:h-12 w-auto object-contain"
                   />
                 </div>
-                <CardTitle className="text-lg font-bold text-gray-800">Cab Charge</CardTitle>
+                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Cab Charge</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-xs lg:text-sm">
                   Professional taxi voucher system
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-4">
-                <div className="h-20 flex items-center justify-center mb-4">
+            <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-3 lg:pb-4">
+                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
                   <img 
                     src="/lovable-uploads/ff41b36f-b25f-4bbc-ba58-002437e858dd.png" 
                     alt="EFTPOS"
-                    className="h-12 w-auto object-contain"
+                    className="h-10 lg:h-12 w-auto object-contain"
                   />
                 </div>
-                <CardTitle className="text-lg font-bold text-gray-800">EFTPOS</CardTitle>
+                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">EFTPOS</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-xs lg:text-sm">
                   Electronic payment terminal available in all vehicles
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-4">
-                <div className="h-20 flex items-center justify-center mb-4">
+            <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-3 lg:pb-4">
+                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
                   <img 
                     src="/lovable-uploads/b2d348c8-6274-4e50-b17b-d6b33e1d7265.png" 
                     alt="Visa Mastercard"
-                    className="h-12 w-auto object-contain"
+                    className="h-10 lg:h-12 w-auto object-contain"
                   />
                 </div>
-                <CardTitle className="text-lg font-bold text-gray-800">Credit & Debit</CardTitle>
+                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Credit & Debit</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-xs lg:text-sm">
                   All major credit and debit cards accepted
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-4">
-                <div className="h-20 flex items-center justify-center mb-4">
+            <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-3 lg:pb-4">
+                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
                   <img 
                     src="/lovable-uploads/44b8aba6-5bbb-44c3-8404-5a0aced4318d.png" 
                     alt="Motor Pass"
-                    className="h-12 w-auto object-contain"
+                    className="h-10 lg:h-12 w-auto object-contain"
                   />
                 </div>
-                <CardTitle className="text-lg font-bold text-gray-800">Motor Pass</CardTitle>
+                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Motor Pass</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-xs lg:text-sm">
                   Convenient payment solution
                 </p>
               </CardContent>
@@ -418,27 +418,27 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Trusted Partners Section */}
-      <section className="py-20 bg-gray-50">
+      {/* Trusted Partners Section - Better responsiveness */}
+      <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Trusted Partners</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 lg:mb-6">Trusted Partners</h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               We work with leading organizations to serve you better
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
-              <CardHeader className="pb-4">
-                <div className="h-24 flex items-center justify-center mb-6">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            <Card className="text-center p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
+              <CardHeader className="pb-3 lg:pb-4">
+                <div className="h-20 lg:h-24 flex items-center justify-center mb-4 lg:mb-6">
                   <img 
                     src="/lovable-uploads/35917797-eeda-4d67-909b-d62d517ea074.png" 
                     alt="TAC Partner"
-                    className="h-16 w-auto object-contain"
+                    className="h-12 lg:h-16 w-auto object-contain"
                   />
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-800 mb-4">TAC Partner</CardTitle>
+                <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">TAC Partner</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-gray-600 text-sm leading-relaxed">
@@ -447,16 +447,16 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
-              <CardHeader className="pb-4">
-                <div className="h-24 flex items-center justify-center mb-6">
+            <Card className="text-center p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
+              <CardHeader className="pb-3 lg:pb-4">
+                <div className="h-20 lg:h-24 flex items-center justify-center mb-4 lg:mb-6">
                   <img 
                     src="/lovable-uploads/6986d0af-dc1d-437a-a921-78b8beaa0c5a.png" 
                     alt="WorkSafe Provider"
-                    className="h-16 w-auto object-contain"
+                    className="h-12 lg:h-16 w-auto object-contain"
                   />
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-800 mb-4">WorkSafe Provider</CardTitle>
+                <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">WorkSafe Provider</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-gray-600 text-sm leading-relaxed">
@@ -465,16 +465,16 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
-              <CardHeader className="pb-4">
-                <div className="h-24 flex items-center justify-center mb-6">
+            <Card className="text-center p-6 lg:p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
+              <CardHeader className="pb-3 lg:pb-4">
+                <div className="h-20 lg:h-24 flex items-center justify-center mb-4 lg:mb-6">
                   <img 
                     src="/lovable-uploads/64dbbb09-9d78-4b7b-9f01-f3b93e6c420a.png" 
                     alt="Safe Transport Victoria"
-                    className="h-16 w-auto object-contain"
+                    className="h-12 lg:h-16 w-auto object-contain"
                   />
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-800 mb-4">Safe Transport Victoria</CardTitle>
+                <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">Safe Transport Victoria</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-gray-600 text-sm leading-relaxed">
@@ -487,14 +487,14 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-gray-900 to-black text-white">
+      <section className="py-16 lg:py-20 bg-gradient-to-r from-gray-900 to-black text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Book Your Ride?</h2>
-          <p className="text-xl mb-8 text-gray-300 max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6">Ready to Book Your Ride?</h2>
+          <p className="text-lg md:text-xl mb-6 lg:mb-8 text-gray-300 max-w-3xl mx-auto">
             Call us now or book online for quick, reliable, and professional taxi service across the Mornington Peninsula.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center">
             <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg">
               <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Online Now</Link>
             </Button>

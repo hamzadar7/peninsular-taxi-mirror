@@ -40,6 +40,11 @@ const BookingForm = () => {
 
   const pickupRef = useRef<HTMLInputElement>(null);
   const destinationRef = useRef<HTMLInputElement>(null);
+  const pickupAutocomplete = useRef<any>(null);
+  const destinationAutocomplete = useRef<any>(null);
+
+  // Get today's date in YYYY-MM-DD format for min date
+  const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     const initializeGooglePlaces = async () => {
@@ -53,14 +58,31 @@ const BookingForm = () => {
         await loader.load();
 
         if (pickupRef.current && destinationRef.current && window.google) {
-          new window.google.maps.places.Autocomplete(pickupRef.current, {
+          // Initialize pickup autocomplete
+          pickupAutocomplete.current = new window.google.maps.places.Autocomplete(pickupRef.current, {
             componentRestrictions: { country: "au" },
             fields: ["place_id", "geometry", "name", "formatted_address"]
           });
 
-          new window.google.maps.places.Autocomplete(destinationRef.current, {
+          // Initialize destination autocomplete
+          destinationAutocomplete.current = new window.google.maps.places.Autocomplete(destinationRef.current, {
             componentRestrictions: { country: "au" },
             fields: ["place_id", "geometry", "name", "formatted_address"]
+          });
+
+          // Add listeners to handle place selection
+          pickupAutocomplete.current.addListener('place_changed', () => {
+            const place = pickupAutocomplete.current.getPlace();
+            if (place && place.formatted_address) {
+              setFormData(prev => ({ ...prev, pickupLocation: place.formatted_address }));
+            }
+          });
+
+          destinationAutocomplete.current.addListener('place_changed', () => {
+            const place = destinationAutocomplete.current.getPlace();
+            if (place && place.formatted_address) {
+              setFormData(prev => ({ ...prev, destination: place.formatted_address }));
+            }
           });
         }
       } catch (error) {
@@ -318,6 +340,7 @@ const BookingForm = () => {
                   type="date"
                   className="pl-10 h-12"
                   value={formData.date}
+                  min={today}
                   onChange={(e) => handleInputChange('date', e.target.value)}
                   required
                 />
