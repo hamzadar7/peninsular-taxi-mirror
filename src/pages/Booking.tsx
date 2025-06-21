@@ -93,7 +93,7 @@ const Booking = () => {
       </section>
 
       {/* Booking Form */}
-      <section className="py-12">
+      <section id="booking-form" className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <BookingForm />

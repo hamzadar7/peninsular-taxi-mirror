@@ -1,11 +1,12 @@
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Phone, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const Navigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
@@ -16,6 +17,19 @@ const Navigation = () => {
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
+
+  const handleBookNowClick = () => {
+    navigate('/booking');
+    // Scroll to booking form after navigation
+    setTimeout(() => {
+      const bookingForm = document.querySelector('#booking-form');
+      if (bookingForm) {
+        bookingForm.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
+  };
 
   return (
     <>
@@ -28,13 +42,12 @@ const Navigation = () => {
           <Phone className="h-4 w-4 mr-2" />
           <span className="font-medium">+61 408 202 034</span>
         </a>
-        <Link 
-          to="/booking" 
-          onClick={() => window.scrollTo(0, 0)}
+        <button 
+          onClick={handleBookNowClick}
           className="flex-1 flex items-center justify-center bg-black text-yellow-400 font-medium hover:bg-gray-800 transition-colors"
         >
           Book Now
-        </Link>
+        </button>
       </div>
 
       {/* Main Navigation */}
@@ -54,13 +67,12 @@ const Navigation = () => {
 
             {/* Mobile Discount Message - Only visible on mobile */}
             <div className="lg:hidden flex-1 mx-4">
-              <Link 
-                to="/booking" 
-                onClick={() => window.scrollTo(0, 0)}
-                className="block text-center text-yellow-400 text-sm font-medium hover:text-yellow-300 transition-colors bg-yellow-400/10 rounded px-2 py-1"
+              <button 
+                onClick={handleBookNowClick}
+                className="block text-center text-yellow-400 text-sm font-medium hover:text-yellow-300 transition-colors bg-yellow-400/10 rounded px-2 py-1 w-full"
               >
                 Up to 10% off Airport Pickups!
-              </Link>
+              </button>
             </div>
             
             {/* Desktop Navigation */}

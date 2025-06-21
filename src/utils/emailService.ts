@@ -88,17 +88,6 @@ Contact: +61 408 202 034`
     
   } catch (error) {
     console.error('Email sending failed:', error);
-    
-    // In development, simulate success to allow testing
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Development mode: Simulating successful email send');
-      return { 
-        success: true, 
-        simulated: true,
-        data: { succeeded: 1 }
-      };
-    }
-    
     throw error;
   }
 };
