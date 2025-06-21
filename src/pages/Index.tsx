@@ -21,9 +21,9 @@ const Index = () => {
 
       {/* Hero Section with City Traffic Background */}
       <section 
-        className="relative min-h-[85vh] bg-cover bg-center bg-no-repeat flex items-center"
+        className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1502920917128-1aa500764cbd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
         }}
       >
         <div className="container mx-auto px-4 text-center text-white">
@@ -38,12 +38,12 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg rounded-lg">
-                <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
+                <Link to="/booking">Book Now</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-lg">
-                <a href="tel:+61408202034" className="flex items-center">
+                <a href="tel:+61408202034">
                   <Phone className="h-5 w-5 mr-2" />
-                  <span>Call +61 408 202 034</span>
+                  +61 408 202 034
                 </a>
               </Button>
             </div>
@@ -134,8 +134,8 @@ const Index = () => {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-gray-600 mb-4">Comfortable and economical choice for standard trips</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold" asChild>
-                  <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
+                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                  Book Now
                 </Button>
               </CardContent>
             </Card>
@@ -154,8 +154,8 @@ const Index = () => {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-gray-600 mb-4">Spacious and comfortable for families with extra luggage</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold" asChild>
-                  <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
+                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                  Book Now
                 </Button>
               </CardContent>
             </Card>
@@ -174,8 +174,8 @@ const Index = () => {
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-gray-600 mb-4">Perfect for larger groups and airport transfers</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold" asChild>
-                  <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
+                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                  Book Now
                 </Button>
               </CardContent>
             </Card>
@@ -183,7 +183,7 @@ const Index = () => {
 
           <div className="text-center">
             <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4">
-              <Link to="/fleet" onClick={() => window.scrollTo(0, 0)}>View Full Fleet Details</Link>
+              <Link to="/fleet">View Full Fleet Details</Link>
             </Button>
           </div>
         </div>
@@ -236,7 +236,7 @@ const Index = () => {
                   </li>
                 </ul>
                 <Button asChild className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-                  <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
+                  <Link to="/booking">Book Now</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -277,7 +277,7 @@ const Index = () => {
                   </li>
                 </ul>
                 <Button asChild className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-                  <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
+                  <Link to="/booking">Book Now</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -318,7 +318,7 @@ const Index = () => {
                   </li>
                 </ul>
                 <Button asChild className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-                  <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Now</Link>
+                  <Link to="/booking">Book Now</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -326,7 +326,7 @@ const Index = () => {
 
           <div className="text-center">
             <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4">
-              <Link to="/services" onClick={() => window.scrollTo(0, 0)}>View All Services</Link>
+              <Link to="/services">View All Services</Link>
             </Button>
           </div>
         </div>
@@ -496,12 +496,12 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg">
-              <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>Book Online Now</Link>
+              <Link to="/booking">Book Online Now</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
-              <a href="tel:+61408202034" className="flex items-center">
+              <a href="tel:+61408202034">
                 <Phone className="h-5 w-5 mr-2" />
-                <span>Call +61 408 202 034</span>
+                Call +61 408 202 034
               </a>
             </Button>
           </div>
