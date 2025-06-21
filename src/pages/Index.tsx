@@ -11,55 +11,41 @@ const Index = () => {
       <section 
         className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/lovable-uploads/55fa939c-e2d7-4101-8554-06404ad19112.png')`
         }}
       >
         <div className="container mx-auto px-4 text-center text-white">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Professional Taxi Service on the{" "}
+              Reliable Taxi Service on the{" "}
               <span className="text-yellow-400">Mornington Peninsula</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-200">
-              Reliable, safe, and comfortable transportation available 24/7. 
-              Book your ride today and experience premium service.
+            <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-3xl mx-auto">
+              Professional, punctual, and affordable taxi service available 24/7. Book your ride today 
+              and experience the difference.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg">
-                <Link to="/booking">Book Your Ride Now</Link>
+              <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg rounded-lg">
+                <Link to="/booking">Book Now</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
+              <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-lg">
                 <a href="tel:+61408202034">
                   <Phone className="h-5 w-5 mr-2" />
                   +61 408 202 034
                 </a>
               </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400">24/7</div>
-                <div className="text-lg">Available</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400">5★</div>
-                <div className="text-lg">Rated Service</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400">100+</div>
-                <div className="text-lg">Happy Customers</div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
+      {/* Why Choose Capelsound Taxi Section */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Why Choose Capelsound Taxi?</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We provide exceptional transportation services with a commitment to safety, reliability, and customer satisfaction
+              We provide exceptional service with these key benefits
             </p>
           </div>
           
