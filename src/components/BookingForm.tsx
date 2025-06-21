@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -45,13 +44,13 @@ const BookingForm = () => {
 
         await loader.load();
 
-        if (pickupRef.current && destinationRef.current) {
-          new google.maps.places.Autocomplete(pickupRef.current, {
+        if (pickupRef.current && destinationRef.current && window.google) {
+          new window.google.maps.places.Autocomplete(pickupRef.current, {
             componentRestrictions: { country: "au" },
             fields: ["place_id", "geometry", "name", "formatted_address"]
           });
 
-          new google.maps.places.Autocomplete(destinationRef.current, {
+          new window.google.maps.places.Autocomplete(destinationRef.current, {
             componentRestrictions: { country: "au" },
             fields: ["place_id", "geometry", "name", "formatted_address"]
           });
