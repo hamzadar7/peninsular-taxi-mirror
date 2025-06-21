@@ -161,7 +161,7 @@ const Booking = () => {
               </div>
               <div className="text-center p-6 bg-gray-50 rounded-lg">
                 <h4 className="text-lg font-semibold text-gray-900 mb-2">Payment Methods</h4>
-                <p className="text-gray-600">Cash, Credit Card, and Bank Transfer accepted for all bookings</p>
+                <p className="text-gray-600">Cash, Credit Card, EFTPOS, Cabcharge, and MPTP accepted for all bookings</p>
               </div>
             </div>
           </div>
