@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Clock, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -79,43 +80,88 @@ const Booking = () => {
         </div>
       </section>
 
-      {/* Booking Policies - Moved below the form */}
-      <section className="py-8 sm:py-12 bg-white">
+      {/* Booking Policies - Updated to match reference image */}
+      <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800">Booking Policies</h2>
-            <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-yellow-400">Cancellation Policy</h3>
-                <ul className="space-y-2 text-sm sm:text-base text-gray-600">
-                  <li>• Free cancellation up to 2 hours before pickup</li>
-                  <li>• 50% charge for cancellations within 2 hours</li>
-                  <li>• Full charge for no-shows</li>
-                </ul>
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Booking Policies</h2>
+              <p className="text-lg sm:text-xl text-gray-600">Important information about our booking and cancellation policies</p>
+            </div>
+            
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+              {/* Pre-Booking Information */}
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="p-6 sm:p-8">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Pre-Booking Information</h3>
+                  
+                  {/* Pre-Book Fee */}
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <div className="text-lg font-bold text-gray-900">Pre-Book Fee: $2.70</div>
+                    <div className="text-gray-600">Applied to all advance bookings</div>
+                  </div>
+                  
+                  {/* Information List */}
+                  <ul className="space-y-3">
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">24-hour advance booking recommended</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">Airport pickups include waiting time</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">Group bookings require 48-hour notice</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">Confirmation within 30 minutes</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-yellow-400">Booking Terms</h3>
-                <ul className="space-y-2 text-sm sm:text-base text-gray-600">
-                  <li>• Advance booking recommended</li>
-                  <li>• 15-minute grace period for pickups</li>
-                  <li>• Payment accepted: Cash, Card, Bank Transfer</li>
-                </ul>
+
+              {/* Cancellation Policy */}
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="p-6 sm:p-8">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Cancellation Policy</h3>
+                  
+                  {/* Important Notice */}
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <div className="text-lg font-bold text-red-800">Important Notice</div>
+                    <div className="text-red-700">No cancellation allowed 2 hours before departure time</div>
+                  </div>
+                  
+                  {/* Policy List */}
+                  <ul className="space-y-3">
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">After 2 hours: full charge applies</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">No-show bookings will be charged in full</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">Changes subject to availability</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-yellow-400">Special Requirements</h3>
-                <ul className="space-y-2 text-sm sm:text-base text-gray-600">
-                  <li>• Child seats available upon request</li>
-                  <li>• Wheelchair accessible vehicles</li>
-                  <li>• Pet-friendly options available</li>
-                </ul>
+            </div>
+
+            {/* Additional Information */}
+            <div className="mt-8 lg:mt-12 grid sm:grid-cols-2 gap-6 lg:gap-8">
+              <div className="text-center p-6 bg-gray-50 rounded-lg">
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">Special Requirements</h4>
+                <p className="text-gray-600">Child seats, wheelchair access, and pet-friendly options available upon request</p>
               </div>
-              <div className="space-y-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-yellow-400">Contact Information</h3>
-                <ul className="space-y-2 text-sm sm:text-base text-gray-600">
-                  <li>• Phone: +61 408 202 034</li>
-                  <li>• Available 24/7</li>
-                  <li>• WhatsApp location sharing</li>
-                </ul>
+              <div className="text-center p-6 bg-gray-50 rounded-lg">
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">Payment Methods</h4>
+                <p className="text-gray-600">Cash, Credit Card, and Bank Transfer accepted for all bookings</p>
               </div>
             </div>
           </div>

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -65,7 +64,7 @@ const BookingForm = () => {
     const initAutocomplete = async () => {
       try {
         const loader = new Loader({
-          apiKey: (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || "",
+          apiKey: "AIzaSyCHK0sH0JnLcDtzNCZEekkUHJlPHwAKIH4",
           version: "weekly",
           libraries: ["places"]
         });
@@ -110,9 +109,7 @@ const BookingForm = () => {
       }
     };
 
-    if ((import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY) {
-      initAutocomplete();
-    }
+    initAutocomplete();
   }, []);
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
