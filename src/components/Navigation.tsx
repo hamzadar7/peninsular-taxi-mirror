@@ -19,8 +19,8 @@ const Navigation = () => {
 
   return (
     <>
-      {/* Top Yellow Bar - Split between phone and book now */}
-      <div className="bg-yellow-400 h-12 flex">
+      {/* Top Yellow Bar - Split between phone and book now - STICKY */}
+      <div className="bg-yellow-400 h-12 flex sticky top-0 z-50">
         <a 
           href="tel:+61408202034" 
           className="flex-1 flex items-center justify-center text-black hover:bg-yellow-500 transition-colors border-r border-yellow-600"
@@ -37,7 +37,7 @@ const Navigation = () => {
       </div>
 
       {/* Main Navigation */}
-      <nav className="bg-black shadow-lg sticky top-0 z-50">
+      <nav className="bg-black shadow-lg sticky top-12 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}

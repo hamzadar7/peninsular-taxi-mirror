@@ -3,11 +3,15 @@ import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import WhatsAppButton from "./components/WhatsAppButton";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Fleet from "./pages/Fleet";
 import Booking from "./pages/Booking";
+import Contact from "./pages/Contact";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   useEffect(() => {
@@ -119,17 +123,27 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navigation />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/fleet" element={<Fleet />} />
-          <Route path="/booking" element={<Booking />} />
-        </Routes>
-      </main>
-      <Footer />
+      <Routes>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/*" element={
+          <>
+            <Navigation />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/fleet" element={<Fleet />} />
+                <Route path="/booking" element={<Booking />} />
+                <Route path="/contact" element={<Contact />} />
+              </Routes>
+            </main>
+            <Footer />
+            <WhatsAppButton />
+          </>
+        } />
+      </Routes>
     </div>
   );
 }

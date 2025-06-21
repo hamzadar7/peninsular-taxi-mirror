@@ -12,6 +12,11 @@ const Footer = () => {
               alt="Capelsound Taxi" 
               className="h-12 w-auto mb-4"
             />
+            <img 
+              src="/lovable-uploads/970b8594-2676-4fdb-9e29-e55000364416.png" 
+              alt="ASIC Registered" 
+              className="h-8 w-auto mb-4"
+            />
             <p className="text-gray-400 text-sm">
               Reliable taxi service on the Mornington Peninsula. Professional drivers, clean vehicles, and 24/7 availability.
             </p>
@@ -49,7 +54,7 @@ const Footer = () => {
                   📞 +61 408 202 034
                 </a>
               </li>
-              <li className="text-gray-400">✉️ contact@capelsoundtaxi.com</li>
+              <li className="text-gray-400">✉️ contact@capelsoundtaxi.com.au</li>
               <li className="text-gray-400">📍 Capel Sound VIC 3940</li>
               <li className="text-gray-400">🕒 24/7 Service</li>
             </ul>
