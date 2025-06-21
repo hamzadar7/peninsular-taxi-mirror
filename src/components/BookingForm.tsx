@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -230,46 +229,46 @@ const BookingForm = () => {
   const minDate = tomorrow.toISOString().split('T')[0];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8 lg:py-12">
+      <div className="container mx-auto px-2 sm:px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">Book Your Taxi</h1>
-            <p className="text-xl text-gray-600">
+          <div className="text-center mb-4 sm:mb-6 lg:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2 sm:mb-4">Book Your Taxi</h1>
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 px-2">
               Fill out the form below and we'll confirm your booking shortly
             </p>
           </div>
 
           <Card id="booking-form" className="shadow-xl">
-            <CardHeader className="bg-yellow-400 text-black">
-              <CardTitle className="text-2xl font-bold text-center">Booking Details</CardTitle>
+            <CardHeader className="bg-yellow-400 text-black py-3 sm:py-4 lg:py-6">
+              <CardTitle className="text-lg sm:text-xl lg:text-2xl font-bold text-center">Booking Details</CardTitle>
             </CardHeader>
-            <CardContent className="p-8">
-              <form onSubmit={handleVerifyAndBook} className="space-y-6">
+            <CardContent className="p-3 sm:p-4 lg:p-8">
+              <form onSubmit={handleVerifyAndBook} className="space-y-3 sm:space-y-4 lg:space-y-6">
                 {/* Personal Information */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-lg font-medium">Full Name *</Label>
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="fullName" className="text-sm sm:text-base lg:text-lg font-medium">Full Name *</Label>
                     <Input
                       id="fullName"
                       type="text"
                       value={formData.fullName}
                       onChange={(e) => handleInputChange('fullName', e.target.value)}
                       required
-                      className="h-12 text-lg"
+                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                       placeholder="Enter your full name"
                       disabled={isOTPSent}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-lg font-medium">Phone Number *</Label>
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="phone" className="text-sm sm:text-base lg:text-lg font-medium">Phone Number *</Label>
                     <Input
                       id="phone"
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       required
-                      className="h-12 text-lg"
+                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                       placeholder="Enter your phone number"
                       disabled={isOTPSent}
                     />
@@ -277,25 +276,25 @@ const BookingForm = () => {
                 </div>
 
                 {/* Email */}
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-lg font-medium">Email Address *</Label>
+                <div className="space-y-1 sm:space-y-2">
+                  <Label htmlFor="email" className="text-sm sm:text-base lg:text-lg font-medium">Email Address *</Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     required
-                    className="h-12 text-lg"
+                    className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                     placeholder="Enter your email address"
                     disabled={isOTPSent}
                   />
                 </div>
 
                 {/* Trip Details */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="pickup" className="text-lg font-medium flex items-center">
-                      <MapPin className="h-5 w-5 mr-2 text-yellow-400" />
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="pickup" className="text-sm sm:text-base lg:text-lg font-medium flex items-center">
+                      <MapPin className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 text-yellow-400" />
                       Pickup Address *
                     </Label>
                     <Input
@@ -305,14 +304,14 @@ const BookingForm = () => {
                       value={formData.pickupAddress}
                       onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
                       required
-                      className="h-12 text-lg"
+                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                       placeholder="Enter pickup address"
                       disabled={isOTPSent}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="destination" className="text-lg font-medium flex items-center">
-                      <MapPin className="h-5 w-5 mr-2 text-yellow-400" />
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="destination" className="text-sm sm:text-base lg:text-lg font-medium flex items-center">
+                      <MapPin className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 text-yellow-400" />
                       Destination *
                     </Label>
                     <Input
@@ -322,7 +321,7 @@ const BookingForm = () => {
                       value={formData.destination}
                       onChange={(e) => handleInputChange('destination', e.target.value)}
                       required
-                      className="h-12 text-lg"
+                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                       placeholder="Enter destination address"
                       disabled={isOTPSent}
                     />
@@ -330,10 +329,10 @@ const BookingForm = () => {
                 </div>
 
                 {/* Date and Time */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="date" className="text-lg font-medium flex items-center">
-                      <Calendar className="h-5 w-5 mr-2 text-yellow-400" />
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="date" className="text-sm sm:text-base lg:text-lg font-medium flex items-center">
+                      <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 text-yellow-400" />
                       Pickup Date *
                     </Label>
                     <Input
@@ -342,14 +341,14 @@ const BookingForm = () => {
                       value={formData.date}
                       onChange={(e) => handleInputChange('date', e.target.value)}
                       required
-                      className="h-12 text-lg"
+                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                       min={minDate}
                       disabled={isOTPSent}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="time" className="text-lg font-medium flex items-center">
-                      <Clock className="h-5 w-5 mr-2 text-yellow-400" />
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="time" className="text-sm sm:text-base lg:text-lg font-medium flex items-center">
+                      <Clock className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 text-yellow-400" />
                       Pickup Time *
                     </Label>
                     <Input
@@ -358,25 +357,25 @@ const BookingForm = () => {
                       value={formData.time}
                       onChange={(e) => handleInputChange('time', e.target.value)}
                       required
-                      className="h-12 text-lg"
+                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                       disabled={isOTPSent}
                     />
                   </div>
                 </div>
 
                 {/* Passengers and Vehicle */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="passengers" className="text-lg font-medium flex items-center">
-                      <Users className="h-5 w-5 mr-2 text-yellow-400" />
-                      Number of Passengers *
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="passengers" className="text-sm sm:text-base lg:text-lg font-medium flex items-center">
+                      <Users className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 text-yellow-400" />
+                      Passengers *
                     </Label>
                     <Select 
                       value={formData.passengers} 
                       onValueChange={(value) => handleInputChange('passengers', value)}
                       disabled={isOTPSent}
                     >
-                      <SelectTrigger className="h-12 text-lg">
+                      <SelectTrigger className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg">
                         <SelectValue placeholder="Select passengers" />
                       </SelectTrigger>
                       <SelectContent>
@@ -388,14 +387,14 @@ const BookingForm = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="vehicle" className="text-lg font-medium">Vehicle Type *</Label>
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="vehicle" className="text-sm sm:text-base lg:text-lg font-medium">Vehicle Type *</Label>
                     <Select 
                       value={formData.vehicleType} 
                       onValueChange={(value) => handleInputChange('vehicleType', value)}
                       disabled={isOTPSent}
                     >
-                      <SelectTrigger className="h-12 text-lg">
+                      <SelectTrigger className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg">
                         <SelectValue placeholder="Select vehicle type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -411,45 +410,45 @@ const BookingForm = () => {
                 </div>
 
                 {/* Return Journey */}
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       id="returnJourney"
                       checked={formData.returnJourney}
                       onChange={(e) => handleInputChange('returnJourney', e.target.checked)}
-                      className="h-5 w-5 text-yellow-400"
+                      className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400"
                       disabled={isOTPSent}
                     />
-                    <Label htmlFor="returnJourney" className="text-lg font-medium">
+                    <Label htmlFor="returnJourney" className="text-sm sm:text-base lg:text-lg font-medium">
                       Return Journey Required
                     </Label>
                   </div>
 
                   {formData.returnJourney && (
-                    <div className="grid md:grid-cols-2 gap-6 p-4 bg-gray-50 rounded-lg">
-                      <div className="space-y-2">
-                        <Label htmlFor="returnDate" className="text-lg font-medium">Return Date *</Label>
+                    <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                      <div className="space-y-1 sm:space-y-2">
+                        <Label htmlFor="returnDate" className="text-sm sm:text-base lg:text-lg font-medium">Return Date *</Label>
                         <Input
                           id="returnDate"
                           type="date"
                           value={formData.returnDate}
                           onChange={(e) => handleInputChange('returnDate', e.target.value)}
                           required={formData.returnJourney}
-                          className="h-12 text-lg"
+                          className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                           min={formData.date || minDate}
                           disabled={isOTPSent}
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="returnTime" className="text-lg font-medium">Return Time *</Label>
+                      <div className="space-y-1 sm:space-y-2">
+                        <Label htmlFor="returnTime" className="text-sm sm:text-base lg:text-lg font-medium">Return Time *</Label>
                         <Input
                           id="returnTime"
                           type="time"
                           value={formData.returnTime}
                           onChange={(e) => handleInputChange('returnTime', e.target.value)}
                           required={formData.returnJourney}
-                          className="h-12 text-lg"
+                          className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                           disabled={isOTPSent}
                         />
                       </div>
@@ -458,28 +457,28 @@ const BookingForm = () => {
                 </div>
 
                 {/* Special Requests */}
-                <div className="space-y-2">
-                  <Label htmlFor="specialRequests" className="text-lg font-medium">Special Requests</Label>
+                <div className="space-y-1 sm:space-y-2">
+                  <Label htmlFor="specialRequests" className="text-sm sm:text-base lg:text-lg font-medium">Special Requests</Label>
                   <Textarea
                     id="specialRequests"
                     value={formData.specialRequests}
                     onChange={(e) => handleInputChange('specialRequests', e.target.value)}
                     placeholder="Any special requirements or notes..."
-                    className="min-h-[100px] text-lg"
+                    className="min-h-[80px] sm:min-h-[90px] lg:min-h-[100px] text-sm sm:text-base lg:text-lg"
                     disabled={isOTPSent}
                   />
                 </div>
 
                 {/* OTP Entry - Now positioned right above the button */}
                 {isOTPSent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp" className="text-lg font-medium">Enter OTP *</Label>
+                  <div className="space-y-1 sm:space-y-2">
+                    <Label htmlFor="otp" className="text-sm sm:text-base lg:text-lg font-medium">Enter OTP *</Label>
                     <Input
                       id="otp"
                       type="text"
                       value={enteredOTP}
                       onChange={(e) => setEnteredOTP(e.target.value)}
-                      className="h-12 text-lg"
+                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
                       placeholder="Enter 6-digit OTP sent to your email"
                       maxLength={6}
                     />
@@ -488,8 +487,8 @@ const BookingForm = () => {
 
                 {/* Message Display */}
                 {message && (
-                  <div className="p-4 rounded-lg bg-gray-50 border">
-                    <p className={`text-sm ${
+                  <div className="p-3 sm:p-4 rounded-lg bg-gray-50 border">
+                    <p className={`text-xs sm:text-sm ${
                       message.includes('sent') || message.includes('confirmed') || message.includes('✅')
                         ? 'text-green-600' 
                         : 'text-red-600'
@@ -503,7 +502,7 @@ const BookingForm = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-xl py-6 h-16"
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg lg:text-xl py-4 sm:py-5 lg:py-6 h-12 sm:h-14 lg:h-16"
                 >
                   {isSubmitting ? 'Processing...' : 
                    isOTPSent ? 'Confirm Booking' : 'Verify and Book'}
