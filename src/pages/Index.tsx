@@ -11,7 +11,7 @@ const Index = () => {
       <section 
         className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/lovable-uploads/d293782e-907f-46c2-896b-0ef786a12d85.png')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/lovable-uploads/c8034d15-0c26-4bcb-ae33-b4612255300f.png')`
         }}
       >
         <div className="container mx-auto px-4 text-center text-white">
@@ -187,56 +187,128 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
-              <div className="h-48 bg-gradient-to-r from-blue-600 to-blue-800 flex items-center justify-center p-4">
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {/* Airport Transfers */}
+            <Card className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="aspect-[4/3] overflow-hidden">
                 <img 
-                  src="/lovable-uploads/25d6e567-58a2-4884-94e4-e967d0d3d02a.png" 
-                  alt="Airport Transfers"
-                  className="h-32 w-auto object-contain opacity-80"
+                  src="/lovable-uploads/846b74e9-ba7a-444b-84eb-c1e6dc7bbadb.png" 
+                  alt="Airport transfer service"
+                  className="w-full h-full object-cover"
                 />
               </div>
-              <CardHeader>
-                <CardTitle className="text-xl font-bold flex items-center">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
                   <Star className="h-5 w-5 text-yellow-400 mr-2" />
                   Airport Transfers
-                </CardTitle>
-                <CardDescription>Reliable transport to and from Melbourne Airport, Avalon Airport, and other regional airports.</CardDescription>
-              </CardHeader>
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Reliable and comfortable transfers to and from Melbourne airports. Our professional drivers ensure you arrive on time for your flights.
+                </p>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Flight monitoring
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Meet & greet service
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Luggage assistance
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Fixed pricing
+                  </li>
+                </ul>
+                <Button asChild className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                  <Link to="/booking">Book Now</Link>
+                </Button>
+              </CardContent>
             </Card>
 
-            <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
-              <div className="h-48 bg-gradient-to-r from-purple-600 to-purple-800 flex items-center justify-center p-4">
+            {/* Corporate Travel */}
+            <Card className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="aspect-[4/3] overflow-hidden">
                 <img 
-                  src="/lovable-uploads/ada7f635-6c64-4449-a05e-5e9e4c9a9ef4.png" 
-                  alt="Corporate Travel"
-                  className="h-32 w-auto object-contain opacity-80"
+                  src="/lovable-uploads/9325ff52-d502-4894-811a-7b1eca0eb72f.png" 
+                  alt="Corporate travel service"
+                  className="w-full h-full object-cover"
                 />
               </div>
-              <CardHeader>
-                <CardTitle className="text-xl font-bold flex items-center">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
                   <Users className="h-5 w-5 text-yellow-400 mr-2" />
                   Corporate Travel
-                </CardTitle>
-                <CardDescription>Professional transportation for business meetings, conferences, and corporate events.</CardDescription>
-              </CardHeader>
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Professional transportation solutions for business clients, with executive accounts available with monthly billing options.
+                </p>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Executive accounts
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Monthly billing
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Business with style
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Priority booking
+                  </li>
+                </ul>
+                <Button asChild className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                  <Link to="/booking">Book Now</Link>
+                </Button>
+              </CardContent>
             </Card>
 
-            <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
-              <div className="h-48 bg-gradient-to-r from-green-600 to-green-800 flex items-center justify-center p-4">
+            {/* Hotel Transfers */}
+            <Card className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="aspect-[4/3] overflow-hidden">
                 <img 
-                  src="/lovable-uploads/5172dff6-8013-4dc3-ab7c-f2dc11dec705.png" 
-                  alt="Hotel Transfers"
-                  className="h-32 w-auto object-contain opacity-80"
+                  src="/lovable-uploads/5c434fcc-5b4a-4dfd-99eb-be1072d4c71e.png" 
+                  alt="Hotel transfer service"
+                  className="w-full h-full object-cover"
                 />
               </div>
-              <CardHeader>
-                <CardTitle className="text-xl font-bold flex items-center">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center">
                   <CheckCircle className="h-5 w-5 text-yellow-400 mr-2" />
                   Hotel Transfers
-                </CardTitle>
-                <CardDescription>Seamless transfers between hotels, airports, and other destinations.</CardDescription>
-              </CardHeader>
+                </h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Seamless transfers between hotels, airports, and other destinations. Let your accommodation change plans flow smoothly.
+                </p>
+                <ul className="space-y-2 mb-6">
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Door to door service
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Luggage handling
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Hotel coordination
+                  </li>
+                  <li className="flex items-center text-sm">
+                    <CheckCircle className="h-4 w-4 text-yellow-400 mr-2" />
+                    Local bookings
+                  </li>
+                </ul>
+                <Button asChild className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
+                  <Link to="/booking">Book Now</Link>
+                </Button>
+              </CardContent>
             </Card>
           </div>
 
@@ -244,6 +316,160 @@ const Index = () => {
             <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4">
               <Link to="/services">View All Services</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Payment Methods Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Payment Methods</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We accept multiple payment methods for your convenience
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-4">
+                <div className="h-20 flex items-center justify-center mb-4">
+                  <img 
+                    src="/lovable-uploads/e53452ae-5660-4c00-aa4a-ef8355711874.png" 
+                    alt="Cab Charge"
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+                <CardTitle className="text-lg font-bold text-gray-800">Cab Charge</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-sm">
+                  Professional taxi voucher system
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-4">
+                <div className="h-20 flex items-center justify-center mb-4">
+                  <img 
+                    src="/lovable-uploads/ff41b36f-b25f-4bbc-ba58-002437e858dd.png" 
+                    alt="EFTPOS"
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+                <CardTitle className="text-lg font-bold text-gray-800">EFTPOS</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-sm">
+                  Electronic payment terminal available in all vehicles
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-4">
+                <div className="h-20 flex items-center justify-center mb-4">
+                  <img 
+                    src="/lovable-uploads/b2d348c8-6274-4e50-b17b-d6b33e1d7265.png" 
+                    alt="Visa Mastercard"
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+                <CardTitle className="text-lg font-bold text-gray-800">Credit & Debit</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-sm">
+                  All major credit and debit cards accepted
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+              <CardHeader className="pb-4">
+                <div className="h-20 flex items-center justify-center mb-4">
+                  <img 
+                    src="/lovable-uploads/44b8aba6-5bbb-44c3-8404-5a0aced4318d.png" 
+                    alt="Motor Pass"
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
+                <CardTitle className="text-lg font-bold text-gray-800">Motor Pass</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-sm">
+                  Convenient payment solution
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Trusted Partners Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Trusted Partners</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We work with leading organizations to serve you better
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
+              <CardHeader className="pb-4">
+                <div className="h-24 flex items-center justify-center mb-6">
+                  <img 
+                    src="/lovable-uploads/35917797-eeda-4d67-909b-d62d517ea074.png" 
+                    alt="TAC Partner"
+                    className="h-16 w-auto object-contain"
+                  />
+                </div>
+                <CardTitle className="text-xl font-bold text-gray-800 mb-4">TAC Partner</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Authorized partner with Transport Accident Commission for medical transport services
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
+              <CardHeader className="pb-4">
+                <div className="h-24 flex items-center justify-center mb-6">
+                  <img 
+                    src="/lovable-uploads/6986d0af-dc1d-437a-a921-78b8beaa0c5a.png" 
+                    alt="WorkSafe Provider"
+                    className="h-16 w-auto object-contain"
+                  />
+                </div>
+                <CardTitle className="text-xl font-bold text-gray-800 mb-4">WorkSafe Provider</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Approved provider for WorkSafe Victoria transportation services
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 bg-white">
+              <CardHeader className="pb-4">
+                <div className="h-24 flex items-center justify-center mb-6">
+                  <img 
+                    src="/lovable-uploads/64dbbb09-9d78-4b7b-9f01-f3b93e6c420a.png" 
+                    alt="Safe Transport Victoria"
+                    className="h-16 w-auto object-contain"
+                  />
+                </div>
+                <CardTitle className="text-xl font-bold text-gray-800 mb-4">Safe Transport Victoria</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Committed to safe and reliable transport services across Victoria
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
