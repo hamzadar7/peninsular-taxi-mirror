@@ -53,7 +53,7 @@ const Services = () => {
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video overflow-hidden">
                 <img 
-                  src="/lovable-uploads/192c9948-4e3a-4ee6-b4ac-809254656fef.png" 
+                  src="/lovable-uploads/157b0943-ebed-45e8-9258-617bf21b7f02.png" 
                   alt="Corporate Travel" 
                   className="w-full h-full object-cover"
                 />
@@ -107,7 +107,7 @@ const Services = () => {
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video overflow-hidden">
                 <img 
-                  src="/lovable-uploads/9579ded4-2a5c-4c10-8544-9b5c24639ace.png" 
+                  src="/lovable-uploads/af3ef60c-5919-4c9a-ace8-04fdc8a7ba57.png" 
                   alt="Hotel Transfers" 
                   className="w-full h-full object-cover"
                 />
@@ -136,13 +136,13 @@ const Services = () => {
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-video overflow-hidden">
                 <img 
-                  src="/lovable-uploads/47ad9818-0488-410e-b56e-32b8a14b9062.png" 
-                  alt="Hospital Transfer" 
+                  src="/lovable-uploads/d293782e-907f-46c2-896b-0ef786a12d85.png" 
+                  alt="Medical Appointments" 
                   className="w-full h-full object-cover"
                 />
               </div>
               <CardHeader>
-                <CardTitle className="text-2xl">Hospital Transfers</CardTitle>
+                <CardTitle className="text-2xl">Medical Appointments</CardTitle>
                 <CardDescription className="text-lg">
                   Safe and comfortable medical transportation services
                 </CardDescription>

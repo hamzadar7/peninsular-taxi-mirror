@@ -68,7 +68,7 @@ const Index = () => {
               <CardHeader>
                 <div className="h-12 w-12 mx-auto mb-4 flex items-center justify-center">
                   <img 
-                    src="/lovable-uploads/47ad9818-0488-410e-b56e-32b8a14b9062.png" 
+                    src="/lovable-uploads/d293782e-907f-46c2-896b-0ef786a12d85.png" 
                     alt="Hospital Transfer" 
                     className="h-12 w-12 object-contain"
                   />
