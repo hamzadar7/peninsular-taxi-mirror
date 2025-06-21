@@ -1,132 +1,115 @@
 
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Phone, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Phone } from "lucide-react";
+import { Button } from "./ui/button";
 
 const Navigation = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleLinkClick = () => {
+    setIsOpen(false);
+    // Scroll to top when navigating
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+  };
 
   const navItems = [
-    { href: "/", label: "Home" },
-    { href: "/services", label: "Services" },
-    { href: "/booking", label: "Booking" },
-    { href: "/fleet", label: "Fleet" },
-    { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    { name: "Services", path: "/services" },
+    { name: "Fleet", path: "/fleet" },
+    { name: "Contact", path: "/contact" },
+    { name: "Book Now", path: "/booking", highlight: true },
   ];
 
   return (
     <>
-      {/* Top Yellow Bar - Split between phone and book now - STICKY */}
-      <div className="bg-yellow-400 h-12 flex sticky top-0 z-50">
-        <a 
-          href="tel:+61408202034" 
-          className="flex-1 flex items-center justify-center text-black hover:bg-yellow-500 transition-colors border-r border-yellow-600"
-        >
-          <Phone className="h-4 w-4 mr-2" />
-          <span className="font-medium">+61 408 202 034</span>
-        </a>
-        <Link 
-          to="/booking" 
-          className="flex-1 flex items-center justify-center bg-black text-yellow-400 font-medium hover:bg-gray-800 transition-colors"
-        >
-          Book Now
-        </Link>
+      {/* Top bar with phone and book now */}
+      <div className="bg-yellow-400 text-black py-2 sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center">
+            <a 
+              href="tel:+61408202034" 
+              className="flex items-center space-x-2 hover:text-gray-700 transition-colors flex-1 justify-center border-r border-black"
+            >
+              <Phone className="h-4 w-4" />
+              <span className="font-semibold">+61 408 202 034</span>
+            </a>
+            <Link 
+              to="/booking" 
+              onClick={handleLinkClick}
+              className="flex-1 text-center font-semibold hover:text-gray-700 transition-colors"
+            >
+              Book Now
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="bg-black shadow-lg sticky top-12 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+      {/* Main navigation */}
+      <nav className="bg-white shadow-lg relative z-40">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center py-4">
             {/* Logo */}
-            <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0">
-                <img 
-                  src="/lovable-uploads/21e2b738-2d9a-4a6f-a974-5cab6cc47635.png" 
-                  alt="Capelsound Taxi" 
-                  className="h-16 w-auto"
-                />
-              </Link>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex space-x-8">
+            <Link to="/" className="flex items-center space-x-2" onClick={handleLinkClick}>
+              <img 
+                src="/lovable-uploads/2af54b00-8ec9-4d76-9e2c-13f943f72fe2.png"
+                alt="Capel Sound Taxi"
+                className="h-12 w-auto"
+              />
+            </Link>
+
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
                 <Link
-                  key={item.href}
-                  to={item.href}
-                  className={cn(
-                    "inline-flex items-center px-3 py-2 text-lg font-medium transition-colors",
-                    location.pathname === item.href
-                      ? "text-yellow-400"
-                      : "text-white hover:text-yellow-400"
-                  )}
+                  key={item.name}
+                  to={item.path}
+                  onClick={handleLinkClick}
+                  className={`text-gray-700 hover:text-yellow-500 font-medium transition-colors ${
+                    location.pathname === item.path ? 'text-yellow-500 font-semibold' : ''
+                  } ${item.highlight ? 'hidden' : ''}`}
                 >
-                  {item.label}
+                  {item.name}
                 </Link>
               ))}
             </div>
 
-            {/* Phone Number - Desktop */}
-            <div className="hidden lg:flex items-center">
-              <a 
-                href="tel:+61408202034" 
-                className="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition-colors text-lg font-medium"
-              >
-                <Phone className="h-5 w-5" />
-                +61 408 202 034
-              </a>
-            </div>
-
             {/* Mobile menu button */}
-            <div className="lg:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-yellow-400 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-400"
-                aria-expanded="false"
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-gray-700 hover:text-yellow-500"
               >
-                <span className="sr-only">Open main menu</span>
-                {isMenuOpen ? (
-                  <X className="block h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <Menu className="block h-6 w-6" aria-hidden="true" />
-                )}
-              </button>
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
             </div>
           </div>
-        </div>
 
-        {/* Mobile menu */}
-        <div className={cn(
-          "lg:hidden transition-all duration-300 ease-in-out",
-          isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
-        )}>
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-gray-900 border-t border-gray-700">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                onClick={() => setIsMenuOpen(false)}
-                className={cn(
-                  "block px-3 py-2 rounded-md text-base font-medium transition-colors",
-                  location.pathname === item.href
-                    ? "text-yellow-400 bg-yellow-400/10"
-                    : "text-white hover:text-yellow-400 hover:bg-white/5"
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <a 
-              href="tel:+61408202034" 
-              className="flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-yellow-400 hover:text-yellow-300 hover:bg-yellow-400/10 transition-colors border-t border-gray-700 mt-3 pt-3"
-            >
-              <Phone className="h-5 w-5" />
-              +61 408 202 034
-            </a>
-          </div>
+          {/* Mobile Menu */}
+          {isOpen && (
+            <div className="md:hidden py-4 border-t border-gray-200">
+              <div className="flex flex-col space-y-4">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={handleLinkClick}
+                    className={`text-gray-700 hover:text-yellow-500 font-medium transition-colors ${
+                      location.pathname === item.path ? 'text-yellow-500 font-semibold' : ''
+                    } ${item.highlight ? 'bg-yellow-400 text-black px-4 py-2 rounded font-semibold hover:bg-yellow-500' : ''}`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </nav>
     </>
