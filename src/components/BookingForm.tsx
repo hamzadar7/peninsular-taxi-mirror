@@ -65,7 +65,7 @@ const BookingForm = () => {
     const initAutocomplete = async () => {
       try {
         const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
+          apiKey: (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || "",
           version: "weekly",
           libraries: ["places"]
         });
@@ -110,7 +110,7 @@ const BookingForm = () => {
       }
     };
 
-    if (import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+    if ((import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY) {
       initAutocomplete();
     }
   }, []);
@@ -133,7 +133,7 @@ const BookingForm = () => {
       const otp = generateOTP();
       setGeneratedOTP(otp);
       
-      const emailSent = await sendOTPEmail(formData.email, otp);
+      const emailSent = await sendOTPEmail(formData.email, otp, formData.fullName);
       
       if (emailSent) {
         setIsOTPSent(true);
@@ -188,13 +188,18 @@ const BookingForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Save booking to local storage
-      const bookingId = Date.now().toString();
+      // Save booking to local storage with correct property names
       const bookingData = {
-        id: bookingId,
-        ...formData,
-        status: 'pending',
-        createdAt: new Date().toISOString()
+        contactName: formData.fullName,
+        contactPhone: formData.phone,
+        contactEmail: formData.email,
+        pickupLocation: formData.pickupAddress,
+        destination: formData.destination,
+        date: formData.date,
+        time: formData.time,
+        passengers: formData.passengers,
+        vehicleType: formData.vehicleType,
+        specialRequests: formData.specialRequests
       };
       
       saveBooking(bookingData);
