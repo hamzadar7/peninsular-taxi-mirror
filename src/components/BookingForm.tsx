@@ -417,7 +417,10 @@ const BookingForm = () => {
                       <SelectContent>
                         <SelectItem value="sedan">Sedan (1-4 passengers)</SelectItem>
                         <SelectItem value="suv">SUV (1-4 passengers)</SelectItem>
-                        <SelectItem value="maxi">Maxi Taxi (1-11 passengers)</SelectItem>
+                        <SelectItem value="maxi-taxi">Maxi Taxi (1-11 passengers)</SelectItem>
+                        <SelectItem value="wagon">Wagon (1-4 passengers)</SelectItem>
+                        <SelectItem value="accessible-taxi">Accessible Taxi (2 Wheelchairs + 4 passengers)</SelectItem>
+                        <SelectItem value="parcel-delivery">Parcel Delivery (Goods)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
