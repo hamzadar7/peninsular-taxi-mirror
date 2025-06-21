@@ -1,40 +1,82 @@
 
 export const sendOTPEmail = async (email: string, otp: string, name: string) => {
   try {
+    console.log(`Sending OTP ${otp} to ${email} for ${name}`);
+    
     const response = await fetch('https://api.smtp2go.com/v3/email/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Smtp2go-Api-Key': 'api-296966F2D21B48BA820EADA72B607188'
+        'X-Smtp2go-Api-Key': 'api-296966F2D21B48BA820EADA72B607188',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
         api_key: 'api-296966F2D21B48BA820EADA72B607188',
         to: [email],
         sender: 'contact@capelsoundtaxi.com.au',
-        from: 'Cape Sound Taxi <contact@capelsoundtaxi.com.au>',
+        from: 'Capel Sound Taxi <contact@capelsoundtaxi.com.au>',
         subject: 'Your Booking Verification Code',
         html_body: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1f2937;">Verify Your Taxi Booking</h2>
-            <p>Dear ${name},</p>
-            <p>Thank you for choosing Cape Sound Taxi. To complete your booking, please use the verification code below:</p>
-            <div style="background-color: #fbbf24; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
-              <h1 style="color: #000; margin: 0; font-size: 32px; letter-spacing: 4px;">${otp}</h1>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #1f2937; margin-bottom: 10px;">Capel Sound Taxi</h1>
+              <h2 style="color: #1f2937; margin-top: 0;">Verify Your Taxi Booking</h2>
             </div>
-            <p>This code will expire in 10 minutes.</p>
-            <p>If you didn't request this booking, please ignore this email.</p>
-            <p>Best regards,<br>Cape Sound Taxi Team</p>
-            <p style="color: #6b7280; font-size: 14px;">Contact: +61 408 202 034</p>
+            <p style="font-size: 16px; line-height: 1.5;">Dear ${name},</p>
+            <p style="font-size: 16px; line-height: 1.5;">Thank you for choosing Capel Sound Taxi. To complete your booking, please use the verification code below:</p>
+            <div style="background-color: #fbbf24; padding: 25px; text-align: center; margin: 30px 0; border-radius: 10px; border: 2px solid #f59e0b;">
+              <h1 style="color: #000; margin: 0; font-size: 36px; letter-spacing: 6px; font-weight: bold;">${otp}</h1>
+            </div>
+            <p style="font-size: 16px; line-height: 1.5;">This code will expire in 10 minutes.</p>
+            <p style="font-size: 16px; line-height: 1.5;">If you didn't request this booking, please ignore this email.</p>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+              <p style="font-size: 16px; line-height: 1.5; margin-bottom: 5px;"><strong>Best regards,</strong></p>
+              <p style="font-size: 16px; line-height: 1.5; margin-bottom: 15px;"><strong>Capel Sound Taxi Team</strong></p>
+              <p style="color: #6b7280; font-size: 14px; margin: 0;">Contact: +61 408 202 034 | Available 24/7</p>
+            </div>
           </div>
         `,
-        text_body: `Your Cape Sound Taxi verification code is: ${otp}. This code will expire in 10 minutes.`
+        text_body: `Dear ${name},
+
+Thank you for choosing Capel Sound Taxi. Your verification code is: ${otp}
+
+This code will expire in 10 minutes.
+
+If you didn't request this booking, please ignore this email.
+
+Best regards,
+Capel Sound Taxi Team
+Contact: +61 408 202 034`
       })
     });
 
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+    }
+
     const result = await response.json();
+    console.log('Email API Success Response:', result);
+    
+    if (result.data && result.data.error) {
+      console.error('API returned error:', result.data.error);
+      throw new Error(result.data.error);
+    }
+    
     return result;
   } catch (error) {
-    console.error('Email sending failed:', error);
+    console.error('Email sending failed with full error details:', error);
+    
+    // For development/testing - simulate successful email sending
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Development mode: Simulating successful email send');
+      return { success: true, simulated: true };
+    }
+    
     throw error;
   }
 };

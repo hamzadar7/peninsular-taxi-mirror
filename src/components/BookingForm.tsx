@@ -11,6 +11,12 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { sendOTPEmail, generateOTP } from "@/utils/emailService";
 import { saveBooking } from "@/utils/bookingStorage";
 
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 const BookingForm = () => {
   const [formData, setFormData] = useState({
     pickupLocation: "",
@@ -45,13 +51,13 @@ const BookingForm = () => {
 
         await loader.load();
 
-        if (pickupRef.current && destinationRef.current) {
-          new google.maps.places.Autocomplete(pickupRef.current, {
+        if (pickupRef.current && destinationRef.current && window.google) {
+          new window.google.maps.places.Autocomplete(pickupRef.current, {
             componentRestrictions: { country: "au" },
             fields: ["place_id", "geometry", "name", "formatted_address"]
           });
 
-          new google.maps.places.Autocomplete(destinationRef.current, {
+          new window.google.maps.places.Autocomplete(destinationRef.current, {
             componentRestrictions: { country: "au" },
             fields: ["place_id", "geometry", "name", "formatted_address"]
           });
@@ -74,12 +80,13 @@ const BookingForm = () => {
       const generatedOTP = generateOTP();
       setSentOTP(generatedOTP);
       
+      console.log("Attempting to send OTP to:", formData.contactEmail);
       await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
       setShowOTP(true);
       setMessage("Verification code sent to your email!");
     } catch (error) {
-      setMessage("Failed to send verification email. Please try again.");
-      console.error("OTP sending failed:", error);
+      console.error("Full error details:", error);
+      setMessage("Failed to send verification email. Please try again or call us directly at +61 408 202 034.");
     } finally {
       setIsSubmitting(false);
     }

@@ -30,21 +30,64 @@ const Booking = () => {
               <p className="text-sm text-gray-500">Available 24/7</p>
             </Card>
 
-            <Card className="text-center p-8 bg-white shadow-lg">
-              <Clock className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <Card className="text-center p-8 bg-white shadow-lg border-2 border-yellow-400">
+              <Clock className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Online Booking</h3>
               <p className="text-gray-600 mb-4">Fill out the form below for advance bookings with confirmation within 15 minutes</p>
-              <div className="text-lg font-semibold text-blue-600">Quick & Easy</div>
+              <div className="text-lg font-semibold text-yellow-400">Quick & Easy</div>
               <p className="text-sm text-gray-500">From exactly when you finish</p>
             </Card>
 
-            <Card className="text-center p-8 bg-white shadow-lg">
-              <MapPin className="h-12 w-12 text-green-600 mx-auto mb-4" />
+            <Card className="text-center p-8 bg-white shadow-lg border-2 border-yellow-400">
+              <MapPin className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">WhatsApp Location Shared</h3>
               <p className="text-gray-600 mb-4">Real time tracking for your peace of mind</p>
-              <div className="text-lg font-semibold text-green-600">Live Updates</div>
+              <div className="text-lg font-semibold text-yellow-400">Live Updates</div>
               <p className="text-sm text-gray-500">Know exactly when we'll arrive</p>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Booking Policies */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Booking Policies</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-yellow-400">Cancellation Policy</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li>• Free cancellation up to 2 hours before pickup</li>
+                  <li>• 50% charge for cancellations within 2 hours</li>
+                  <li>• Full charge for no-shows</li>
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-yellow-400">Booking Terms</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li>• Advance booking recommended</li>
+                  <li>• 15-minute grace period for pickups</li>
+                  <li>• Payment accepted: Cash, Card, Bank Transfer</li>
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-yellow-400">Special Requirements</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li>• Child seats available upon request</li>
+                  <li>• Wheelchair accessible vehicles</li>
+                  <li>• Pet-friendly options available</li>
+                </ul>
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-yellow-400">Contact Information</h3>
+                <ul className="space-y-2 text-gray-600">
+                  <li>• Phone: +61 408 202 034</li>
+                  <li>• Available 24/7</li>
+                  <li>• WhatsApp location sharing</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
