@@ -30,6 +30,7 @@ const Navigation = () => {
         </a>
         <Link 
           to="/booking" 
+          onClick={() => window.scrollTo(0, 0)}
           className="flex-1 flex items-center justify-center bg-black text-yellow-400 font-medium hover:bg-gray-800 transition-colors"
         >
           Book Now
@@ -50,6 +51,17 @@ const Navigation = () => {
                 />
               </Link>
             </div>
+
+            {/* Mobile Discount Message - Only visible on mobile */}
+            <div className="lg:hidden flex-1 mx-4">
+              <Link 
+                to="/booking" 
+                onClick={() => window.scrollTo(0, 0)}
+                className="block text-center text-yellow-400 text-sm font-medium hover:text-yellow-300 transition-colors bg-yellow-400/10 rounded px-2 py-1"
+              >
+                Up to 10% off Airport Pickups!
+              </Link>
+            </div>
             
             {/* Desktop Navigation */}
             <div className="hidden lg:flex space-x-8">
@@ -57,6 +69,7 @@ const Navigation = () => {
                 <Link
                   key={item.href}
                   to={item.href}
+                  onClick={() => window.scrollTo(0, 0)}
                   className={cn(
                     "inline-flex items-center px-3 py-2 text-lg font-medium transition-colors",
                     location.pathname === item.href
@@ -69,7 +82,7 @@ const Navigation = () => {
               ))}
             </div>
 
-            {/* Phone Number - Desktop */}
+            {/* Phone Number - Desktop - Always visible */}
             <div className="hidden lg:flex items-center">
               <a 
                 href="tel:+61408202034" 
@@ -108,7 +121,10 @@ const Navigation = () => {
               <Link
                 key={item.href}
                 to={item.href}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  window.scrollTo(0, 0);
+                }}
                 className={cn(
                   "block px-3 py-2 rounded-md text-base font-medium transition-colors",
                   location.pathname === item.href

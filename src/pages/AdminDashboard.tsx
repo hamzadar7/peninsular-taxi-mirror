@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('admin_logged_in');
-    if (!isLoggedIn) {
+    if (isLoggedIn !== 'true') {
       navigate('/admin/login');
       return;
     }
