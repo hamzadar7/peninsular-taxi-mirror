@@ -291,22 +291,6 @@ const BookingForm = () => {
                   />
                 </div>
 
-                {/* OTP Entry - Only show after OTP is sent */}
-                {isOTPSent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp" className="text-lg font-medium">Enter OTP *</Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      value={enteredOTP}
-                      onChange={(e) => setEnteredOTP(e.target.value)}
-                      className="h-12 text-lg"
-                      placeholder="Enter 6-digit OTP sent to your email"
-                      maxLength={6}
-                    />
-                  </div>
-                )}
-
                 {/* Trip Details */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -485,6 +469,22 @@ const BookingForm = () => {
                     disabled={isOTPSent}
                   />
                 </div>
+
+                {/* OTP Entry - Now positioned right above the button */}
+                {isOTPSent && (
+                  <div className="space-y-2">
+                    <Label htmlFor="otp" className="text-lg font-medium">Enter OTP *</Label>
+                    <Input
+                      id="otp"
+                      type="text"
+                      value={enteredOTP}
+                      onChange={(e) => setEnteredOTP(e.target.value)}
+                      className="h-12 text-lg"
+                      placeholder="Enter 6-digit OTP sent to your email"
+                      maxLength={6}
+                    />
+                  </div>
+                )}
 
                 {/* Message Display */}
                 {message && (
