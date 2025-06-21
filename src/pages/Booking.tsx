@@ -8,12 +8,10 @@ const Booking = () => {
   const navigate = useNavigate();
 
   const handleBookNowClick = () => {
-    // If already on booking page, scroll to form
     const bookingForm = document.querySelector('#booking-form');
     if (bookingForm) {
       bookingForm.scrollIntoView({ behavior: 'smooth' });
     } else {
-      // Otherwise navigate to booking page
       navigate('/booking');
       setTimeout(() => {
         const form = document.querySelector('#booking-form');
@@ -80,7 +78,7 @@ const Booking = () => {
         </div>
       </section>
 
-      {/* Booking Policies - Updated to match reference image */}
+      {/* Booking Policies */}
       <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
@@ -153,15 +151,29 @@ const Booking = () => {
               </div>
             </div>
 
-            {/* Additional Information */}
+            {/* Additional Information - Special Requirements and Payment Methods */}
             <div className="mt-8 lg:mt-12 grid sm:grid-cols-2 gap-6 lg:gap-8">
-              <div className="text-center p-6 bg-gray-50 rounded-lg">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Special Requirements</h4>
-                <p className="text-gray-600">Child seats, wheelchair access, and pet-friendly options available upon request</p>
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg shadow-sm">
+                <div className="p-6 text-center">
+                  <h4 className="text-xl font-bold text-gray-900 mb-4">Special Requirements</h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    <span className="font-semibold text-blue-800">Child seats</span>, 
+                    <span className="font-semibold text-blue-800"> wheelchair access</span>, and 
+                    <span className="font-semibold text-blue-800"> pet-friendly options</span> available upon request
+                  </p>
+                </div>
               </div>
-              <div className="text-center p-6 bg-gray-50 rounded-lg">
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Payment Methods</h4>
-                <p className="text-gray-600">Cash, Credit Card, EFTPOS, Cabcharge, and MPTP accepted for all bookings</p>
+              <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg shadow-sm">
+                <div className="p-6 text-center">
+                  <h4 className="text-xl font-bold text-gray-900 mb-4">Payment Methods</h4>
+                  <p className="text-gray-700 leading-relaxed">
+                    <span className="font-semibold text-green-800">Cash</span>, 
+                    <span className="font-semibold text-green-800"> Credit Card</span>, 
+                    <span className="font-semibold text-green-800"> EFTPOS</span>, 
+                    <span className="font-semibold text-green-800"> Cabcharge</span>, and 
+                    <span className="font-semibold text-green-800"> MPTP</span> accepted for all bookings
+                  </p>
+                </div>
               </div>
             </div>
           </div>

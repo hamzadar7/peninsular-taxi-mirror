@@ -7,56 +7,82 @@ export const sendOTPEmail = async (email: string, otp: string, name: string) => 
       api_key: 'api-296966F2D21B48BA820EADA72B607188',
       to: [email],
       sender: 'Capel Sound Taxi <contact@capelsoundtaxi.com.au>',
-      subject: 'Your Booking Verification Code - Capel Sound Taxi',
+      subject: 'Verify Your Taxi Booking - Capel Sound Taxi',
       html_body: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
-          <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #1f2937; margin-bottom: 10px; font-size: 28px;">Capel Sound Taxi</h1>
-              <h2 style="color: #374151; margin-top: 0; font-size: 20px;">Verify Your Booking</h2>
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc;">
+          <div style="background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 40px; border-bottom: 2px solid #fbbf24; padding-bottom: 20px;">
+              <h1 style="color: #1f2937; margin-bottom: 8px; font-size: 32px; font-weight: 700;">Capel Sound Taxi</h1>
+              <h2 style="color: #4b5563; margin-top: 0; font-size: 20px; font-weight: 500;">Booking Verification Required</h2>
             </div>
             
-            <p style="font-size: 16px; line-height: 1.6; color: #374151;">Dear ${name},</p>
+            <!-- Greeting -->
+            <div style="margin-bottom: 30px;">
+              <p style="font-size: 18px; color: #374151; margin-bottom: 10px;">Hello ${name},</p>
+              <p style="font-size: 16px; line-height: 1.6; color: #4b5563;">
+                Thank you for choosing Capel Sound Taxi for your transportation needs. To complete your booking request, please verify your email address using the code below.
+              </p>
+            </div>
             
-            <p style="font-size: 16px; line-height: 1.6; color: #374151;">
-              Thank you for choosing Capel Sound Taxi. To complete your booking, please use the verification code below:
-            </p>
-            
-            <div style="background-color: #fbbf24; padding: 25px; text-align: center; margin: 30px 0; border-radius: 10px; border: 3px solid #f59e0b;">
-              <div style="color: #000; margin: 0; font-size: 36px; letter-spacing: 8px; font-weight: bold; font-family: 'Courier New', monospace;">
+            <!-- OTP Box -->
+            <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 30px; text-align: center; margin: 40px 0; border-radius: 12px; border: 2px solid #d97706; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
+              <p style="color: #000; margin-bottom: 10px; font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Verification Code</p>
+              <div style="color: #000; margin: 0; font-size: 42px; letter-spacing: 6px; font-weight: 800; font-family: 'Courier New', monospace; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
                 ${otp}
               </div>
+              <p style="color: #78350f; margin-top: 10px; font-size: 12px; font-weight: 500;">Valid for 10 minutes</p>
             </div>
             
-            <p style="font-size: 16px; line-height: 1.6; color: #374151;">
-              <strong>This code will expire in 10 minutes.</strong>
-            </p>
+            <!-- Instructions -->
+            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 30px 0;">
+              <h3 style="color: #374151; font-size: 16px; margin-bottom: 10px; font-weight: 600;">Next Steps:</h3>
+              <ol style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0; padding-left: 20px;">
+                <li>Return to the booking form</li>
+                <li>Enter the verification code above</li>
+                <li>Click "Confirm Booking" to complete your request</li>
+              </ol>
+            </div>
             
-            <p style="font-size: 14px; line-height: 1.6; color: #6b7280;">
-              If you didn't request this booking, please ignore this email or contact us at +61 408 202 034.
-            </p>
+            <!-- Security Notice -->
+            <div style="background-color: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="font-size: 13px; color: #b91c1c; margin: 0; font-weight: 500;">
+                <strong>Security Notice:</strong> If you didn't request this booking, please ignore this email or contact us immediately at +61 408 202 034.
+              </p>
+            </div>
             
+            <!-- Footer -->
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
-              <p style="font-size: 16px; color: #374151; margin-bottom: 5px;"><strong>Best regards,</strong></p>
-              <p style="font-size: 16px; color: #374151; margin-bottom: 15px;"><strong>Capel Sound Taxi Team</strong></p>
-              <p style="color: #6b7280; font-size: 14px; margin: 0;">📞 +61 408 202 034 | Available 24/7</p>
+              <p style="font-size: 16px; color: #374151; margin-bottom: 8px; font-weight: 600;">Best regards,</p>
+              <p style="font-size: 16px; color: #374151; margin-bottom: 20px; font-weight: 600;">Capel Sound Taxi Team</p>
+              
+              <div style="background-color: #1f2937; color: white; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <p style="margin: 0; font-size: 14px;">📞 +61 408 202 034 | ✉️ contact@capelsoundtaxi.com.au</p>
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: #d1d5db;">Professional • Reliable • Available 24/7</p>
+              </div>
             </div>
           </div>
         </div>
       `,
-      text_body: `Dear ${name},
+      text_body: `Hello ${name},
 
 Thank you for choosing Capel Sound Taxi.
 
-Your verification code is: ${otp}
+Your booking verification code is: ${otp}
 
 This code will expire in 10 minutes.
+
+Next Steps:
+1. Return to the booking form
+2. Enter the verification code above  
+3. Click "Confirm Booking" to complete your request
 
 If you didn't request this booking, please ignore this email.
 
 Best regards,
 Capel Sound Taxi Team
 Phone: +61 408 202 034
+Email: contact@capelsoundtaxi.com.au
 Available 24/7`
     };
 

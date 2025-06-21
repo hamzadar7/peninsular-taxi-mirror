@@ -493,7 +493,7 @@ const BookingForm = () => {
                         ? 'text-green-600' 
                         : 'text-red-600'
                     }`}>
-                      {message}
+                      {isOTPSent && message.includes('sent') ? 'Enter OTP to confirm your booking.' : message}
                     </p>
                   </div>
                 )}

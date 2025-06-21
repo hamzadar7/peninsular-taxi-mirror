@@ -20,7 +20,6 @@ const Navigation = () => {
 
   const handleBookNowClick = () => {
     navigate('/booking');
-    // Scroll to booking form after navigation
     setTimeout(() => {
       const bookingForm = document.querySelector('#booking-form');
       if (bookingForm) {
@@ -40,13 +39,13 @@ const Navigation = () => {
           className="flex-1 flex items-center justify-center text-black hover:bg-yellow-500 transition-colors border-r border-yellow-600"
         >
           <Phone className="h-4 w-4 mr-2" />
-          <span className="font-medium">+61 408 202 034</span>
+          <span className="font-medium text-center">+61 408 202 034</span>
         </a>
         <button 
           onClick={handleBookNowClick}
           className="flex-1 flex items-center justify-center bg-black text-yellow-400 font-medium hover:bg-gray-800 transition-colors"
         >
-          Book Now
+          <span className="text-center">Book Now</span>
         </button>
       </div>
 
@@ -66,10 +65,10 @@ const Navigation = () => {
             </div>
 
             {/* Mobile Discount Message - Only visible on mobile */}
-            <div className="lg:hidden flex-1 mx-4">
+            <div className="lg:hidden flex-1 mx-4 flex justify-center">
               <button 
                 onClick={handleBookNowClick}
-                className="block text-center text-yellow-400 text-sm font-medium hover:text-yellow-300 transition-colors bg-yellow-400/10 rounded px-2 py-1 w-full"
+                className="text-center text-yellow-400 text-sm font-medium hover:text-yellow-300 transition-colors bg-yellow-400/10 rounded px-2 py-1"
               >
                 Up to 10% off Airport Pickups!
               </button>

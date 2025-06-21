@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
+import { saveContact } from "@/utils/contactStorage";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -14,15 +15,45 @@ const Contact = () => {
     phone: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Contact form submitted:", formData);
-    // Handle form submission
+    
+    if (!formData.name || !formData.email || !formData.message) {
+      setSubmitMessage("Please fill in all required fields.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      saveContact({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message
+      });
+      
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: ""
+      });
+      
+      setSubmitMessage("✅ Message sent successfully! We'll get back to you soon.");
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      setSubmitMessage("❌ Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (submitMessage) setSubmitMessage("");
   };
 
   return (
@@ -105,6 +136,7 @@ const Contact = () => {
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -117,6 +149,7 @@ const Contact = () => {
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -128,6 +161,7 @@ const Contact = () => {
                     placeholder="+61 XXX XXX XXX"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -140,11 +174,26 @@ const Contact = () => {
                     onChange={(e) => handleInputChange('message', e.target.value)}
                     required
                     className="min-h-[120px]"
+                    disabled={isSubmitting}
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3">
-                  Send Message
+                {submitMessage && (
+                  <div className="p-3 rounded-lg bg-gray-50 border">
+                    <p className={`text-sm ${
+                      submitMessage.includes('✅') ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {submitMessage}
+                    </p>
+                  </div>
+                )}
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
             </CardContent>
