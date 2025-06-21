@@ -60,26 +60,25 @@ Phone: +61 408 202 034
 Available 24/7`
     };
 
-    console.log('Sending request to SMTP2GO API with payload:', JSON.stringify(requestBody, null, 2));
+    console.log('Sending request to SMTP2GO API');
+    console.log('Request payload:', JSON.stringify(requestBody, null, 2));
     
     const response = await fetch('https://api.smtp2go.com/v3/email/send', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'X-Smtp2go-Api-Key': 'api-296966F2D21B48BA820EADA72B607188'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(requestBody)
     });
 
     console.log('SMTP2GO Response Status:', response.status);
-    console.log('SMTP2GO Response Headers:', Object.fromEntries(response.headers.entries()));
 
     const responseText = await response.text();
     console.log('SMTP2GO Raw Response:', responseText);
 
     if (!response.ok) {
-      console.error('HTTP Error Response:', response.status, responseText);
-      throw new Error(`SMTP2GO API returned ${response.status}: ${responseText}`);
+      console.error('SMTP2GO API Error:', response.status, responseText);
+      throw new Error(`SMTP2GO API failed with status ${response.status}: ${responseText}`);
     }
 
     let result;
@@ -87,47 +86,33 @@ Available 24/7`
       result = JSON.parse(responseText);
       console.log('Parsed SMTP2GO Response:', result);
     } catch (parseError) {
-      console.error('Failed to parse SMTP2GO response:', parseError);
-      throw new Error(`Invalid JSON response from SMTP2GO: ${responseText}`);
+      console.error('Failed to parse JSON response:', parseError);
+      throw new Error(`Invalid JSON response: ${responseText}`);
     }
 
-    // Check for API-level errors
-    if (result.request_id) {
-      console.log('SMTP2GO Request ID:', result.request_id);
-    }
-
-    if (result.data) {
-      if (result.data.succeeded && result.data.succeeded > 0) {
-        console.log('Email sent successfully! Succeeded count:', result.data.succeeded);
-        return { success: true, data: result.data };
-      } else if (result.data.failed && result.data.failed.length > 0) {
-        const failureReason = result.data.failed[0].error || 'Unknown failure reason';
-        console.error('Email sending failed:', failureReason);
-        throw new Error(`Email delivery failed: ${failureReason}`);
-      } else {
-        console.error('Unexpected response structure:', result);
-        throw new Error('Unexpected response from email service');
-      }
+    // Check if email was sent successfully
+    if (result.data && result.data.succeeded && result.data.succeeded > 0) {
+      console.log('✅ Email sent successfully!');
+      return { success: true, data: result.data };
+    } else if (result.data && result.data.failed && result.data.failed.length > 0) {
+      const errorMsg = result.data.failed[0].error || result.data.failed[0].error_code || 'Unknown error';
+      console.error('❌ Email delivery failed:', errorMsg);
+      throw new Error(`Email delivery failed: ${errorMsg}`);
     } else {
-      console.error('Missing data in response:', result);
-      throw new Error('Invalid response format from email service');
+      console.error('❌ Unexpected response structure:', result);
+      throw new Error('Unexpected response from email service');
     }
     
   } catch (error) {
-    console.error('Email sending error details:', {
-      message: error.message,
-      stack: error.stack,
-      email: email,
-      otp: otp
-    });
+    console.error('❌ Email sending error:', error);
     
-    // Re-throw with a more user-friendly message
-    if (error.message.includes('fetch')) {
-      throw new Error('Network error: Unable to connect to email service. Please check your internet connection.');
+    // Provide user-friendly error messages
+    if (error.message.includes('fetch') || error.message.includes('network')) {
+      throw new Error('Network error - please check your internet connection and try again.');
     } else if (error.message.includes('401') || error.message.includes('403')) {
-      throw new Error('Email service authentication failed. Please contact support.');
+      throw new Error('Email service authentication failed - please contact support.');
     } else if (error.message.includes('422') || error.message.includes('400')) {
-      throw new Error('Invalid email format or request. Please check your email address.');
+      throw new Error('Invalid email request - please check your email address.');
     } else {
       throw error;
     }
@@ -135,8 +120,21 @@ Available 24/7`
 };
 
 export const generateOTP = (): string => {
-  // Generate a more secure 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   console.log('Generated OTP:', otp);
   return otp;
+};
+
+// Test function to send OTP to hamzadar7@icloud.com
+export const sendTestOTP = async () => {
+  try {
+    console.log('🧪 Sending test OTP email...');
+    const testOTP = generateOTP();
+    const result = await sendOTPEmail('hamzadar7@icloud.com', testOTP, 'Test User');
+    console.log('✅ Test email sent successfully!', result);
+    return result;
+  } catch (error) {
+    console.error('❌ Test email failed:', error);
+    throw error;
+  }
 };

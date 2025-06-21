@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import { sendOTPEmail, generateOTP } from "@/utils/emailService";
+import { sendOTPEmail, generateOTP, sendTestOTP } from "@/utils/emailService";
 import { saveBooking } from "@/utils/bookingStorage";
 
 declare global {
@@ -92,20 +92,29 @@ const BookingForm = () => {
     initializeGooglePlaces();
   }, []);
 
+  const handleTestEmail = async () => {
+    setIsSubmitting(true);
+    setMessage("🧪 Sending test OTP email to hamzadar7@icloud.com...");
+    
+    try {
+      const result = await sendTestOTP();
+      setMessage("✅ Test email sent successfully! Check hamzadar7@icloud.com inbox.");
+      console.log('Test email result:', result);
+    } catch (error) {
+      console.error('Test email failed:', error);
+      setMessage(`❌ Test email failed: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setMessage("");
+    setMessage("Sending verification code...");
 
     try {
-      console.log("Starting OTP send process...");
-      console.log("Form data:", {
-        name: formData.contactName,
-        email: formData.contactEmail,
-        phone: formData.contactPhone
-      });
-
-      // Validate email format before sending
+      // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.contactEmail)) {
         throw new Error("Please enter a valid email address.");
@@ -115,35 +124,21 @@ const BookingForm = () => {
       const generatedOTP = generateOTP();
       setSentOTP(generatedOTP);
       
-      console.log("Attempting to send OTP to:", formData.contactEmail);
+      console.log('📧 Sending OTP to:', formData.contactEmail);
       
       const result = await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
       
-      console.log("Email send result:", result);
-      
       if (result && result.success) {
-        setMessage("✅ Verification code sent successfully! Please check your email inbox and spam folder.");
+        setMessage("✅ Verification code sent! Please check your email (including spam folder).");
         setShowOTP(true);
         setRetryCount(0);
       } else {
-        throw new Error("Failed to send verification email. Please try again.");
+        throw new Error("Failed to send verification email.");
       }
       
     } catch (error) {
       console.error("Email sending error:", error);
-      setRetryCount(prev => prev + 1);
-      
-      let errorMessage = error.message || "Failed to send verification email.";
-      
-      if (retryCount < 2) {
-        setMessage(`❌ ${errorMessage} Retrying... (Attempt ${retryCount + 1}/3)`);
-        // Auto-retry after 3 seconds
-        setTimeout(() => {
-          handleSubmit(e);
-        }, 3000);
-      } else {
-        setMessage(`❌ ${errorMessage} Please check your email address or call us directly at +61 408 202 034.`);
-      }
+      setMessage(`❌ ${error.message} Please try again or call +61 408 202 034.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -274,6 +269,18 @@ const BookingForm = () => {
         <CardDescription className="text-base sm:text-lg text-gray-600">Fill in your details to reserve your ride</CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6 lg:p-8">
+        {/* Test Email Button - Remove this after testing */}
+        <div className="mb-6 text-center">
+          <Button 
+            onClick={handleTestEmail}
+            disabled={isSubmitting}
+            variant="outline"
+            className="mb-4"
+          >
+            {isSubmitting ? "Sending..." : "🧪 Send Test OTP"}
+          </Button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {/* Contact Information */}
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
@@ -433,10 +440,10 @@ const BookingForm = () => {
 
           {message && (
             <p className={`text-sm ${
-              message.includes('sent') || message.includes('confirmed') 
+              message.includes('sent') || message.includes('confirmed') || message.includes('✅')
                 ? 'text-green-600' 
-                : message.includes('Retrying') 
-                  ? 'text-yellow-600' 
+                : message.includes('🧪')
+                  ? 'text-blue-600'
                   : 'text-red-600'
             }`}>
               {message}
