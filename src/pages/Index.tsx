@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Shield, Car, Phone, Star, Users, CheckCircle } from "lucide-react";
@@ -49,59 +48,45 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
-              <CardHeader>
-                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="h-8 w-8 text-black" />
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
+              <CardHeader className="pb-4">
+                <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Clock className="h-10 w-10 text-black" />
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-800">24/7 Service</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gray-800 mb-4">24/7 Service</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Round-the-clock availability for all your transportation needs, any time of day or night.
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Available round the clock, every day of the year. No matter when you need us, we're here.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
-              <CardHeader>
-                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-8 w-8 text-black" />
+            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
+              <CardHeader className="pb-4">
+                <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Shield className="h-10 w-10 text-black" />
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-800">Licensed & Insured</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gray-800 mb-4">Licensed & Insured</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Fully licensed drivers and comprehensive insurance coverage for your complete peace of mind.
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  All our drivers are fully licensed and our vehicles are comprehensively insured for your safety.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
-              <CardHeader>
-                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Car className="h-8 w-8 text-black" />
+            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-white">
+              <CardHeader className="pb-4">
+                <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Car className="h-10 w-10 text-black" />
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-800">Modern Fleet</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gray-800 mb-4">Modern Fleet</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Clean, comfortable, and well-maintained vehicles equipped with modern safety features.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
-              <CardHeader>
-                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-8 w-8 text-black" />
-                </div>
-                <CardTitle className="text-xl font-bold text-gray-800">5-Star Service</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Professional drivers committed to providing exceptional customer service on every trip.
+              <CardContent className="pt-0">
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Clean, comfortable, and well-maintained vehicles to ensure a pleasant journey every time.
                 </p>
               </CardContent>
             </Card>
