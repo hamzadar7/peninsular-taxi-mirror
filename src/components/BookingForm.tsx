@@ -1,5 +1,6 @@
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,448 +17,516 @@ declare global {
   }
 }
 
+interface FormData {
+  fullName: string;
+  phone: string;
+  email: string;
+  pickupAddress: string;
+  destination: string;
+  date: string;
+  time: string;
+  passengers: string;
+  vehicleType: string;
+  specialRequests: string;
+  returnJourney: boolean;
+  returnDate: string;
+  returnTime: string;
+}
+
 const BookingForm = () => {
-  const [formData, setFormData] = useState({
-    pickupLocation: "",
-    destination: "",
-    date: "",
-    time: "",
-    passengers: "",
-    vehicleType: "",
-    specialRequests: "",
-    contactName: "",
-    contactPhone: "",
-    contactEmail: ""
+  const [formData, setFormData] = useState<FormData>({
+    fullName: '',
+    phone: '',
+    email: '',
+    pickupAddress: '',
+    destination: '',
+    date: '',
+    time: '',
+    passengers: '1',
+    vehicleType: 'sedan',
+    specialRequests: '',
+    returnJourney: false,
+    returnDate: '',
+    returnTime: ''
   });
 
-  const [showOTP, setShowOTP] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [sentOTP, setSentOTP] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
-  const [retryCount, setRetryCount] = useState(0);
+  const [message, setMessage] = useState('');
+  const [isOTPSent, setIsOTPSent] = useState(false);
+  const [enteredOTP, setEnteredOTP] = useState('');
+  const [generatedOTP, setGeneratedOTP] = useState('');
+  const [isOTPVerified, setIsOTPVerified] = useState(false);
 
   const pickupRef = useRef<HTMLInputElement>(null);
   const destinationRef = useRef<HTMLInputElement>(null);
-  const pickupAutocomplete = useRef<any>(null);
-  const destinationAutocomplete = useRef<any>(null);
 
-  // Get today's date in YYYY-MM-DD format for min date
-  const today = new Date().toISOString().split('T')[0];
-
+  // Google Maps Autocomplete Setup
   useEffect(() => {
-    const initializeGooglePlaces = async () => {
+    const initAutocomplete = async () => {
       try {
         const loader = new Loader({
-          apiKey: "AIzaSyCHK0sH0JnLcDtzNCZEekkUHJlPHwAKIH4",
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
           version: "weekly",
           libraries: ["places"]
         });
 
-        await loader.load();
-
-        if (pickupRef.current && destinationRef.current && window.google) {
-          // Initialize pickup autocomplete
-          pickupAutocomplete.current = new window.google.maps.places.Autocomplete(pickupRef.current, {
-            componentRestrictions: { country: "au" },
-            fields: ["place_id", "geometry", "name", "formatted_address"]
+        const google = await loader.load();
+        
+        if (pickupRef.current) {
+          const pickupAutocomplete = new google.maps.places.Autocomplete(pickupRef.current, {
+            componentRestrictions: { country: "AU" },
+            fields: ["address_components", "geometry", "formatted_address"]
           });
-
-          // Initialize destination autocomplete
-          destinationAutocomplete.current = new window.google.maps.places.Autocomplete(destinationRef.current, {
-            componentRestrictions: { country: "au" },
-            fields: ["place_id", "geometry", "name", "formatted_address"]
-          });
-
-          // Add listeners to handle place selection
-          pickupAutocomplete.current.addListener('place_changed', () => {
-            const place = pickupAutocomplete.current.getPlace();
-            if (place && place.formatted_address) {
-              setFormData(prev => ({ ...prev, pickupLocation: place.formatted_address }));
+          
+          pickupAutocomplete.addListener("place_changed", () => {
+            const place = pickupAutocomplete.getPlace();
+            if (place.formatted_address) {
+              setFormData(prev => ({
+                ...prev,
+                pickupAddress: place.formatted_address
+              }));
             }
           });
+        }
 
-          destinationAutocomplete.current.addListener('place_changed', () => {
-            const place = destinationAutocomplete.current.getPlace();
-            if (place && place.formatted_address) {
-              setFormData(prev => ({ ...prev, destination: place.formatted_address }));
+        if (destinationRef.current) {
+          const destinationAutocomplete = new google.maps.places.Autocomplete(destinationRef.current, {
+            componentRestrictions: { country: "AU" },
+            fields: ["address_components", "geometry", "formatted_address"]
+          });
+          
+          destinationAutocomplete.addListener("place_changed", () => {
+            const place = destinationAutocomplete.getPlace();
+            if (place.formatted_address) {
+              setFormData(prev => ({
+                ...prev,
+                destination: place.formatted_address
+              }));
             }
           });
         }
       } catch (error) {
-        console.error("Google Places API loading failed:", error);
+        console.error("Error loading Google Maps:", error);
       }
     };
 
-    initializeGooglePlaces();
+    if (import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+      initAutocomplete();
+    }
   }, []);
 
-  const handleTestEmail = async () => {
+  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSendOTP = async () => {
+    if (!formData.email) {
+      setMessage('Please enter your email address first.');
+      return;
+    }
+
     setIsSubmitting(true);
-    setMessage("🧪 Sending test OTP email to hamzadar7@icloud.com...");
-    
     try {
-      const result = await sendTestOTP();
-      setMessage("✅ Test email sent successfully! Check hamzadar7@icloud.com inbox.");
-      console.log('Test email result:', result);
+      const otp = generateOTP();
+      setGeneratedOTP(otp);
+      
+      const emailSent = await sendOTPEmail(formData.email, otp);
+      
+      if (emailSent) {
+        setIsOTPSent(true);
+        setMessage('✅ OTP sent to your email. Please check and enter it below.');
+      } else {
+        setMessage('Failed to send OTP. Please try again.');
+      }
     } catch (error) {
-      console.error('Test email failed:', error);
-      setMessage(`❌ Test email failed: ${error.message}`);
+      console.error('Error sending OTP:', error);
+      setMessage('Error sending OTP. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleVerifyOTP = () => {
+    if (enteredOTP === generatedOTP) {
+      setIsOTPVerified(true);
+      setMessage('✅ Email verified successfully!');
+    } else {
+      setMessage('Invalid OTP. Please try again.');
+    }
+  };
+
+  const validateForm = () => {
+    if (!formData.fullName || !formData.phone || !formData.email || 
+        !formData.pickupAddress || !formData.destination || 
+        !formData.date || !formData.time) {
+      return 'Please fill in all required fields.';
+    }
+    
+    if (!isOTPVerified) {
+      return 'Please verify your email address first.';
+    }
+    
+    if (formData.returnJourney && (!formData.returnDate || !formData.returnTime)) {
+      return 'Please fill in return journey details.';
+    }
+    
+    return null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const validationError = validateForm();
+    if (validationError) {
+      setMessage(validationError);
+      return;
+    }
+
     setIsSubmitting(true);
-    setMessage("Sending verification code...");
-
+    
     try {
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.contactEmail)) {
-        throw new Error("Please enter a valid email address.");
-      }
-
-      // Generate and send OTP
-      const generatedOTP = generateOTP();
-      setSentOTP(generatedOTP);
+      // Save booking to local storage
+      const bookingId = Date.now().toString();
+      const bookingData = {
+        id: bookingId,
+        ...formData,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      };
       
-      console.log('📧 Sending OTP to:', formData.contactEmail);
+      saveBooking(bookingData);
       
-      const result = await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
+      // Reset form
+      setFormData({
+        fullName: '',
+        phone: '',
+        email: '',
+        pickupAddress: '',
+        destination: '',
+        date: '',
+        time: '',
+        passengers: '1',
+        vehicleType: 'sedan',
+        specialRequests: '',
+        returnJourney: false,
+        returnDate: '',
+        returnTime: ''
+      });
       
-      if (result && result.success) {
-        setMessage("✅ Verification code sent! Please check your email (including spam folder).");
-        setShowOTP(true);
-        setRetryCount(0);
-      } else {
-        throw new Error("Failed to send verification email.");
-      }
+      setIsOTPSent(false);
+      setIsOTPVerified(false);
+      setEnteredOTP('');
+      setGeneratedOTP('');
       
+      setMessage('✅ Booking submitted successfully! We will contact you shortly to confirm your reservation.');
     } catch (error) {
-      console.error("Email sending error:", error);
-      setMessage(`❌ ${error.message} Please try again or call +61 408 202 034.`);
+      console.error('Error submitting booking:', error);
+      setMessage('Error submitting booking. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleOTPVerification = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    console.log("Verifying OTP:", { entered: otp, expected: sentOTP });
-    
-    if (otp === sentOTP) {
-      // Save booking
-      const booking = saveBooking(formData);
-      console.log("Booking saved:", booking);
-      
-      setMessage("🎉 Booking confirmed! We'll contact you shortly to confirm details and pickup time.");
-      
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setFormData({
-          pickupLocation: "",
-          destination: "",
-          date: "",
-          time: "",
-          passengers: "",
-          vehicleType: "",
-          specialRequests: "",
-          contactName: "",
-          contactPhone: "",
-          contactEmail: ""
-        });
-        setShowOTP(false);
-        setOtp("");
-        setSentOTP("");
-        setRetryCount(0);
-        setMessage("");
-      }, 3000);
-    } else {
-      setMessage("❌ Invalid verification code. Please check your email and try again.");
-    }
-  };
-
-  const handleResendOTP = async () => {
-    setIsSubmitting(true);
-    setMessage("Sending new verification code...");
-    
-    try {
-      const generatedOTP = generateOTP();
-      setSentOTP(generatedOTP);
-      
-      const result = await sendOTPEmail(formData.contactEmail, generatedOTP, formData.contactName);
-      
-      if (result && result.success) {
-        setMessage("✅ New verification code sent to your email!");
-      } else {
-        throw new Error("Failed to send verification code.");
-      }
-    } catch (error) {
-      console.error("Resend OTP error:", error);
-      setMessage("❌ Failed to resend verification code. Please try again or call +61 408 202 034.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  if (showOTP) {
-    return (
-      <Card className="bg-white shadow-xl max-w-md mx-auto">
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl sm:text-2xl">Verify Your Email</CardTitle>
-          <CardDescription className="text-sm sm:text-base">Enter the 6-digit code sent to {formData.contactEmail}</CardDescription>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6">
-          <form onSubmit={handleOTPVerification} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="otp" className="text-base font-semibold">Verification Code</Label>
-              <Input 
-                id="otp"
-                placeholder="000000"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                maxLength={6}
-                required
-                className="text-center text-xl sm:text-2xl tracking-widest h-12"
-              />
-            </div>
-            {message && (
-              <p className={`text-sm ${message.includes('confirmed') || message.includes('sent') ? 'text-green-600' : 'text-red-600'}`}>
-                {message}
-              </p>
-            )}
-            <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold h-12">
-              Verify & Complete Booking
-            </Button>
-            <div className="flex gap-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="flex-1 h-10"
-                onClick={() => setShowOTP(false)}
-              >
-                Back to Form
-              </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="flex-1 h-10"
-                onClick={handleResendOTP}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Sending..." : "Resend Code"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Get tomorrow's date as minimum date
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const minDate = tomorrow.toISOString().split('T')[0];
 
   return (
-    <Card className="bg-white shadow-xl">
-      <CardHeader className="text-center pb-6 sm:pb-8">
-        <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-800">Book Your Taxi</CardTitle>
-        <CardDescription className="text-base sm:text-lg text-gray-600">Fill in your details to reserve your ride</CardDescription>
-      </CardHeader>
-      <CardContent className="p-4 sm:p-6 lg:p-8">
-        {/* Test Email Button - Remove this after testing */}
-        <div className="mb-6 text-center">
-          <Button 
-            onClick={handleTestEmail}
-            disabled={isSubmitting}
-            variant="outline"
-            className="mb-4"
-          >
-            {isSubmitting ? "Sending..." : "🧪 Send Test OTP"}
-          </Button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-          {/* Contact Information */}
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm sm:text-base font-semibold">Full Name *</Label>
-              <Input 
-                id="name"
-                placeholder="Your full name"
-                value={formData.contactName}
-                onChange={(e) => handleInputChange('contactName', e.target.value)}
-                required
-                className="h-10 sm:h-12"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="text-sm sm:text-base font-semibold">Phone Number *</Label>
-              <Input 
-                id="phone"
-                type="tel"
-                placeholder="+61 XXX XXX XXX"
-                value={formData.contactPhone}
-                onChange={(e) => handleInputChange('contactPhone', e.target.value)}
-                required
-                className="h-10 sm:h-12"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm sm:text-base font-semibold">Email Address *</Label>
-            <Input 
-              id="email"
-              type="email"
-              placeholder="your.email@example.com"
-              value={formData.contactEmail}
-              onChange={(e) => handleInputChange('contactEmail', e.target.value)}
-              required
-              className="h-10 sm:h-12"
-            />
-          </div>
-
-          {/* Location Information */}
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="pickup" className="text-sm sm:text-base font-semibold">Pickup Location *</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
-                <Input 
-                  ref={pickupRef}
-                  id="pickup"
-                  placeholder="Enter pickup address"
-                  className="pl-10 h-10 sm:h-12"
-                  value={formData.pickupLocation}
-                  onChange={(e) => handleInputChange('pickupLocation', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="destination" className="text-sm sm:text-base font-semibold">Drop-off Location *</Label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
-                <Input 
-                  ref={destinationRef}
-                  id="destination"
-                  placeholder="Enter destination address"
-                  className="pl-10 h-10 sm:h-12"
-                  value={formData.destination}
-                  onChange={(e) => handleInputChange('destination', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Date and Time */}
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="date" className="text-sm sm:text-base font-semibold">Pickup Date *</Label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
-                <Input 
-                  id="date"
-                  type="date"
-                  className="pl-10 h-10 sm:h-12"
-                  value={formData.date}
-                  min={today}
-                  onChange={(e) => handleInputChange('date', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="time" className="text-sm sm:text-base font-semibold">Pickup Time *</Label>
-              <div className="relative">
-                <Clock className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
-                <Input 
-                  id="time"
-                  type="time"
-                  className="pl-10 h-10 sm:h-12"
-                  value={formData.time}
-                  onChange={(e) => handleInputChange('time', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Vehicle and Passengers */}
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="vehicle-type" className="text-sm sm:text-base font-semibold">Vehicle Type</Label>
-              <Select value={formData.vehicleType} onValueChange={(value) => handleInputChange('vehicleType', value)}>
-                <SelectTrigger className="h-10 sm:h-12">
-                  <SelectValue placeholder="Select vehicle type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="sedan">Sedan</SelectItem>
-                  <SelectItem value="suv">SUV</SelectItem>
-                  <SelectItem value="maxi">Maxi Taxi</SelectItem>
-                  <SelectItem value="wagon">Wagon</SelectItem>
-                  <SelectItem value="accessible">Accessible Taxi</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="passengers" className="text-sm sm:text-base font-semibold">Number of Passengers</Label>
-              <div className="relative">
-                <Users className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
-                <Select value={formData.passengers} onValueChange={(value) => handleInputChange('passengers', value)}>
-                  <SelectTrigger className="pl-10 h-10 sm:h-12">
-                    <SelectValue placeholder="Select passengers" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 Passenger</SelectItem>
-                    <SelectItem value="2">2 Passengers</SelectItem>
-                    <SelectItem value="3">3 Passengers</SelectItem>
-                    <SelectItem value="4">4 Passengers</SelectItem>
-                    <SelectItem value="5+">5+ Passengers</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          {/* Special Requests */}
-          <div className="space-y-2">
-            <Label htmlFor="requests" className="text-sm sm:text-base font-semibold">Additional Requirements (Optional)</Label>
-            <Textarea 
-              id="requests"
-              placeholder="Any special requirements, wheelchair access, child seats, etc."
-              value={formData.specialRequests}
-              onChange={(e) => handleInputChange('specialRequests', e.target.value)}
-              className="min-h-[80px] sm:min-h-[100px]"
-            />
-          </div>
-
-          {message && (
-            <p className={`text-sm ${
-              message.includes('sent') || message.includes('confirmed') || message.includes('✅')
-                ? 'text-green-600' 
-                : 'text-red-600'
-            }`}>
-              {message}
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">Book Your Taxi</h1>
+            <p className="text-xl text-gray-600">
+              Fill out the form below and we'll confirm your booking shortly
             </p>
-          )}
+          </div>
 
-          <Button 
-            type="submit" 
-            className="w-full bg-yellow-400 hover:bg-yellow-500 text-black text-base sm:text-lg py-4 sm:py-6 font-bold"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Sending..." : "Proceed to Verification"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+          <Card id="booking-form" className="shadow-xl">
+            <CardHeader className="bg-yellow-400 text-black">
+              <CardTitle className="text-2xl font-bold text-center">Booking Details</CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Personal Information */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName" className="text-lg font-medium">Full Name *</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      value={formData.fullName}
+                      onChange={(e) => handleInputChange('fullName', e.target.value)}
+                      required
+                      className="h-12 text-lg"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-lg font-medium">Phone Number *</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      required
+                      className="h-12 text-lg"
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+                </div>
+
+                {/* Email and OTP Verification */}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-lg font-medium">Email Address *</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        required
+                        className="h-12 text-lg"
+                        placeholder="Enter your email address"
+                        disabled={isOTPVerified}
+                      />
+                      {!isOTPSent && !isOTPVerified && (
+                        <Button 
+                          type="button"
+                          onClick={handleSendOTP}
+                          disabled={isSubmitting || !formData.email}
+                          className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold h-12 px-6"
+                        >
+                          Send OTP
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {isOTPSent && !isOTPVerified && (
+                    <div className="space-y-2">
+                      <Label htmlFor="otp" className="text-lg font-medium">Enter OTP *</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="otp"
+                          type="text"
+                          value={enteredOTP}
+                          onChange={(e) => setEnteredOTP(e.target.value)}
+                          className="h-12 text-lg"
+                          placeholder="Enter 6-digit OTP"
+                          maxLength={6}
+                        />
+                        <Button 
+                          type="button"
+                          onClick={handleVerifyOTP}
+                          disabled={!enteredOTP || enteredOTP.length !== 6}
+                          className="bg-green-600 hover:bg-green-700 text-white font-semibold h-12 px-6"
+                        >
+                          Verify
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Trip Details */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="pickup" className="text-lg font-medium flex items-center">
+                      <MapPin className="h-5 w-5 mr-2 text-yellow-400" />
+                      Pickup Address *
+                    </Label>
+                    <Input
+                      id="pickup"
+                      ref={pickupRef}
+                      type="text"
+                      value={formData.pickupAddress}
+                      onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
+                      required
+                      className="h-12 text-lg"
+                      placeholder="Enter pickup address"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="destination" className="text-lg font-medium flex items-center">
+                      <MapPin className="h-5 w-5 mr-2 text-yellow-400" />
+                      Destination *
+                    </Label>
+                    <Input
+                      id="destination"
+                      ref={destinationRef}
+                      type="text"
+                      value={formData.destination}
+                      onChange={(e) => handleInputChange('destination', e.target.value)}
+                      required
+                      className="h-12 text-lg"
+                      placeholder="Enter destination address"
+                    />
+                  </div>
+                </div>
+
+                {/* Date and Time */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="date" className="text-lg font-medium flex items-center">
+                      <Calendar className="h-5 w-5 mr-2 text-yellow-400" />
+                      Pickup Date *
+                    </Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => handleInputChange('date', e.target.value)}
+                      required
+                      className="h-12 text-lg"
+                      min={minDate}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="time" className="text-lg font-medium flex items-center">
+                      <Clock className="h-5 w-5 mr-2 text-yellow-400" />
+                      Pickup Time *
+                    </Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      value={formData.time}
+                      onChange={(e) => handleInputChange('time', e.target.value)}
+                      required
+                      className="h-12 text-lg"
+                    />
+                  </div>
+                </div>
+
+                {/* Passengers and Vehicle */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="passengers" className="text-lg font-medium flex items-center">
+                      <Users className="h-5 w-5 mr-2 text-yellow-400" />
+                      Number of Passengers *
+                    </Label>
+                    <Select 
+                      value={formData.passengers} 
+                      onValueChange={(value) => handleInputChange('passengers', value)}
+                    >
+                      <SelectTrigger className="h-12 text-lg">
+                        <SelectValue placeholder="Select passengers" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[1,2,3,4,5,6,7,8,9,10,11].map(num => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num} {num === 1 ? 'Passenger' : 'Passengers'}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vehicle" className="text-lg font-medium">Vehicle Type *</Label>
+                    <Select 
+                      value={formData.vehicleType} 
+                      onValueChange={(value) => handleInputChange('vehicleType', value)}
+                    >
+                      <SelectTrigger className="h-12 text-lg">
+                        <SelectValue placeholder="Select vehicle type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sedan">Sedan (1-4 passengers)</SelectItem>
+                        <SelectItem value="suv">SUV (1-4 passengers)</SelectItem>
+                        <SelectItem value="maxi">Maxi Taxi (1-11 passengers)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Return Journey */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="returnJourney"
+                      checked={formData.returnJourney}
+                      onChange={(e) => handleInputChange('returnJourney', e.target.checked)}
+                      className="h-5 w-5 text-yellow-400"
+                    />
+                    <Label htmlFor="returnJourney" className="text-lg font-medium">
+                      Return Journey Required
+                    </Label>
+                  </div>
+
+                  {formData.returnJourney && (
+                    <div className="grid md:grid-cols-2 gap-6 p-4 bg-gray-50 rounded-lg">
+                      <div className="space-y-2">
+                        <Label htmlFor="returnDate" className="text-lg font-medium">Return Date *</Label>
+                        <Input
+                          id="returnDate"
+                          type="date"
+                          value={formData.returnDate}
+                          onChange={(e) => handleInputChange('returnDate', e.target.value)}
+                          required={formData.returnJourney}
+                          className="h-12 text-lg"
+                          min={formData.date || minDate}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="returnTime" className="text-lg font-medium">Return Time *</Label>
+                        <Input
+                          id="returnTime"
+                          type="time"
+                          value={formData.returnTime}
+                          onChange={(e) => handleInputChange('returnTime', e.target.value)}
+                          required={formData.returnJourney}
+                          className="h-12 text-lg"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Special Requests */}
+                <div className="space-y-2">
+                  <Label htmlFor="specialRequests" className="text-lg font-medium">Special Requests</Label>
+                  <Textarea
+                    id="specialRequests"
+                    value={formData.specialRequests}
+                    onChange={(e) => handleInputChange('specialRequests', e.target.value)}
+                    placeholder="Any special requirements or notes..."
+                    className="min-h-[100px] text-lg"
+                  />
+                </div>
+
+                {/* Message Display */}
+                {message && (
+                  <div className="p-4 rounded-lg bg-gray-50 border">
+                    <p className={`text-sm ${
+                      message.includes('sent') || message.includes('confirmed') || message.includes('✅')
+                        ? 'text-green-600' 
+                        : 'text-red-600'
+                    }`}>
+                      {message}
+                    </p>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || !isOTPVerified}
+                  className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-xl py-6 h-16"
+                >
+                  {isSubmitting ? 'Submitting...' : 'Book Now'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 

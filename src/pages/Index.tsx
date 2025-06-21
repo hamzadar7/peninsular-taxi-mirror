@@ -59,7 +59,7 @@ const Index = () => {
               >
                 Book Now
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg rounded-lg shadow-lg">
+              <Button asChild variant="outline" size="lg" className="border-2 border-white bg-white text-black hover:bg-gray-100 px-8 py-4 text-lg rounded-lg shadow-lg">
                 <a href="tel:+61408202034">
                   <Phone className="h-5 w-5 mr-2" />
                   +61 408 202 034
@@ -539,7 +539,7 @@ const Index = () => {
             >
               Book Online Now
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
+            <Button asChild variant="outline" size="lg" className="border-2 border-white bg-white text-black hover:bg-gray-100 px-8 py-4 text-lg">
               <a href="tel:+61408202034">
                 <Phone className="h-5 w-5 mr-2" />
                 Call +61 408 202 034
