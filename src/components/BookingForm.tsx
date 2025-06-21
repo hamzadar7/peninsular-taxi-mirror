@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -54,7 +55,6 @@ const BookingForm = () => {
   const [isOTPSent, setIsOTPSent] = useState(false);
   const [enteredOTP, setEnteredOTP] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState('');
-  const [isOTPVerified, setIsOTPVerified] = useState(false);
 
   const pickupRef = useRef<HTMLInputElement>(null);
   const destinationRef = useRef<HTMLInputElement>(null);
@@ -119,51 +119,11 @@ const BookingForm = () => {
     }));
   };
 
-  const handleSendOTP = async () => {
-    if (!formData.email) {
-      setMessage('Please enter your email address first.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const otp = generateOTP();
-      setGeneratedOTP(otp);
-      
-      const emailSent = await sendOTPEmail(formData.email, otp, formData.fullName);
-      
-      if (emailSent) {
-        setIsOTPSent(true);
-        setMessage('✅ OTP sent to your email. Please check and enter it below.');
-      } else {
-        setMessage('Failed to send OTP. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error sending OTP:', error);
-      setMessage('Error sending OTP. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleVerifyOTP = () => {
-    if (enteredOTP === generatedOTP) {
-      setIsOTPVerified(true);
-      setMessage('✅ Email verified successfully!');
-    } else {
-      setMessage('Invalid OTP. Please try again.');
-    }
-  };
-
   const validateForm = () => {
     if (!formData.fullName || !formData.phone || !formData.email || 
         !formData.pickupAddress || !formData.destination || 
         !formData.date || !formData.time) {
       return 'Please fill in all required fields.';
-    }
-    
-    if (!isOTPVerified) {
-      return 'Please verify your email address first.';
     }
     
     if (formData.returnJourney && (!formData.returnDate || !formData.returnTime)) {
@@ -173,62 +133,94 @@ const BookingForm = () => {
     return null;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleVerifyAndBook = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const validationError = validateForm();
-    if (validationError) {
-      setMessage(validationError);
-      return;
-    }
+    // If OTP not sent yet, validate form and send OTP
+    if (!isOTPSent) {
+      const validationError = validateForm();
+      if (validationError) {
+        setMessage(validationError);
+        return;
+      }
 
-    setIsSubmitting(true);
-    
-    try {
-      // Save booking to local storage with correct property names
-      const bookingData = {
-        contactName: formData.fullName,
-        contactPhone: formData.phone,
-        contactEmail: formData.email,
-        pickupLocation: formData.pickupAddress,
-        destination: formData.destination,
-        date: formData.date,
-        time: formData.time,
-        passengers: formData.passengers,
-        vehicleType: formData.vehicleType,
-        specialRequests: formData.specialRequests
-      };
-      
-      saveBooking(bookingData);
-      
-      // Reset form
-      setFormData({
-        fullName: '',
-        phone: '',
-        email: '',
-        pickupAddress: '',
-        destination: '',
-        date: '',
-        time: '',
-        passengers: '1',
-        vehicleType: 'sedan',
-        specialRequests: '',
-        returnJourney: false,
-        returnDate: '',
-        returnTime: ''
-      });
-      
-      setIsOTPSent(false);
-      setIsOTPVerified(false);
-      setEnteredOTP('');
-      setGeneratedOTP('');
-      
-      setMessage('✅ Booking submitted successfully! We will contact you shortly to confirm your reservation.');
-    } catch (error) {
-      console.error('Error submitting booking:', error);
-      setMessage('Error submitting booking. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(true);
+      try {
+        const otp = generateOTP();
+        setGeneratedOTP(otp);
+        
+        const emailSent = await sendOTPEmail(formData.email, otp, formData.fullName);
+        
+        if (emailSent) {
+          setIsOTPSent(true);
+          setMessage('✅ OTP sent to your email. Please check and enter it below to confirm your booking.');
+        } else {
+          setMessage('Failed to send OTP. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error sending OTP:', error);
+        setMessage('Error sending OTP. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      // If OTP sent, verify OTP and complete booking
+      if (!enteredOTP) {
+        setMessage('Please enter the OTP sent to your email.');
+        return;
+      }
+
+      if (enteredOTP !== generatedOTP) {
+        setMessage('Invalid OTP. Please try again.');
+        return;
+      }
+
+      // OTP verified, complete booking
+      setIsSubmitting(true);
+      try {
+        const bookingData = {
+          contactName: formData.fullName,
+          contactPhone: formData.phone,
+          contactEmail: formData.email,
+          pickupLocation: formData.pickupAddress,
+          destination: formData.destination,
+          date: formData.date,
+          time: formData.time,
+          passengers: formData.passengers,
+          vehicleType: formData.vehicleType,
+          specialRequests: formData.specialRequests
+        };
+        
+        saveBooking(bookingData);
+        
+        // Reset form
+        setFormData({
+          fullName: '',
+          phone: '',
+          email: '',
+          pickupAddress: '',
+          destination: '',
+          date: '',
+          time: '',
+          passengers: '1',
+          vehicleType: 'sedan',
+          specialRequests: '',
+          returnJourney: false,
+          returnDate: '',
+          returnTime: ''
+        });
+        
+        setIsOTPSent(false);
+        setEnteredOTP('');
+        setGeneratedOTP('');
+        
+        setMessage('✅ Booking confirmed successfully! We will contact you shortly with further details.');
+      } catch (error) {
+        console.error('Error confirming booking:', error);
+        setMessage('Error confirming booking. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -253,7 +245,7 @@ const BookingForm = () => {
               <CardTitle className="text-2xl font-bold text-center">Booking Details</CardTitle>
             </CardHeader>
             <CardContent className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleVerifyAndBook} className="space-y-6">
                 {/* Personal Information */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -266,6 +258,7 @@ const BookingForm = () => {
                       required
                       className="h-12 text-lg"
                       placeholder="Enter your full name"
+                      disabled={isOTPSent}
                     />
                   </div>
                   <div className="space-y-2">
@@ -278,63 +271,41 @@ const BookingForm = () => {
                       required
                       className="h-12 text-lg"
                       placeholder="Enter your phone number"
+                      disabled={isOTPSent}
                     />
                   </div>
                 </div>
 
-                {/* Email and OTP Verification */}
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-lg font-medium">Email Address *</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        required
-                        className="h-12 text-lg"
-                        placeholder="Enter your email address"
-                        disabled={isOTPVerified}
-                      />
-                      {!isOTPSent && !isOTPVerified && (
-                        <Button 
-                          type="button"
-                          onClick={handleSendOTP}
-                          disabled={isSubmitting || !formData.email}
-                          className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold h-12 px-6"
-                        >
-                          Send OTP
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  {isOTPSent && !isOTPVerified && (
-                    <div className="space-y-2">
-                      <Label htmlFor="otp" className="text-lg font-medium">Enter OTP *</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="otp"
-                          type="text"
-                          value={enteredOTP}
-                          onChange={(e) => setEnteredOTP(e.target.value)}
-                          className="h-12 text-lg"
-                          placeholder="Enter 6-digit OTP"
-                          maxLength={6}
-                        />
-                        <Button 
-                          type="button"
-                          onClick={handleVerifyOTP}
-                          disabled={!enteredOTP || enteredOTP.length !== 6}
-                          className="bg-green-600 hover:bg-green-700 text-white font-semibold h-12 px-6"
-                        >
-                          Verify
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+                {/* Email */}
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-lg font-medium">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    required
+                    className="h-12 text-lg"
+                    placeholder="Enter your email address"
+                    disabled={isOTPSent}
+                  />
                 </div>
+
+                {/* OTP Entry - Only show after OTP is sent */}
+                {isOTPSent && (
+                  <div className="space-y-2">
+                    <Label htmlFor="otp" className="text-lg font-medium">Enter OTP *</Label>
+                    <Input
+                      id="otp"
+                      type="text"
+                      value={enteredOTP}
+                      onChange={(e) => setEnteredOTP(e.target.value)}
+                      className="h-12 text-lg"
+                      placeholder="Enter 6-digit OTP sent to your email"
+                      maxLength={6}
+                    />
+                  </div>
+                )}
 
                 {/* Trip Details */}
                 <div className="grid md:grid-cols-2 gap-6">
@@ -352,6 +323,7 @@ const BookingForm = () => {
                       required
                       className="h-12 text-lg"
                       placeholder="Enter pickup address"
+                      disabled={isOTPSent}
                     />
                   </div>
                   <div className="space-y-2">
@@ -368,6 +340,7 @@ const BookingForm = () => {
                       required
                       className="h-12 text-lg"
                       placeholder="Enter destination address"
+                      disabled={isOTPSent}
                     />
                   </div>
                 </div>
@@ -387,6 +360,7 @@ const BookingForm = () => {
                       required
                       className="h-12 text-lg"
                       min={minDate}
+                      disabled={isOTPSent}
                     />
                   </div>
                   <div className="space-y-2">
@@ -401,6 +375,7 @@ const BookingForm = () => {
                       onChange={(e) => handleInputChange('time', e.target.value)}
                       required
                       className="h-12 text-lg"
+                      disabled={isOTPSent}
                     />
                   </div>
                 </div>
@@ -415,6 +390,7 @@ const BookingForm = () => {
                     <Select 
                       value={formData.passengers} 
                       onValueChange={(value) => handleInputChange('passengers', value)}
+                      disabled={isOTPSent}
                     >
                       <SelectTrigger className="h-12 text-lg">
                         <SelectValue placeholder="Select passengers" />
@@ -433,6 +409,7 @@ const BookingForm = () => {
                     <Select 
                       value={formData.vehicleType} 
                       onValueChange={(value) => handleInputChange('vehicleType', value)}
+                      disabled={isOTPSent}
                     >
                       <SelectTrigger className="h-12 text-lg">
                         <SelectValue placeholder="Select vehicle type" />
@@ -455,6 +432,7 @@ const BookingForm = () => {
                       checked={formData.returnJourney}
                       onChange={(e) => handleInputChange('returnJourney', e.target.checked)}
                       className="h-5 w-5 text-yellow-400"
+                      disabled={isOTPSent}
                     />
                     <Label htmlFor="returnJourney" className="text-lg font-medium">
                       Return Journey Required
@@ -473,6 +451,7 @@ const BookingForm = () => {
                           required={formData.returnJourney}
                           className="h-12 text-lg"
                           min={formData.date || minDate}
+                          disabled={isOTPSent}
                         />
                       </div>
                       <div className="space-y-2">
@@ -484,6 +463,7 @@ const BookingForm = () => {
                           onChange={(e) => handleInputChange('returnTime', e.target.value)}
                           required={formData.returnJourney}
                           className="h-12 text-lg"
+                          disabled={isOTPSent}
                         />
                       </div>
                     </div>
@@ -499,6 +479,7 @@ const BookingForm = () => {
                     onChange={(e) => handleInputChange('specialRequests', e.target.value)}
                     placeholder="Any special requirements or notes..."
                     className="min-h-[100px] text-lg"
+                    disabled={isOTPSent}
                   />
                 </div>
 
@@ -518,10 +499,11 @@ const BookingForm = () => {
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={isSubmitting || !isOTPVerified}
+                  disabled={isSubmitting}
                   className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-xl py-6 h-16"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Book Now'}
+                  {isSubmitting ? 'Processing...' : 
+                   isOTPSent ? 'Confirm Booking' : 'Verify and Book'}
                 </Button>
               </form>
             </CardContent>
