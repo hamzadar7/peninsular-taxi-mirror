@@ -69,10 +69,12 @@ Contact: +61 408 202 034`
     console.log('Parsed response:', result);
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${result.data?.error || responseText}`);
+      console.error('HTTP Error:', response.status, result);
+      throw new Error(`HTTP ${response.status}: ${result.data?.error || result.error || responseText}`);
     }
 
     if (result.data && result.data.error) {
+      console.error('API Error:', result.data.error);
       throw new Error(`API Error: ${result.data.error}`);
     }
 
@@ -80,6 +82,7 @@ Contact: +61 408 202 034`
       const errorMsg = result.data.failed && result.data.failed.length > 0 
         ? result.data.failed[0].error 
         : 'Unknown email sending error';
+      console.error('Email sending failed:', errorMsg);
       throw new Error(`Email sending failed: ${errorMsg}`);
     }
     

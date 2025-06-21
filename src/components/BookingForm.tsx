@@ -110,12 +110,7 @@ const BookingForm = () => {
       
       console.log("Email send result:", result);
       
-      if (result.simulated) {
-        setMessage("Development mode: Verification code simulated. Use any 6-digit code to proceed.");
-      } else {
-        setMessage("Verification code sent to your email!");
-      }
-      
+      setMessage("Verification code sent to your email! Please check your inbox.");
       setShowOTP(true);
       setRetryCount(0);
     } catch (error) {
@@ -129,7 +124,7 @@ const BookingForm = () => {
           handleSubmit(e);
         }, 2000);
       } else {
-        setMessage("Failed to send verification email after multiple attempts. Please call us directly at +61 408 202 034 or try again later.");
+        setMessage("Failed to send verification email after multiple attempts. Please check your email address or call us directly at +61 408 202 034.");
       }
     } finally {
       setIsSubmitting(false);
@@ -139,12 +134,7 @@ const BookingForm = () => {
   const handleOTPVerification = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // In development mode, accept any 6-digit code
-    const isValidOTP = process.env.NODE_ENV === 'development' 
-      ? otp.length === 6 && /^\d{6}$/.test(otp)
-      : otp === sentOTP;
-    
-    if (isValidOTP) {
+    if (otp === sentOTP) {
       // Save booking
       const booking = saveBooking(formData);
       setMessage("Booking confirmed! We'll contact you shortly to confirm details and pickup time.");
@@ -197,13 +187,13 @@ const BookingForm = () => {
     return (
       <Card className="bg-white shadow-xl max-w-md mx-auto">
         <CardHeader className="text-center">
-          <CardTitle>Verify Your Email</CardTitle>
-          <CardDescription>Enter the 6-digit code sent to {formData.contactEmail}</CardDescription>
+          <CardTitle className="text-xl sm:text-2xl">Verify Your Email</CardTitle>
+          <CardDescription className="text-sm sm:text-base">Enter the 6-digit code sent to {formData.contactEmail}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           <form onSubmit={handleOTPVerification} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="otp">Verification Code</Label>
+              <Label htmlFor="otp" className="text-base font-semibold">Verification Code</Label>
               <Input 
                 id="otp"
                 placeholder="000000"
@@ -211,7 +201,7 @@ const BookingForm = () => {
                 onChange={(e) => setOtp(e.target.value)}
                 maxLength={6}
                 required
-                className="text-center text-2xl tracking-widest"
+                className="text-center text-xl sm:text-2xl tracking-widest h-12"
               />
             </div>
             {message && (
@@ -219,14 +209,14 @@ const BookingForm = () => {
                 {message}
               </p>
             )}
-            <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold">
+            <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold h-12">
               Verify & Complete Booking
             </Button>
             <div className="flex gap-2">
               <Button 
                 type="button" 
                 variant="outline" 
-                className="flex-1"
+                className="flex-1 h-10"
                 onClick={() => setShowOTP(false)}
               >
                 Back to Form
@@ -234,7 +224,7 @@ const BookingForm = () => {
               <Button 
                 type="button" 
                 variant="outline" 
-                className="flex-1"
+                className="flex-1 h-10"
                 onClick={handleResendOTP}
                 disabled={isSubmitting}
               >
@@ -249,27 +239,27 @@ const BookingForm = () => {
 
   return (
     <Card className="bg-white shadow-xl">
-      <CardHeader className="text-center pb-8">
-        <CardTitle className="text-3xl font-bold text-gray-800">Book Your Taxi</CardTitle>
-        <CardDescription className="text-lg text-gray-600">Fill in your details to reserve your ride</CardDescription>
+      <CardHeader className="text-center pb-6 sm:pb-8">
+        <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-800">Book Your Taxi</CardTitle>
+        <CardDescription className="text-base sm:text-lg text-gray-600">Fill in your details to reserve your ride</CardDescription>
       </CardHeader>
-      <CardContent className="p-8">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <CardContent className="p-4 sm:p-6 lg:p-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
           {/* Contact Information */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-base font-semibold">Full Name *</Label>
+              <Label htmlFor="name" className="text-sm sm:text-base font-semibold">Full Name *</Label>
               <Input 
                 id="name"
                 placeholder="Your full name"
                 value={formData.contactName}
                 onChange={(e) => handleInputChange('contactName', e.target.value)}
                 required
-                className="h-12"
+                className="h-10 sm:h-12"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-base font-semibold">Phone Number *</Label>
+              <Label htmlFor="phone" className="text-sm sm:text-base font-semibold">Phone Number *</Label>
               <Input 
                 id="phone"
                 type="tel"
@@ -277,13 +267,13 @@ const BookingForm = () => {
                 value={formData.contactPhone}
                 onChange={(e) => handleInputChange('contactPhone', e.target.value)}
                 required
-                className="h-12"
+                className="h-10 sm:h-12"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-base font-semibold">Email Address *</Label>
+            <Label htmlFor="email" className="text-sm sm:text-base font-semibold">Email Address *</Label>
             <Input 
               id="email"
               type="email"
@@ -291,21 +281,21 @@ const BookingForm = () => {
               value={formData.contactEmail}
               onChange={(e) => handleInputChange('contactEmail', e.target.value)}
               required
-              className="h-12"
+              className="h-10 sm:h-12"
             />
           </div>
 
           {/* Location Information */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-2">
-              <Label htmlFor="pickup" className="text-base font-semibold">Pickup Location *</Label>
+              <Label htmlFor="pickup" className="text-sm sm:text-base font-semibold">Pickup Location *</Label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-4 h-4 w-4 text-gray-400" />
+                <MapPin className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
                 <Input 
                   ref={pickupRef}
                   id="pickup"
                   placeholder="Enter pickup address"
-                  className="pl-10 h-12"
+                  className="pl-10 h-10 sm:h-12"
                   value={formData.pickupLocation}
                   onChange={(e) => handleInputChange('pickupLocation', e.target.value)}
                   required
@@ -313,14 +303,14 @@ const BookingForm = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="destination" className="text-base font-semibold">Drop-off Location *</Label>
+              <Label htmlFor="destination" className="text-sm sm:text-base font-semibold">Drop-off Location *</Label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-4 h-4 w-4 text-gray-400" />
+                <MapPin className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
                 <Input 
                   ref={destinationRef}
                   id="destination"
                   placeholder="Enter destination address"
-                  className="pl-10 h-12"
+                  className="pl-10 h-10 sm:h-12"
                   value={formData.destination}
                   onChange={(e) => handleInputChange('destination', e.target.value)}
                   required
@@ -330,15 +320,15 @@ const BookingForm = () => {
           </div>
 
           {/* Date and Time */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-2">
-              <Label htmlFor="date" className="text-base font-semibold">Pickup Date *</Label>
+              <Label htmlFor="date" className="text-sm sm:text-base font-semibold">Pickup Date *</Label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-4 h-4 w-4 text-gray-400" />
+                <Calendar className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
                 <Input 
                   id="date"
                   type="date"
-                  className="pl-10 h-12"
+                  className="pl-10 h-10 sm:h-12"
                   value={formData.date}
                   min={today}
                   onChange={(e) => handleInputChange('date', e.target.value)}
@@ -347,13 +337,13 @@ const BookingForm = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="time" className="text-base font-semibold">Pickup Time *</Label>
+              <Label htmlFor="time" className="text-sm sm:text-base font-semibold">Pickup Time *</Label>
               <div className="relative">
-                <Clock className="absolute left-3 top-4 h-4 w-4 text-gray-400" />
+                <Clock className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
                 <Input 
                   id="time"
                   type="time"
-                  className="pl-10 h-12"
+                  className="pl-10 h-10 sm:h-12"
                   value={formData.time}
                   onChange={(e) => handleInputChange('time', e.target.value)}
                   required
@@ -363,11 +353,11 @@ const BookingForm = () => {
           </div>
 
           {/* Vehicle and Passengers */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-2">
-              <Label htmlFor="vehicle-type" className="text-base font-semibold">Vehicle Type</Label>
+              <Label htmlFor="vehicle-type" className="text-sm sm:text-base font-semibold">Vehicle Type</Label>
               <Select value={formData.vehicleType} onValueChange={(value) => handleInputChange('vehicleType', value)}>
-                <SelectTrigger className="h-12">
+                <SelectTrigger className="h-10 sm:h-12">
                   <SelectValue placeholder="Select vehicle type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -380,11 +370,11 @@ const BookingForm = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="passengers" className="text-base font-semibold">Number of Passengers</Label>
+              <Label htmlFor="passengers" className="text-sm sm:text-base font-semibold">Number of Passengers</Label>
               <div className="relative">
-                <Users className="absolute left-3 top-4 h-4 w-4 text-gray-400" />
+                <Users className="absolute left-3 top-3 sm:top-4 h-4 w-4 text-gray-400" />
                 <Select value={formData.passengers} onValueChange={(value) => handleInputChange('passengers', value)}>
-                  <SelectTrigger className="pl-10 h-12">
+                  <SelectTrigger className="pl-10 h-10 sm:h-12">
                     <SelectValue placeholder="Select passengers" />
                   </SelectTrigger>
                   <SelectContent>
@@ -401,19 +391,19 @@ const BookingForm = () => {
 
           {/* Special Requests */}
           <div className="space-y-2">
-            <Label htmlFor="requests" className="text-base font-semibold">Additional Requirements (Optional)</Label>
+            <Label htmlFor="requests" className="text-sm sm:text-base font-semibold">Additional Requirements (Optional)</Label>
             <Textarea 
               id="requests"
               placeholder="Any special requirements, wheelchair access, child seats, etc."
               value={formData.specialRequests}
               onChange={(e) => handleInputChange('specialRequests', e.target.value)}
-              className="min-h-[100px]"
+              className="min-h-[80px] sm:min-h-[100px]"
             />
           </div>
 
           {message && (
             <p className={`text-sm ${
-              message.includes('sent') || message.includes('confirmed') || message.includes('simulated') 
+              message.includes('sent') || message.includes('confirmed') 
                 ? 'text-green-600' 
                 : message.includes('Retrying') 
                   ? 'text-yellow-600' 
@@ -425,7 +415,7 @@ const BookingForm = () => {
 
           <Button 
             type="submit" 
-            className="w-full bg-yellow-400 hover:bg-yellow-500 text-black text-lg py-6 font-bold"
+            className="w-full bg-yellow-400 hover:bg-yellow-500 text-black text-base sm:text-lg py-4 sm:py-6 font-bold"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Sending..." : "Proceed to Verification"}
