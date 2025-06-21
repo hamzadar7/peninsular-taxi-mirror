@@ -1,102 +1,121 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, Shield, Car, Phone } from "lucide-react";
+import { Clock, Shield, Car, Phone, Star, Users, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
-      {/* Top Yellow Bar */}
-      <div className="bg-yellow-400 text-black py-2">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Phone className="h-4 w-4" />
-            <span className="font-medium">+61 408 202 034</span>
-          </div>
-          <Button asChild size="sm" className="bg-black text-yellow-400 hover:bg-gray-800">
-            <Link to="/booking">Book Now</Link>
-          </Button>
-        </div>
-      </div>
-
-      {/* Hero Section */}
+      {/* Hero Section with City Traffic Background */}
       <section 
         className="relative h-screen bg-cover bg-center bg-no-repeat flex items-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/lovable-uploads/c8034d15-0c26-4bcb-ae33-b4612255300f.png')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
         }}
       >
         <div className="container mx-auto px-4 text-center text-white">
-          <h1 className="text-6xl font-bold mb-6">
-            Reliable Taxi Service on the{" "}
-            <span className="text-yellow-400">Mornington Peninsula</span>
-          </h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Professional, punctual, and affordable taxi service available 24/7. Book your ride today 
-            and experience the difference.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8">
-              <Link to="/booking">Book Now</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-black px-8">
-              <a href="tel:+61408202034">
-                <Phone className="h-5 w-5 mr-2" />
-                +61 408 202 034
-              </a>
-            </Button>
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+              Professional Taxi Service on the{" "}
+              <span className="text-yellow-400">Mornington Peninsula</span>
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 text-gray-200">
+              Reliable, safe, and comfortable transportation available 24/7. 
+              Book your ride today and experience premium service.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg">
+                <Link to="/booking">Book Your Ride Now</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
+                <a href="tel:+61408202034">
+                  <Phone className="h-5 w-5 mr-2" />
+                  +61 408 202 034
+                </a>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-yellow-400">24/7</div>
+                <div className="text-lg">Available</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-yellow-400">5★</div>
+                <div className="text-lg">Rated Service</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-yellow-400">100+</div>
+                <div className="text-lg">Happy Customers</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Why Choose Capelsound Taxi Section */}
-      <section className="py-16 bg-gray-50">
+      {/* Why Choose Us Section */}
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose Capelsound Taxi?</h2>
-            <p className="text-lg text-gray-600">We provide exceptional service with these key benefits</p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Why Choose Capelsound Taxi?</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We provide exceptional transportation services with a commitment to safety, reliability, and customer satisfaction
+            </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
               <CardHeader>
                 <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Clock className="h-8 w-8 text-black" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-800">24/7 Service</CardTitle>
+                <CardTitle className="text-xl font-bold text-gray-800">24/7 Service</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  Available round the clock, every day of the year. No matter when you need us, we're here.
+                  Round-the-clock availability for all your transportation needs, any time of day or night.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
               <CardHeader>
                 <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Shield className="h-8 w-8 text-black" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-800">Licensed & Insured</CardTitle>
+                <CardTitle className="text-xl font-bold text-gray-800">Licensed & Insured</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  All our drivers are fully licensed and our vehicles are comprehensively insured for your safety.
+                  Fully licensed drivers and comprehensive insurance coverage for your complete peace of mind.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-8 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
               <CardHeader>
                 <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Car className="h-8 w-8 text-black" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-800">Modern Fleet</CardTitle>
+                <CardTitle className="text-xl font-bold text-gray-800">Modern Fleet</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  Clean, comfortable, and well-maintained vehicles to ensure a pleasant journey every time.
+                  Clean, comfortable, and well-maintained vehicles equipped with modern safety features.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
+              <CardHeader>
+                <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Star className="h-8 w-8 text-black" />
+                </div>
+                <CardTitle className="text-xl font-bold text-gray-800">5-Star Service</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Professional drivers committed to providing exceptional customer service on every trip.
                 </p>
               </CardContent>
             </Card>
@@ -104,134 +123,93 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Fleet Section */}
-      <section className="py-16 bg-white">
+      {/* Services Preview Section */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Our Fleet</h2>
-            <p className="text-lg text-blue-600">Modern vehicles to suit every transportation need</p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Our Services</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Professional transportation solutions for every need across the Mornington Peninsula
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="text-center">
-                <img 
-                  src="/lovable-uploads/2f3bb04b-fcf9-4d3e-9c30-5281b1c93698.png" 
-                  alt="Sedan" 
-                  className="w-full h-32 object-contain mb-4"
-                />
-                <CardTitle className="text-xl font-bold">SEDAN</CardTitle>
-                <CardDescription className="text-blue-600">1-4 Passengers</CardDescription>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
+              <div className="h-48 bg-gradient-to-r from-blue-600 to-blue-800 flex items-center justify-center">
+                <Car className="h-16 w-16 text-white" />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Local Taxi Service</CardTitle>
+                <CardDescription>Point-to-point transportation across the peninsula</CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Comfortable and economical choice for standard trips</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">Book Now</Button>
+              <CardContent>
+                <ul className="space-y-2 text-gray-600 mb-4">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Door-to-door service</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />GPS tracking</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Professional drivers</li>
+                </ul>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="text-center">
-                <img 
-                  src="/lovable-uploads/2f3bb04b-fcf9-4d3e-9c30-5281b1c93698.png" 
-                  alt="SUV" 
-                  className="w-full h-32 object-contain mb-4"
-                />
-                <CardTitle className="text-xl font-bold">SUV</CardTitle>
-                <CardDescription className="text-blue-600">1-4 Passengers</CardDescription>
+            <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
+              <div className="h-48 bg-gradient-to-r from-purple-600 to-purple-800 flex items-center justify-center">
+                <Users className="h-16 w-16 text-white" />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Airport Transfers</CardTitle>
+                <CardDescription>Reliable transport to Melbourne airports</CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Spacious and comfortable for families with extra luggage</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">Book Now</Button>
+              <CardContent>
+                <ul className="space-y-2 text-gray-600 mb-4">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Flight monitoring</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Meet & greet service</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Fixed rate pricing</li>
+                </ul>
               </CardContent>
             </Card>
 
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="text-center">
-                <img 
-                  src="/lovable-uploads/2f3bb04b-fcf9-4d3e-9c30-5281b1c93698.png" 
-                  alt="Maxi-Taxi" 
-                  className="w-full h-32 object-contain mb-4"
-                />
-                <CardTitle className="text-xl font-bold">MAXI-TAXI</CardTitle>
-                <CardDescription className="text-blue-600">1-11 Passengers</CardDescription>
+            <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0">
+              <div className="h-48 bg-gradient-to-r from-green-600 to-green-800 flex items-center justify-center">
+                <Shield className="h-16 w-16 text-white" />
+              </div>
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Corporate Travel</CardTitle>
+                <CardDescription>Professional business transportation</CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Perfect for larger groups and airport transfers</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">Book Now</Button>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="text-center">
-                <img 
-                  src="/lovable-uploads/2f3bb04b-fcf9-4d3e-9c30-5281b1c93698.png" 
-                  alt="Wagon" 
-                  className="w-full h-32 object-contain mb-4"
-                />
-                <CardTitle className="text-xl font-bold">WAGON</CardTitle>
-                <CardDescription className="text-blue-600">1-4 Passengers</CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Ideal balance of passenger comfort and luggage capacity</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">Book Now</Button>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="text-center">
-                <img 
-                  src="/lovable-uploads/2f3bb04b-fcf9-4d3e-9c30-5281b1c93698.png" 
-                  alt="Accessible Taxi" 
-                  className="w-full h-32 object-contain mb-4"
-                />
-                <CardTitle className="text-xl font-bold">ACCESSIBLE TAXI</CardTitle>
-                <CardDescription className="text-blue-600">Wheelchair Accessible</CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Specially designed for passengers with mobility needs</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">Book Now</Button>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader className="text-center">
-                <img 
-                  src="/lovable-uploads/2f3bb04b-fcf9-4d3e-9c30-5281b1c93698.png" 
-                  alt="Parcel Delivery" 
-                  className="w-full h-32 object-contain mb-4"
-                />
-                <CardTitle className="text-xl font-bold">PARCEL DELIVERY</CardTitle>
-                <CardDescription className="text-blue-600">Portable Items</CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-600 mb-4">Items that are portable and fit in car</p>
-                <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">Book Now</Button>
+              <CardContent>
+                <ul className="space-y-2 text-gray-600 mb-4">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Executive vehicles</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Account billing</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Corporate rates</li>
+                </ul>
               </CardContent>
             </Card>
           </div>
 
-          <div className="text-center mt-8">
-            <Button asChild className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8">
-              <Link to="/fleet">View Full Fleet Details</Link>
+          <div className="text-center mt-12">
+            <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4">
+              <Link to="/services">View All Services</Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Ready to Book Section */}
-      <section className="py-16 bg-black text-white">
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-gray-900 to-black text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">Ready to Book Your Ride?</h2>
-          <p className="text-lg mb-8">Call us now or book online for a quick and reliable taxi service.</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Book Your Ride?</h2>
+          <p className="text-xl mb-8 text-gray-300 max-w-3xl mx-auto">
+            Call us now or book online for quick, reliable, and professional taxi service across the Mornington Peninsula.
+          </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8">
-              <Link to="/booking">Book Online</Link>
+            <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg">
+              <Link to="/booking">Book Online Now</Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-black px-8">
+            <Button asChild variant="outline" size="lg" className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg">
               <a href="tel:+61408202034">
                 <Phone className="h-5 w-5 mr-2" />
-                +61 408 202 034
+                Call +61 408 202 034
               </a>
             </Button>
           </div>
