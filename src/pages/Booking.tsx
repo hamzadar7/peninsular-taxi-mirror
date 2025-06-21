@@ -1,9 +1,28 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Clock, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import BookingForm from "@/components/BookingForm";
 
 const Booking = () => {
+  const navigate = useNavigate();
+
+  const handleBookNowClick = () => {
+    // If already on booking page, scroll to form
+    const bookingForm = document.querySelector('#booking-form');
+    if (bookingForm) {
+      bookingForm.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Otherwise navigate to booking page
+      navigate('/booking');
+      setTimeout(() => {
+        const form = document.querySelector('#booking-form');
+        if (form) {
+          form.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}

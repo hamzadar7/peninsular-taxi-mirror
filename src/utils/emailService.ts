@@ -6,7 +6,7 @@ export const sendOTPEmail = async (email: string, otp: string, name: string) => 
     const requestBody = {
       api_key: 'api-296966F2D21B48BA820EADA72B607188',
       to: [email],
-      sender: 'contact@capelsoundtaxi.com.au',
+      sender: 'Capel Sound Taxi <contact@capelsoundtaxi.com.au>',
       subject: 'Your Booking Verification Code - Capel Sound Taxi',
       html_body: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
@@ -61,7 +61,6 @@ Available 24/7`
     };
 
     console.log('Sending request to SMTP2GO API');
-    console.log('Request payload:', JSON.stringify(requestBody, null, 2));
     
     const response = await fetch('https://api.smtp2go.com/v3/email/send', {
       method: 'POST',
@@ -90,7 +89,6 @@ Available 24/7`
       throw new Error(`Invalid JSON response: ${responseText}`);
     }
 
-    // Check if email was sent successfully
     if (result.data && result.data.succeeded && result.data.succeeded > 0) {
       console.log('✅ Email sent successfully!');
       return { success: true, data: result.data };
@@ -106,7 +104,6 @@ Available 24/7`
   } catch (error) {
     console.error('❌ Email sending error:', error);
     
-    // Provide user-friendly error messages
     if (error.message.includes('fetch') || error.message.includes('network')) {
       throw new Error('Network error - please check your internet connection and try again.');
     } else if (error.message.includes('401') || error.message.includes('403')) {
@@ -123,18 +120,4 @@ export const generateOTP = (): string => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   console.log('Generated OTP:', otp);
   return otp;
-};
-
-// Test function to send OTP to hamzadar7@icloud.com
-export const sendTestOTP = async () => {
-  try {
-    console.log('🧪 Sending test OTP email...');
-    const testOTP = generateOTP();
-    const result = await sendOTPEmail('hamzadar7@icloud.com', testOTP, 'Test User');
-    console.log('✅ Test email sent successfully!', result);
-    return result;
-  } catch (error) {
-    console.error('❌ Test email failed:', error);
-    throw error;
-  }
 };
