@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Users, Clock, Award, Phone, Mail, Star, Shield } from "lucide-react";
@@ -7,13 +6,6 @@ import { Link } from "react-router-dom";
 const About = () => {
   return (
     <div className="min-h-screen bg-white">
-      {/* SEO Meta Tags */}
-      <head>
-        <title>About Capel Sound Taxi - Professional Taxi Service Since 2003 | Mornington Peninsula</title>
-        <meta name="description" content="Learn about Capel Sound Taxi, serving the Mornington Peninsula since 2003. Professional, reliable transportation with 20+ years experience." />
-        <meta name="keywords" content="about Capel Sound taxi, Mornington Peninsula taxi history, professional taxi service, reliable transport" />
-      </head>
-
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-900 to-black text-white py-20">
         <div className="container mx-auto px-4">
