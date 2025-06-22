@@ -1,4 +1,5 @@
 
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {
@@ -34,7 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("SMTP2GO_API_KEY not configured");
     }
 
-    // Use simple sender email format that SMTP2GO can validate
+    // Use verified sender email address
     const senderEmail = "contact@capelsoundtaxi.com.au";
     
     // Create simple, business-focused email content
@@ -110,24 +111,14 @@ This is an automated message. Please do not reply.`;
 </body>
 </html>`;
 
-    // Simplified email configuration that complies with RFC 5322
+    // Clean email configuration without conflicting headers
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: senderEmail,
+      sender: `Capel Sound Taxi <${senderEmail}>`,
       subject: subject,
       text_body: textBody,
       html_body: htmlBody,
-      custom_headers: [
-        {
-          header: "From",
-          value: `Capel Sound Taxi <${senderEmail}>`
-        },
-        {
-          header: "Reply-To", 
-          value: senderEmail
-        }
-      ],
       // Disable tracking for better deliverability
       track_opens: false,
       track_clicks: false,
@@ -135,7 +126,7 @@ This is an automated message. Please do not reply.`;
     };
 
     console.log('Sending email via SMTP2GO...');
-    console.log('Using sender email:', senderEmail);
+    console.log('Using sender:', `Capel Sound Taxi <${senderEmail}>`);
     
     const response = await fetch("https://api.smtp2go.com/v3/email/send", {
       method: "POST",
@@ -187,3 +178,4 @@ This is an automated message. Please do not reply.`;
 };
 
 serve(handler);
+
