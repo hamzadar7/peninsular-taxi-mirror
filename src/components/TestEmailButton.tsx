@@ -24,15 +24,15 @@ const TestEmailButton = () => {
 
     setIsSending(true);
     try {
-      console.log('Starting inbox delivery test...');
+      console.log('Starting email delivery test...');
       await sendTestOTP(testEmail, testName);
       
       toast({
         title: "✅ Email Sent Successfully!",
-        description: `Professional email sent from Capel Sound Taxi <contact@capelsoundtaxi.com.au> to ${testEmail}. Check your INBOX!`,
+        description: `Email sent from Capel Sound Taxi to ${testEmail}. Check your inbox!`,
       });
       
-      console.log('Test email sent successfully - should arrive in inbox');
+      console.log('Test email sent successfully');
     } catch (error) {
       console.error('Test email failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to send test email';
@@ -48,11 +48,11 @@ const TestEmailButton = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 mb-6 shadow-sm">
-      <h3 className="text-lg font-bold text-green-800 mb-4">📧 Inbox Delivery Test</h3>
-      <p className="text-green-700 mb-4 text-sm">
-        Test our professional email system using <strong>Capel Sound Taxi &lt;contact@capelsoundtaxi.com.au&gt;</strong>. 
-        This should now deliver directly to your <strong>INBOX</strong> with enhanced deliverability.
+    <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-6 mb-6 shadow-sm">
+      <h3 className="text-lg font-bold text-blue-800 mb-4">📧 Email Delivery Test</h3>
+      <p className="text-blue-700 mb-4 text-sm">
+        Test our email system using <strong>Capel Sound Taxi</strong> sender. 
+        This will help us verify if emails are reaching your inbox properly.
       </p>
       
       <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -83,56 +83,28 @@ const TestEmailButton = () => {
       <Button
         onClick={handleTestEmail}
         disabled={isSending}
-        className="bg-green-600 hover:bg-green-700 text-white font-semibold"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
       >
-        {isSending ? 'Sending Enhanced Inbox Test...' : 'Test Enhanced Inbox Delivery'}
+        {isSending ? 'Sending Test Email...' : 'Test Email Delivery'}
       </Button>
       
-      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-        <p className="text-xs text-blue-800 font-medium">
-          🎯 <strong>Enhanced Inbox Optimization:</strong>
+      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+        <p className="text-sm text-yellow-800 font-medium">
+          💡 <strong>Troubleshooting Email Delivery:</strong>
         </p>
-        <ul className="text-xs text-blue-700 mt-1 ml-4 list-disc">
-          <li>Professional sender: Capel Sound Taxi &lt;contact@capelsoundtaxi.com.au&gt; ✓</li>
-          <li>Enhanced email headers and authentication ✓</li>
-          <li>All tracking completely disabled ✓</li>
-          <li>Professional business content ✓</li>
+        <ul className="text-sm text-yellow-700 mt-2 ml-4 list-disc space-y-1">
+          <li>Check your spam/junk folder if email doesn't arrive in inbox</li>
+          <li>Add contact@capelsoundtaxi.com.au to your contacts</li>
+          <li>Mark emails as "Not Spam" if they appear in spam folder</li>
           <li>Test OTP will be: <strong>123456</strong></li>
         </ul>
       </div>
       
-      <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-        <p className="text-sm text-red-800 font-bold mb-2">
-          🚨 CRITICAL: Domain Authentication REQUIRED for Inbox Delivery
-        </p>
-        <p className="text-xs text-red-700 mb-2">
-          Your emails are going to SPAM because these DNS records are missing from your GoDaddy domain:
-        </p>
-        <div className="text-xs text-red-700 space-y-2">
-          <div className="bg-red-100 p-2 rounded">
-            <strong>1. SPF Record (TXT):</strong><br/>
-            <code className="bg-red-200 px-1 rounded">v=spf1 include:smtp2go.com ~all</code>
-          </div>
-          <div className="bg-red-100 p-2 rounded">
-            <strong>2. DKIM:</strong><br/>
-            Contact SMTP2Go support to set up DKIM for capelsoundtaxi.com.au
-          </div>
-          <div className="bg-red-100 p-2 rounded">
-            <strong>3. DMARC Record (TXT):</strong><br/>
-            <code className="bg-red-200 px-1 rounded">v=DMARC1; p=quarantine; rua=mailto:contact@capelsoundtaxi.com.au</code>
-          </div>
-        </div>
-        <div className="mt-3 p-2 bg-yellow-100 border border-yellow-300 rounded">
-          <p className="text-xs text-yellow-800 font-bold">
-            ⚠️ Without these DNS records, ALL emails will continue going to SPAM regardless of content quality!
-          </p>
-        </div>
-      </div>
-      
       <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
         <p className="text-xs text-gray-700">
-          <strong>Why emails went to inbox before:</strong> Your previous setup likely used a different email service 
-          with pre-configured domain authentication, or was sending from a well-established domain with existing reputation.
+          <strong>Why emails might go to spam:</strong> Email providers have become stricter. 
+          If emails reach spam initially, marking them as "Not Spam" will help train your email provider 
+          to deliver future emails to your inbox.
         </p>
       </div>
     </div>
