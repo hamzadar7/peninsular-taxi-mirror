@@ -24,6 +24,13 @@ try {
         $name = $input['name'];
         $testMode = $input['testMode'] ?? false;
         
+        // Log the attempt
+        error_log("=== OTP EMAIL ATTEMPT ===");
+        error_log("To: " . $email);
+        error_log("Name: " . $name);
+        error_log("Test Mode: " . ($testMode ? 'true' : 'false'));
+        error_log("API Key: " . substr(SMTP2GO_API_KEY, 0, 10) . "...");
+        
         // Prepare email data for SMTP2GO with verified sender
         $emailData = [
             'api_key' => SMTP2GO_API_KEY,
@@ -133,6 +140,10 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
                 [
                     'header' => 'X-MSMail-Priority',
                     'value' => 'High'
+                ],
+                [
+                    'header' => 'Return-Path',
+                    'value' => 'contact@capelsoundtaxi.com.au'
                 ]
             ]
         ];
@@ -141,6 +152,11 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
         if ($testMode) {
             $emailData['subject'] = '[TEST] ' . $emailData['subject'];
         }
+        
+        // Log the email data being sent (without sensitive info)
+        error_log("Email payload prepared for: " . $email);
+        error_log("Subject: " . $emailData['subject']);
+        error_log("Sender: " . $emailData['sender']);
         
         // Send email via SMTP2GO
         $ch = curl_init();
@@ -156,51 +172,100 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
         
+        // Execute the request
+        error_log("Sending request to SMTP2GO...");
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
+        $curlInfo = curl_getinfo($ch);
         curl_close($ch);
         
         // Enhanced error logging
+        error_log("=== SMTP2GO RESPONSE ===");
+        error_log("HTTP Code: " . $httpCode);
+        error_log("CURL Error: " . ($curlError ?: 'None'));
+        error_log("Response: " . $response);
+        error_log("CURL Info: " . json_encode($curlInfo));
+        
         if ($curlError) {
             error_log("SMTP2GO CURL Error: " . $curlError);
-            sendResponse(['error' => 'Failed to send email: Network error'], 500);
+            sendResponse(['error' => 'Failed to send email: Network error - ' . $curlError], 500);
         }
         
         if ($httpCode !== 200) {
             error_log("SMTP2GO HTTP Error: " . $httpCode . " Response: " . $response);
-            sendResponse(['error' => 'Failed to send email. Service temporarily unavailable.'], 500);
+            
+            // Parse response for more details
+            $errorDetails = 'HTTP ' . $httpCode;
+            if ($response) {
+                $responseData = json_decode($response, true);
+                if (isset($responseData['error'])) {
+                    $errorDetails = $responseData['error'];
+                } elseif (isset($responseData['errors'])) {
+                    $errorDetails = json_encode($responseData['errors']);
+                }
+            }
+            
+            sendResponse(['error' => 'Failed to send email: ' . $errorDetails], 500);
         }
         
         $responseData = json_decode($response, true);
         
-        if (!$responseData || !isset($responseData['data'])) {
+        if (!$responseData) {
             error_log("SMTP2GO Invalid Response: " . $response);
             sendResponse(['error' => 'Invalid response from email service'], 500);
         }
         
-        $emailResult = $responseData['data'];
+        // Log full response for debugging
+        error_log("SMTP2GO Full Response: " . json_encode($responseData));
         
-        // Check if email was successfully queued/sent
-        if (!isset($emailResult['succeeded']) || $emailResult['succeeded'] !== 1) {
-            error_log("SMTP2GO Email Failed: " . json_encode($emailResult));
-            $errorMsg = isset($emailResult['failed']) && count($emailResult['failed']) > 0 
-                ? 'Email delivery failed: ' . json_encode($emailResult['failed'][0])
-                : 'Email delivery failed';
-            sendResponse(['error' => $errorMsg], 500);
+        // Check response structure - SMTP2GO may return different formats
+        if (isset($responseData['data'])) {
+            $emailResult = $responseData['data'];
+        } else {
+            $emailResult = $responseData;
         }
         
-        // Log successful delivery
-        error_log("SMTP2GO Email Success: " . json_encode($emailResult));
-        
-        sendResponse([
-            'success' => true,
-            'message' => 'OTP email sent successfully',
-            'email_id' => $emailResult['email_id'] ?? null,
-            'emails_sent' => $emailResult['succeeded'] ?? 0,
-            'test_mode' => $testMode
-        ]);
+        // Check if email was successfully queued/sent
+        if (isset($emailResult['succeeded']) && $emailResult['succeeded'] > 0) {
+            // Success case
+            error_log("SMTP2GO Email Success: " . json_encode($emailResult));
+            
+            sendResponse([
+                'success' => true,
+                'message' => 'OTP email sent successfully',
+                'email_id' => $emailResult['email_id'] ?? null,
+                'emails_sent' => $emailResult['succeeded'] ?? 1,
+                'test_mode' => $testMode
+            ]);
+        } elseif (isset($responseData['request_id'])) {
+            // Alternative success format
+            error_log("SMTP2GO Email Queued: " . json_encode($responseData));
+            
+            sendResponse([
+                'success' => true,
+                'message' => 'OTP email sent successfully',
+                'request_id' => $responseData['request_id'],
+                'emails_sent' => 1,
+                'test_mode' => $testMode
+            ]);
+        } else {
+            // Failure case
+            error_log("SMTP2GO Email Failed: " . json_encode($responseData));
+            
+            $errorMsg = 'Email delivery failed';
+            if (isset($emailResult['failed']) && count($emailResult['failed']) > 0) {
+                $errorMsg = 'Email delivery failed: ' . json_encode($emailResult['failed'][0]);
+            } elseif (isset($responseData['error'])) {
+                $errorMsg = 'Email delivery failed: ' . $responseData['error'];
+            } elseif (isset($responseData['errors'])) {
+                $errorMsg = 'Email delivery failed: ' . json_encode($responseData['errors']);
+            }
+            
+            sendResponse(['error' => $errorMsg], 500);
+        }
         
     } else {
         sendResponse(['error' => 'Method not allowed'], 405);
@@ -208,6 +273,7 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
     
 } catch (Exception $e) {
     error_log("OTP API error: " . $e->getMessage());
-    sendResponse(['error' => 'Internal server error'], 500);
+    error_log("Stack trace: " . $e->getTraceAsString());
+    sendResponse(['error' => 'Internal server error: ' . $e->getMessage()], 500);
 }
 ?>
