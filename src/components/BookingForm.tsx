@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,8 @@ import { Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { sendOTPEmail, generateOTP } from "@/utils/emailService";
-import { saveBooking } from "@/utils/bookingStorage";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 declare global {
   interface Window {
@@ -54,7 +56,9 @@ const BookingForm = () => {
   const [isOTPSent, setIsOTPSent] = useState(false);
   const [enteredOTP, setEnteredOTP] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState('');
+  const [otpExpiry, setOtpExpiry] = useState<Date | null>(null);
 
+  const { toast } = useToast();
   const pickupRef = useRef<HTMLInputElement>(null);
   const destinationRef = useRef<HTMLInputElement>(null);
 
@@ -62,6 +66,7 @@ const BookingForm = () => {
   useEffect(() => {
     const initAutocomplete = async () => {
       try {
+        console.log('Initializing Google Maps autocomplete...');
         const loader = new Loader({
           apiKey: "AIzaSyCHK0sH0JnLcDtzNCZEekkUHJlPHwAKIH4",
           version: "weekly",
@@ -69,6 +74,7 @@ const BookingForm = () => {
         });
 
         const google = await loader.load();
+        console.log('Google Maps loaded successfully');
         
         if (pickupRef.current) {
           const pickupAutocomplete = new google.maps.places.Autocomplete(pickupRef.current, {
@@ -78,6 +84,7 @@ const BookingForm = () => {
           
           pickupAutocomplete.addListener("place_changed", () => {
             const place = pickupAutocomplete.getPlace();
+            console.log('Pickup place selected:', place);
             if (place.formatted_address) {
               setFormData(prev => ({
                 ...prev,
@@ -85,6 +92,7 @@ const BookingForm = () => {
               }));
             }
           });
+          console.log('Pickup autocomplete initialized');
         }
 
         if (destinationRef.current) {
@@ -95,6 +103,7 @@ const BookingForm = () => {
           
           destinationAutocomplete.addListener("place_changed", () => {
             const place = destinationAutocomplete.getPlace();
+            console.log('Destination place selected:', place);
             if (place.formatted_address) {
               setFormData(prev => ({
                 ...prev,
@@ -102,14 +111,20 @@ const BookingForm = () => {
               }));
             }
           });
+          console.log('Destination autocomplete initialized');
         }
       } catch (error) {
         console.error("Error loading Google Maps:", error);
+        toast({
+          title: "Maps Loading Error",
+          description: "Google Maps autocomplete failed to load. You can still enter addresses manually.",
+          variant: "destructive"
+        });
       }
     };
 
     initAutocomplete();
-  }, []);
+  }, [toast]);
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({
@@ -119,27 +134,88 @@ const BookingForm = () => {
   };
 
   const validateForm = () => {
-    if (!formData.fullName || !formData.phone || !formData.email || 
-        !formData.pickupAddress || !formData.destination || 
-        !formData.date || !formData.time) {
-      return 'Please fill in all required fields.';
-    }
+    console.log('Validating form data:', formData);
     
-    if (formData.returnJourney && (!formData.returnDate || !formData.returnTime)) {
-      return 'Please fill in return journey details.';
+    if (!formData.fullName.trim()) return 'Full name is required.';
+    if (!formData.phone.trim()) return 'Phone number is required.';
+    if (!formData.email.trim()) return 'Email address is required.';
+    if (!formData.pickupAddress.trim()) return 'Pickup address is required.';
+    if (!formData.destination.trim()) return 'Destination is required.';
+    if (!formData.date) return 'Pickup date is required.';
+    if (!formData.time) return 'Pickup time is required.';
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) return 'Please enter a valid email address.';
+    
+    // Phone validation (basic)
+    if (formData.phone.length < 10) return 'Please enter a valid phone number.';
+    
+    if (formData.returnJourney) {
+      if (!formData.returnDate) return 'Return date is required for return journey.';
+      if (!formData.returnTime) return 'Return time is required for return journey.';
     }
     
     return null;
   };
 
+  const isOTPExpired = () => {
+    if (!otpExpiry) return false;
+    return new Date() > otpExpiry;
+  };
+
+  const saveBookingToDatabase = async (bookingData: any) => {
+    try {
+      console.log('Saving booking to Supabase:', bookingData);
+      
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert([{
+          contact_name: bookingData.contactName,
+          contact_phone: bookingData.contactPhone,
+          contact_email: bookingData.contactEmail,
+          pickup_location: bookingData.pickupLocation,
+          destination: bookingData.destination,
+          date: bookingData.date,
+          time: bookingData.time,
+          passengers: bookingData.passengers,
+          vehicle_type: bookingData.vehicleType,
+          special_requests: bookingData.specialRequests,
+          device_info: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop'
+        }])
+        .select();
+
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
+
+      console.log('Booking saved successfully:', data);
+      return data;
+    } catch (error) {
+      console.error('Error saving booking:', error);
+      throw new Error('Failed to save booking to database');
+    }
+  };
+
   const handleVerifyAndBook = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Clear previous messages
+    setMessage('');
+    
     // If OTP not sent yet, validate form and send OTP
     if (!isOTPSent) {
+      console.log('Step 1: Validating form and sending OTP');
+      
       const validationError = validateForm();
       if (validationError) {
         setMessage(validationError);
+        toast({
+          title: "Validation Error",
+          description: validationError,
+          variant: "destructive"
+        });
         return;
       }
 
@@ -148,29 +224,71 @@ const BookingForm = () => {
         const otp = generateOTP();
         setGeneratedOTP(otp);
         
-        const emailSent = await sendOTPEmail(formData.email, otp, formData.fullName);
+        // Set OTP expiry to 10 minutes from now
+        const expiryTime = new Date();
+        expiryTime.setMinutes(expiryTime.getMinutes() + 10);
+        setOtpExpiry(expiryTime);
         
-        if (emailSent) {
-          setIsOTPSent(true);
-          setMessage('✅ OTP sent to your email. Please check and enter it below to confirm your booking.');
-        } else {
-          setMessage('Failed to send OTP. Please try again.');
-        }
+        console.log('Sending OTP email...');
+        await sendOTPEmail(formData.email, otp, formData.fullName);
+        
+        setIsOTPSent(true);
+        setMessage('✅ OTP sent to your email. Please check and enter it below to confirm your booking.');
+        toast({
+          title: "OTP Sent",
+          description: "Please check your email for the verification code.",
+        });
+        
       } catch (error) {
         console.error('Error sending OTP:', error);
-        setMessage('Error sending OTP. Please try again.');
+        const errorMessage = error instanceof Error ? error.message : 'Failed to send OTP. Please try again.';
+        setMessage(`❌ ${errorMessage}`);
+        toast({
+          title: "Email Error",
+          description: errorMessage,
+          variant: "destructive"
+        });
       } finally {
         setIsSubmitting(false);
       }
     } else {
-      // If OTP sent, verify OTP and complete booking
-      if (!enteredOTP) {
-        setMessage('Please enter the OTP sent to your email.');
+      // Step 2: Verify OTP and complete booking
+      console.log('Step 2: Verifying OTP and completing booking');
+      
+      if (!enteredOTP.trim()) {
+        const errorMsg = 'Please enter the OTP sent to your email.';
+        setMessage(errorMsg);
+        toast({
+          title: "OTP Required",
+          description: errorMsg,
+          variant: "destructive"
+        });
         return;
       }
 
-      if (enteredOTP !== generatedOTP) {
-        setMessage('Invalid OTP. Please try again.');
+      if (isOTPExpired()) {
+        const errorMsg = 'OTP has expired. Please request a new one.';
+        setMessage(errorMsg);
+        setIsOTPSent(false);
+        setEnteredOTP('');
+        setGeneratedOTP('');
+        setOtpExpiry(null);
+        toast({
+          title: "OTP Expired",
+          description: errorMsg,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (enteredOTP.trim() !== generatedOTP) {
+        const errorMsg = 'Invalid OTP. Please check and try again.';
+        setMessage(errorMsg);
+        toast({
+          title: "Invalid OTP",
+          description: errorMsg,
+          variant: "destructive"
+        });
         return;
       }
 
@@ -190,7 +308,8 @@ const BookingForm = () => {
           specialRequests: formData.specialRequests
         };
         
-        saveBooking(bookingData);
+        // Save to Supabase database
+        await saveBookingToDatabase(bookingData);
         
         // Reset form
         setFormData({
@@ -212,14 +331,66 @@ const BookingForm = () => {
         setIsOTPSent(false);
         setEnteredOTP('');
         setGeneratedOTP('');
+        setOtpExpiry(null);
         
-        setMessage('✅ Booking confirmed successfully! We will contact you shortly with further details.');
+        const successMsg = '✅ Booking confirmed successfully! We will contact you shortly with further details.';
+        setMessage(successMsg);
+        toast({
+          title: "Booking Confirmed",
+          description: "Your taxi booking has been confirmed successfully!",
+        });
+        
+        // Scroll to top to show success message
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
       } catch (error) {
         console.error('Error confirming booking:', error);
-        setMessage('Error confirming booking. Please try again.');
+        const errorMsg = 'Error confirming booking. Please try again or contact us directly.';
+        setMessage(`❌ ${errorMsg}`);
+        toast({
+          title: "Booking Error",
+          description: errorMsg,
+          variant: "destructive"
+        });
       } finally {
         setIsSubmitting(false);
       }
+    }
+  };
+
+  const handleResendOTP = async () => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      const otp = generateOTP();
+      setGeneratedOTP(otp);
+      
+      // Set new OTP expiry
+      const expiryTime = new Date();
+      expiryTime.setMinutes(expiryTime.getMinutes() + 10);
+      setOtpExpiry(expiryTime);
+      
+      await sendOTPEmail(formData.email, otp, formData.fullName);
+      
+      setMessage('✅ New OTP sent to your email.');
+      setEnteredOTP(''); // Clear previous OTP entry
+      toast({
+        title: "OTP Resent",
+        description: "A new verification code has been sent to your email.",
+      });
+      
+    } catch (error) {
+      console.error('Error resending OTP:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to resend OTP. Please try again.';
+      setMessage(`❌ ${errorMessage}`);
+      toast({
+        title: "Resend Error",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -305,7 +476,7 @@ const BookingForm = () => {
                       onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
                       required
                       className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
-                      placeholder="Enter pickup address"
+                      placeholder="Start typing your pickup address..."
                       disabled={isOTPSent}
                     />
                   </div>
@@ -322,7 +493,7 @@ const BookingForm = () => {
                       onChange={(e) => handleInputChange('destination', e.target.value)}
                       required
                       className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
-                      placeholder="Enter destination address"
+                      placeholder="Start typing your destination..."
                       disabled={isOTPSent}
                     />
                   </div>
@@ -469,19 +640,35 @@ const BookingForm = () => {
                   />
                 </div>
 
-                {/* OTP Entry - Now positioned right above the button */}
+                {/* OTP Entry */}
                 {isOTPSent && (
                   <div className="space-y-1 sm:space-y-2">
                     <Label htmlFor="otp" className="text-sm sm:text-base lg:text-lg font-medium">Enter OTP *</Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      value={enteredOTP}
-                      onChange={(e) => setEnteredOTP(e.target.value)}
-                      className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
-                      placeholder="Enter 6-digit OTP sent to your email"
-                      maxLength={6}
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="otp"
+                        type="text"
+                        value={enteredOTP}
+                        onChange={(e) => setEnteredOTP(e.target.value.replace(/\D/g, '').substring(0, 6))}
+                        className="h-10 sm:h-11 lg:h-12 text-sm sm:text-base lg:text-lg"
+                        placeholder="Enter 6-digit OTP"
+                        maxLength={6}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleResendOTP}
+                        disabled={isSubmitting}
+                        className="whitespace-nowrap"
+                      >
+                        Resend OTP
+                      </Button>
+                    </div>
+                    {otpExpiry && (
+                      <p className="text-xs text-gray-500">
+                        OTP expires at: {otpExpiry.toLocaleTimeString()}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -489,11 +676,11 @@ const BookingForm = () => {
                 {message && (
                   <div className="p-3 sm:p-4 rounded-lg bg-gray-50 border">
                     <p className={`text-xs sm:text-sm ${
-                      message.includes('sent') || message.includes('confirmed') || message.includes('✅')
+                      message.includes('✅') || message.includes('sent') || message.includes('confirmed')
                         ? 'text-green-600' 
                         : 'text-red-600'
                     }`}>
-                      {isOTPSent && message.includes('sent') ? 'Enter OTP to confirm your booking.' : message}
+                      {message}
                     </p>
                   </div>
                 )}
@@ -505,7 +692,7 @@ const BookingForm = () => {
                   className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg lg:text-xl py-4 sm:py-5 lg:py-6 h-12 sm:h-14 lg:h-16"
                 >
                   {isSubmitting ? 'Processing...' : 
-                   isOTPSent ? 'Confirm Booking' : 'Verify and Book'}
+                   isOTPSent ? 'Confirm Booking' : 'Send Verification Code'}
                 </Button>
               </form>
             </CardContent>

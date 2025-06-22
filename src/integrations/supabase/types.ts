@@ -9,7 +9,93 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          admin_remarks: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          date: string
+          destination: string
+          device_info: string | null
+          id: string
+          passengers: string
+          pickup_location: string
+          special_requests: string | null
+          status: string | null
+          time: string
+          vehicle_type: string
+        }
+        Insert: {
+          admin_remarks?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          date: string
+          destination: string
+          device_info?: string | null
+          id?: string
+          passengers: string
+          pickup_location: string
+          special_requests?: string | null
+          status?: string | null
+          time: string
+          vehicle_type: string
+        }
+        Update: {
+          admin_remarks?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          date?: string
+          destination?: string
+          device_info?: string | null
+          id?: string
+          passengers?: string
+          pickup_location?: string
+          special_requests?: string | null
+          status?: string | null
+          time?: string
+          vehicle_type?: string
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          device_info: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          status: string | null
+          timestamp: string
+        }
+        Insert: {
+          device_info?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          status?: string | null
+          timestamp?: string
+        }
+        Update: {
+          device_info?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          status?: string | null
+          timestamp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
