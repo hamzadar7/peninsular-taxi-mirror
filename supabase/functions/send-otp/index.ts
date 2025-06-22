@@ -24,7 +24,6 @@ const handler = async (req: Request): Promise<Response> => {
     console.log('=== OTP EMAIL REQUEST STARTED ===');
     console.log('Request method:', req.method);
     console.log('Request URL:', req.url);
-    console.log('Request headers:', Object.fromEntries(req.headers.entries()));
     
     const requestBody = await req.json();
     console.log('Raw request body:', JSON.stringify(requestBody, null, 2));
@@ -53,123 +52,31 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('=== PREPARING EMAIL DATA ===');
 
-    // Production-ready sender configuration
-    const senderEmail = "contact@capelsoundtaxi.com.au";
+    // Use a verified sender email that works with SMTP2GO
+    const senderEmail = "noreply@smtp2go.com"; // Using SMTP2GO's verified domain
     const senderName = "Capel Sound Taxi";
-    const fullSender = `${senderName} <${senderEmail}>`;
     
-    console.log('Using sender email:', fullSender);
+    console.log('Using sender email:', senderEmail);
+    console.log('Using sender name:', senderName);
     console.log('Sending to:', email);
     console.log('Test mode:', testMode);
-
-    // Generate unique message ID for better deliverability
-    const messageId = `<${Date.now()}-${Math.random().toString(36).substr(2, 9)}@capelsoundtaxi.com.au>`;
-    const currentDateTime = new Date().toUTCString();
 
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: fullSender,
+      sender: senderEmail,
+      sender_name: senderName,
       subject: testMode 
         ? "TEST - Your Booking Verification Code - Capel Sound Taxi" 
         : "Your Booking Verification Code - Capel Sound Taxi",
-      // Production-grade email headers for maximum deliverability
-      custom_headers: [
-        {
-          header: "From",
-          value: fullSender
-        },
-        {
-          header: "Reply-To",
-          value: senderEmail
-        },
-        {
-          header: "Return-Path",
-          value: senderEmail
-        },
-        {
-          header: "Message-ID",
-          value: messageId
-        },
-        {
-          header: "Date",
-          value: currentDateTime
-        },
-        {
-          header: "MIME-Version",
-          value: "1.0"
-        },
-        {
-          header: "Content-Type",
-          value: "multipart/alternative; boundary=\"boundary123\""
-        },
-        {
-          header: "X-Mailer",
-          value: "Capel Sound Taxi Booking System v2.0"
-        },
-        {
-          header: "X-Priority",
-          value: "1 (Highest)"
-        },
-        {
-          header: "Importance",
-          value: "High"
-        },
-        {
-          header: "X-MSMail-Priority",
-          value: "High"
-        },
-        {
-          header: "X-Auto-Response-Suppress",
-          value: "OOF, DR, RN, NRN, AutoReply"
-        },
-        {
-          header: "Precedence",
-          value: "first-class"
-        },
-        {
-          header: "X-Original-Sender",
-          value: senderEmail
-        },
-        {
-          header: "Organization",
-          value: "Capel Sound Taxi"
-        },
-        {
-          header: "X-Sender-Domain",
-          value: "capelsoundtaxi.com.au"
-        },
-        {
-          header: "List-Unsubscribe",
-          value: `<mailto:${senderEmail}?subject=Unsubscribe>`
-        },
-        {
-          header: "List-Unsubscribe-Post",
-          value: "List-Unsubscribe=One-Click"
-        }
-      ],
-      text_body: `Hello ${name},\n\n${testMode ? 'This is a TEST email to verify our email delivery system.\n\n' : ''}Your verification code for taxi booking is: ${otp}\n\nThis code will expire in 10 minutes.\n\nPlease enter this code to confirm your booking.\n\nBest regards,\nCapel Sound Taxi Team\n\nPhone: (03) 5983 1800\nEmail: ${senderEmail}\nWebsite: www.capelsoundtaxi.com.au\n\nThis is an automated message, please do not reply to this email.`,
+      text_body: `Hello ${name},\n\n${testMode ? 'This is a TEST email to verify our email delivery system.\n\n' : ''}Your verification code for taxi booking is: ${otp}\n\nThis code will expire in 10 minutes.\n\nPlease enter this code to confirm your booking.\n\nBest regards,\nCapel Sound Taxi Team\n\nPhone: (03) 5983 1800\nEmail: contact@capelsoundtaxi.com.au\nWebsite: www.capelsoundtaxi.com.au\n\nThis is an automated message, please do not reply to this email.`,
       html_body: `
         <!DOCTYPE html>
-        <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+        <html>
           <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="x-apple-disable-message-reformatting">
-            <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
-            <meta name="robots" content="noindex,nofollow">
             <title>Verification Code - Capel Sound Taxi</title>
-            <!--[if mso]>
-            <noscript>
-              <xml>
-                <o:OfficeDocumentSettings>
-                  <o:AllowPNG/>
-                  <o:PixelsPerInch>96</o:PixelsPerInch>
-                </o:OfficeDocumentSettings>
-              </xml>
-            </noscript>
-            <![endif]-->
             <style type="text/css">
               @media only screen and (max-width: 600px) {
                 .container { width: 100% !important; }
@@ -179,15 +86,15 @@ const handler = async (req: Request): Promise<Response> => {
               }
             </style>
           </head>
-          <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; line-height: 1.6;">
-            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; background-color: #f8f9fa;">
+          <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa; line-height: 1.6;">
+            <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; background-color: #f8f9fa;">
               <tr>
                 <td align="center" style="padding: 40px 20px;">
-                  <table role="presentation" class="container" style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden;">
+                  <table class="container" style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden;">
                     <!-- Header -->
                     <tr>
-                      <td style="background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 40px; text-align: center; border-bottom: none;">
-                        <h1 style="color: #000; margin: 0; font-size: 32px; font-weight: bold; text-shadow: none;">🚕 Capel Sound Taxi</h1>
+                      <td style="background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 40px; text-align: center;">
+                        <h1 style="color: #000; margin: 0; font-size: 32px; font-weight: bold;">🚕 Capel Sound Taxi</h1>
                         <p style="color: #333; margin: 8px 0 0 0; font-size: 16px; font-weight: 500;">Professional Taxi Service - Mornington Peninsula</p>
                         ${testMode ? '<div style="color: #d63384; font-weight: bold; background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px solid #ffeaa7;">⚠️ THIS IS A TEST EMAIL - Email System Working! ⚠️</div>' : ''}
                       </td>
@@ -205,7 +112,7 @@ const handler = async (req: Request): Promise<Response> => {
                         <!-- OTP Code Box -->
                         <div style="text-align: center; margin: 35px 0;">
                           <div class="code-box" style="display: inline-block; background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 25px 35px; border-radius: 12px; border: 3px solid #ffb300; box-shadow: 0 8px 16px rgba(255,193,7,0.4);">
-                            <span class="code" style="font-size: 42px; font-weight: bold; color: #000; letter-spacing: 8px; font-family: 'Courier New', Consolas, monospace; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">${otp}</span>
+                            <span class="code" style="font-size: 42px; font-weight: bold; color: #000; letter-spacing: 8px; font-family: 'Courier New', Consolas, monospace;">${otp}</span>
                           </div>
                         </div>
                         
@@ -226,7 +133,7 @@ const handler = async (req: Request): Promise<Response> => {
                         <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 10px; text-align: center; border: 1px solid #dee2e6;">
                           <h3 style="color: #ffc107; margin-bottom: 15px; font-size: 20px; font-weight: 700;">📞 Contact Information</h3>
                           <p style="color: #555; margin: 8px 0; font-size: 14px; font-weight: 600;">📞 Phone: <a href="tel:+61359831800" style="color: #007bff; text-decoration: none;">(03) 5983 1800</a></p>
-                          <p style="color: #555; margin: 8px 0; font-size: 14px; font-weight: 600;">✉️ Email: <a href="mailto:${senderEmail}" style="color: #007bff; text-decoration: none;">${senderEmail}</a></p>
+                          <p style="color: #555; margin: 8px 0; font-size: 14px; font-weight: 600;">✉️ Email: <a href="mailto:contact@capelsoundtaxi.com.au" style="color: #007bff; text-decoration: none;">contact@capelsoundtaxi.com.au</a></p>
                           <p style="color: #555; margin: 8px 0; font-size: 14px; font-weight: 600;">🌐 Website: <a href="https://www.capelsoundtaxi.com.au" style="color: #007bff; text-decoration: none;">www.capelsoundtaxi.com.au</a></p>
                         </div>
                         
@@ -237,9 +144,6 @@ const handler = async (req: Request): Promise<Response> => {
                           </p>
                           <p style="color: #6c757d; font-size: 10px; margin: 10px 0 0 0;">
                             This is an automated message. Please do not reply to this email.
-                          </p>
-                          <p style="color: #6c757d; font-size: 10px; margin: 5px 0 0 0;">
-                            <a href="mailto:${senderEmail}?subject=Unsubscribe" style="color: #6c757d; text-decoration: underline;">Unsubscribe</a>
                           </p>
                         </div>
                       </td>
@@ -257,8 +161,8 @@ const handler = async (req: Request): Promise<Response> => {
     console.log('Email payload (without API key):', {
       to: emailData.to,
       sender: emailData.sender,
+      sender_name: emailData.sender_name,
       subject: emailData.subject,
-      custom_headers: emailData.custom_headers.length + ' headers',
       api_key: 'HIDDEN'
     });
 
@@ -307,7 +211,7 @@ const handler = async (req: Request): Promise<Response> => {
       email_id: result.data?.email_id,
       emails_sent: result.data?.succeeded || 0,
       emails_failed: result.data?.failed || 0,
-      sender_email: fullSender,
+      sender_email: `${senderName} <${senderEmail}>`,
       recipient_email: email,
       test_mode: testMode
     };
