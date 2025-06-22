@@ -24,15 +24,15 @@ const TestEmailButton = () => {
 
     setIsSending(true);
     try {
-      console.log('Starting test email send...');
+      console.log('Starting inbox delivery test...');
       await sendTestOTP(testEmail, testName);
       
       toast({
         title: "✅ Email Sent Successfully!",
-        description: `Professional email sent from contact@capelsoundtaxi.com.au to ${testEmail}. Check your INBOX (not spam)!`,
+        description: `Professional email sent from contact@capelsoundtaxi.com.au to ${testEmail}. Check your INBOX!`,
       });
       
-      console.log('Test email sent successfully');
+      console.log('Test email sent successfully - should arrive in inbox');
     } catch (error) {
       console.error('Test email failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to send test email';
@@ -48,11 +48,11 @@ const TestEmailButton = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-6 mb-6 shadow-sm">
-      <h3 className="text-lg font-bold text-blue-800 mb-4">📧 Professional Email Delivery Test</h3>
-      <p className="text-blue-700 mb-4 text-sm">
+    <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 mb-6 shadow-sm">
+      <h3 className="text-lg font-bold text-green-800 mb-4">📧 Inbox Delivery Test</h3>
+      <p className="text-green-700 mb-4 text-sm">
         Test our professional email system using <strong>contact@capelsoundtaxi.com.au</strong>. 
-        This should now deliver directly to your <strong>INBOX</strong> with proper authentication and anti-spam measures.
+        This should now deliver directly to your <strong>INBOX</strong> with optimized deliverability.
       </p>
       
       <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -83,22 +83,36 @@ const TestEmailButton = () => {
       <Button
         onClick={handleTestEmail}
         disabled={isSending}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+        className="bg-green-600 hover:bg-green-700 text-white font-semibold"
       >
-        {isSending ? 'Sending Professional Email...' : 'Send Professional Email Test'}
+        {isSending ? 'Sending Inbox Test Email...' : 'Test Inbox Delivery'}
       </Button>
       
-      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
-        <p className="text-xs text-green-800 font-medium">
-          ✅ <strong>Anti-Spam Configuration:</strong>
+      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-xs text-blue-800 font-medium">
+          🎯 <strong>Inbox Optimization Enabled:</strong>
         </p>
-        <ul className="text-xs text-green-700 mt-1 ml-4 list-disc">
-          <li>Verified sender: contact@capelsoundtaxi.com.au ✓</li>
-          <li>Professional content with no spam triggers ✓</li>
-          <li>Proper email headers and authentication ✓</li>
-          <li>Business-appropriate formatting ✓</li>
+        <ul className="text-xs text-blue-700 mt-1 ml-4 list-disc">
+          <li>Professional sender: contact@capelsoundtaxi.com.au ✓</li>
+          <li>Inbox-optimized content and headers ✓</li>
+          <li>All tracking disabled for better deliverability ✓</li>
+          <li>Proper email authentication required (see below) ✓</li>
           <li>Test OTP will be: <strong>123456</strong></li>
         </ul>
+      </div>
+      
+      <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-md">
+        <p className="text-sm text-orange-800 font-bold mb-2">
+          ⚠️ Important: Domain Authentication Required
+        </p>
+        <p className="text-xs text-orange-700 mb-2">
+          To ensure emails reach the inbox, you MUST add these DNS records to your GoDaddy domain:
+        </p>
+        <div className="text-xs text-orange-700 space-y-1">
+          <div><strong>1. SPF Record:</strong> TXT record with value: <code className="bg-orange-100 px-1 rounded">v=spf1 include:smtp2go.com ~all</code></div>
+          <div><strong>2. DKIM:</strong> Contact SMTP2Go support to set up DKIM for capelsoundtaxi.com.au</div>
+          <div><strong>3. DMARC:</strong> TXT record with value: <code className="bg-orange-100 px-1 rounded">v=DMARC1; p=quarantine; rua=mailto:contact@capelsoundtaxi.com.au</code></div>
+        </div>
       </div>
     </div>
   );
