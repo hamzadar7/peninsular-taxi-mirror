@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import AdminLayout from "@/components/AdminLayout";
+import AdminErrorBoundary from "@/components/AdminErrorBoundary";
 import Index from "@/pages/Index";
 import About from "@/pages/About";
 import Services from "@/pages/Services";
@@ -20,13 +21,15 @@ function AppContent() {
 
   if (isAdminRoute) {
     return (
-      <AdminLayout>
-        <Routes>
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        </Routes>
-        <Toaster />
-      </AdminLayout>
+      <AdminErrorBoundary>
+        <AdminLayout>
+          <Routes>
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </Routes>
+          <Toaster />
+        </AdminLayout>
+      </AdminErrorBoundary>
     );
   }
 
