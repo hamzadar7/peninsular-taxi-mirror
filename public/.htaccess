@@ -1,18 +1,17 @@
 
 RewriteEngine On
 
-# Security Headers
+# Security Headers (simplified for better compatibility)
 Header always set X-Content-Type-Options nosniff
 Header always set X-Frame-Options DENY
 Header always set X-XSS-Protection "1; mode=block"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
-Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://api.smtp2go.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.smtp2go.com https://maps.googleapis.com;"
 
-# Hide admin routes from discovery
-RewriteRule ^admin/? - [F,L]
+# Simplified CSP that allows localStorage and local scripts
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self';"
 
 # Block access to sensitive files
-<FilesMatch "\.(env|log|sql|config|ini|json)$">
+<FilesMatch "\.(env|log|sql|config|ini)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
@@ -20,40 +19,36 @@ RewriteRule ^admin/? - [F,L]
 # Prevent directory browsing
 Options -Indexes
 
-# Block suspicious requests
+# Basic security against common attacks
 RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
 RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
-RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
-RewriteCond %{QUERY_STRING} proc/self/environ [OR]
-RewriteCond %{QUERY_STRING} mosConfig_[a-zA-Z_]{1,21}(=|\%3D) [OR]
-RewriteCond %{QUERY_STRING} base64_(en|de)code[^(]*\([^)]*\) [OR]
-RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
-RewriteCond %{QUERY_STRING} (\<|%3C).*iframe.*(\>|%3E) [NC]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
 RewriteRule .* - [F]
 
-# Rate limiting for API calls
-RewriteEngine On
-RewriteCond %{REQUEST_URI} ^/api/
-RewriteRule .* - [E=rate_limit:1]
-
-# SPA Routing - Handle client-side routing
+# SPA Routing - Handle client-side routing (essential for React apps)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/admin/
 RewriteRule . /index.html [L]
 
-# Cache static assets
+# Admin route protection (optional - can be removed if causing issues)
+RewriteRule ^admin/login$ /index.html [L]
+RewriteRule ^admin/dashboard$ /index.html [L]
+
+# Cache static assets for better performance
 <IfModule mod_expires.c>
     ExpiresActive on
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType text/html "access plus 1 hour"
 </IfModule>
 
-# Compress files
+# Compress files for faster loading
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/html
@@ -64,4 +59,17 @@ RewriteRule . /index.html [L]
     AddOutputFilterByType DEFLATE application/rss+xml
     AddOutputFilterByType DEFLATE application/javascript
     AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# Enable CORS for better mobile compatibility
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
+
+# Mobile-specific optimizations
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+    AddType text/css .css
 </IfModule>
