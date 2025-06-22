@@ -47,13 +47,45 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
   const [isMobile, setIsMobile] = useState(false);
+  const [authCheckComplete, setAuthCheckComplete] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Enhanced auth check for mobile
+  useEffect(() => {
+    console.log('AdminDashboard component mounted');
+    console.log('Current location:', window.location.href);
+    console.log('User agent:', navigator.userAgent);
+    
+    const checkAuth = () => {
+      const isLoggedIn = localStorage.getItem('admin_logged_in');
+      console.log('Auth check - admin_logged_in:', isLoggedIn);
+      
+      if (isLoggedIn !== 'true') {
+        console.log('Not authenticated, redirecting to admin login...');
+        window.location.href = '/admin';
+        return false;
+      }
+      
+      console.log('Authentication successful');
+      setAuthCheckComplete(true);
+      return true;
+    };
+    
+    // Check auth immediately
+    const isAuthenticated = checkAuth();
+    
+    if (!isAuthenticated) {
+      return; // Don't proceed with initialization
+    }
+  }, []);
+
   // Check if device is mobile
   useEffect(() => {
+    if (!authCheckComplete) return;
+    
     const checkMobile = () => {
-      const mobile = window.innerWidth <= 768 || navigator.userAgent.includes('Mobile');
+      const mobile = window.innerWidth <= 768 || /Mobile|Android|iPhone|iPad/.test(navigator.userAgent);
       setIsMobile(mobile);
       console.log('Device type:', mobile ? 'Mobile' : 'Desktop');
     };
@@ -61,14 +93,19 @@ const AdminDashboard = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [authCheckComplete]);
 
   // Enhanced data loading function using Supabase
   const loadAllData = useCallback(async () => {
+    if (!authCheckComplete) {
+      console.log('Auth not complete, skipping data load');
+      return;
+    }
+    
     console.log('=== Loading all data from Supabase ===');
     console.log('Device info:', {
       userAgent: navigator.userAgent,
-      isMobile: navigator.userAgent.includes('Mobile'),
+      isMobile: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent),
       screenWidth: window.innerWidth
     });
     
@@ -125,10 +162,12 @@ const AdminDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, authCheckComplete]);
 
   // Real-time subscription for bookings and contacts
   useEffect(() => {
+    if (!authCheckComplete) return;
+    
     console.log('Setting up real-time subscriptions...');
     
     // Subscribe to bookings changes
@@ -160,15 +199,11 @@ const AdminDashboard = () => {
       supabase.removeChannel(bookingsSubscription);
       supabase.removeChannel(contactsSubscription);
     };
-  }, [loadAllData]);
+  }, [loadAllData, authCheckComplete]);
 
-  // Initial setup and auth check
+  // Initial data load and periodic refresh
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('admin_logged_in');
-    if (isLoggedIn !== 'true') {
-      navigate('/admin');
-      return;
-    }
+    if (!authCheckComplete) return;
     
     // Initial data load
     loadAllData();
@@ -189,7 +224,7 @@ const AdminDashboard = () => {
       clearInterval(interval);
       window.removeEventListener('focus', handleFocus);
     };
-  }, [navigate, loadAllData, isMobile]);
+  }, [loadAllData, isMobile, authCheckComplete]);
 
   const handleRefresh = () => {
     console.log('Manual refresh triggered...');
@@ -197,8 +232,9 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = () => {
+    console.log('Logging out...');
     localStorage.removeItem('admin_logged_in');
-    navigate('/admin');
+    window.location.href = '/admin';
   };
 
   const handleConfirmBooking = async (bookingId: string) => {
@@ -290,6 +326,26 @@ const AdminDashboard = () => {
       });
     }
   };
+
+  // Show loading screen until auth check is complete
+  if (!authCheckComplete) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardContent className="text-center py-8">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <RefreshCw className="h-4 w-4 animate-spin" />
+              <p className="text-gray-500">Checking authentication...</p>
+            </div>
+            <div className="text-xs text-gray-400">
+              <p>Device: {/Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Mobile' : 'Desktop'}</p>
+              <p>Screen: {window.innerWidth}x{window.innerHeight}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const filteredBookings = bookings.filter(booking => {
     const statusMatch = filter === 'all' || booking.status === filter;
@@ -403,13 +459,18 @@ const AdminDashboard = () => {
                     <pre className="text-xs overflow-auto">{JSON.stringify({
                       isMobile,
                       userAgent: navigator.userAgent,
-                      screenWidth: window.innerWidth
+                      screenWidth: window.innerWidth,
+                      authCheckComplete,
+                      localStorage: typeof localStorage !== 'undefined',
+                      currentUrl: window.location.href
                     }, null, 2)}</pre>
                   </div>
                   <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-semibold mb-2">Supabase Connection</h4>
+                    <h4 className="font-semibold mb-2">Authentication & Connection</h4>
                     <div className="space-y-2">
-                      <p><strong>Status:</strong> Connected ✅</p>
+                      <p><strong>Auth Complete:</strong> {authCheckComplete ? 'Yes ✅' : 'No ❌'}</p>
+                      <p><strong>Admin Status:</strong> {localStorage.getItem('admin_logged_in') === 'true' ? 'Logged In ✅' : 'Not Logged In ❌'}</p>
+                      <p><strong>Supabase:</strong> Connected ✅</p>
                       <p><strong>Real-time:</strong> Enabled ✅</p>
                       <p><strong>Last Refresh:</strong> {new Date(lastRefresh).toLocaleString()}</p>
                       <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
