@@ -13,19 +13,9 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('AdminLogin component mounted');
-    console.log('Current location:', window.location.href);
-    console.log('User agent:', navigator.userAgent);
-    
-    // Check if admin is already logged in
-    const isLoggedIn = localStorage.getItem('admin_logged_in');
-    console.log('Admin logged in status:', isLoggedIn);
-    
-    if (isLoggedIn === 'true') {
-      console.log('Admin already logged in, redirecting to dashboard...');
-      // Use window.location.href for more reliable navigation on mobile
-      window.location.href = '/admin/dashboard';
-    }
+    // Clear any existing admin session on component mount
+    // This ensures we always show the login form
+    localStorage.removeItem('admin_logged_in');
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -33,36 +23,17 @@ const AdminLogin = () => {
     setIsLoading(true);
     setError("");
     
-    console.log('Login attempt with:', { username: credentials.username });
-    console.log('Device info:', {
-      userAgent: navigator.userAgent,
-      isMobile: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent),
-      screenWidth: window.innerWidth,
-      localStorage: typeof localStorage !== 'undefined'
-    });
-    
     try {
       // Add a small delay to ensure UI updates
       await new Promise(resolve => setTimeout(resolve, 100));
       
       if (credentials.username === "backoffice" && credentials.password === "G89x!h5qgj") {
-        console.log('Login successful, setting localStorage...');
+        // Set admin login status
+        localStorage.setItem('admin_logged_in', 'true');
         
-        // Ensure localStorage is available
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('admin_logged_in', 'true');
-          console.log('localStorage set, value:', localStorage.getItem('admin_logged_in'));
-        } else {
-          console.error('localStorage not available');
-          setError("Storage not available on this device");
-          return;
-        }
-        
-        // Use window.location.href for more reliable navigation on mobile
-        console.log('Redirecting to dashboard...');
-        window.location.href = '/admin/dashboard';
+        // Navigate to dashboard
+        navigate('/admin/dashboard');
       } else {
-        console.log('Invalid credentials');
         setError("Invalid credentials");
       }
     } catch (err) {
@@ -94,6 +65,7 @@ const AdminLogin = () => {
                 onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
                 disabled={isLoading}
                 required
+                autoComplete="username"
               />
             </div>
             <div className="space-y-2">
@@ -105,6 +77,7 @@ const AdminLogin = () => {
                 onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
                 disabled={isLoading}
                 required
+                autoComplete="current-password"
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -116,14 +89,6 @@ const AdminLogin = () => {
               {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
-          
-          {/* Debug info for mobile */}
-          <div className="mt-4 text-xs text-gray-500 border-t pt-4">
-            <p>Debug Info:</p>
-            <p>Screen: {window.innerWidth}x{window.innerHeight}</p>
-            <p>Mobile: {/Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Yes' : 'No'}</p>
-            <p>Storage: {typeof localStorage !== 'undefined' ? 'Available' : 'Not available'}</p>
-          </div>
         </CardContent>
       </Card>
     </div>

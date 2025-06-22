@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw, AlertCircle, Smartphone, Monitor } from "lucide-react";
+import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw } from "lucide-react";
 
 interface BookingData {
   id: string;
@@ -40,80 +40,30 @@ interface ContactData {
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState<BookingData[]>([]);
   const [contacts, setContacts] = useState<ContactData[]>([]);
-  const [activeTab, setActiveTab] = useState<'bookings' | 'contacts' | 'debug'>('bookings');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'contacts'>('bookings');
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed'>('all');
   const [dateFilter, setDateFilter] = useState('');
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
-  const [isMobile, setIsMobile] = useState(false);
-  const [authCheckComplete, setAuthCheckComplete] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Enhanced auth check for mobile
+  // Check authentication
   useEffect(() => {
-    console.log('AdminDashboard component mounted');
-    console.log('Current location:', window.location.href);
-    console.log('User agent:', navigator.userAgent);
-    
-    const checkAuth = () => {
-      const isLoggedIn = localStorage.getItem('admin_logged_in');
-      console.log('Auth check - admin_logged_in:', isLoggedIn);
-      
-      if (isLoggedIn !== 'true') {
-        console.log('Not authenticated, redirecting to admin login...');
-        window.location.href = '/admin';
-        return false;
-      }
-      
-      console.log('Authentication successful');
-      setAuthCheckComplete(true);
-      return true;
-    };
-    
-    // Check auth immediately
-    const isAuthenticated = checkAuth();
-    
-    if (!isAuthenticated) {
-      return; // Don't proceed with initialization
+    const isLoggedIn = localStorage.getItem('admin_logged_in');
+    if (isLoggedIn !== 'true') {
+      navigate('/admin');
+      return;
     }
-  }, []);
-
-  // Check if device is mobile
-  useEffect(() => {
-    if (!authCheckComplete) return;
-    
-    const checkMobile = () => {
-      const mobile = window.innerWidth <= 768 || /Mobile|Android|iPhone|iPad/.test(navigator.userAgent);
-      setIsMobile(mobile);
-      console.log('Device type:', mobile ? 'Mobile' : 'Desktop');
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, [authCheckComplete]);
+  }, [navigate]);
 
   // Enhanced data loading function using Supabase
   const loadAllData = useCallback(async () => {
-    if (!authCheckComplete) {
-      console.log('Auth not complete, skipping data load');
-      return;
-    }
-    
-    console.log('=== Loading all data from Supabase ===');
-    console.log('Device info:', {
-      userAgent: navigator.userAgent,
-      isMobile: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent),
-      screenWidth: window.innerWidth
-    });
-    
     setIsLoading(true);
     
     try {
       // Load bookings from Supabase
-      console.log('Loading bookings from Supabase...');
       const { data: bookingsData, error: bookingsError } = await supabase
         .from('bookings')
         .select('*')
@@ -124,11 +74,9 @@ const AdminDashboard = () => {
         throw bookingsError;
       }
 
-      console.log('Bookings loaded from Supabase:', bookingsData?.length || 0, bookingsData);
       setBookings(bookingsData || []);
       
       // Load contacts from Supabase
-      console.log('Loading contacts from Supabase...');
       const { data: contactsData, error: contactsError } = await supabase
         .from('contacts')
         .select('*')
@@ -139,7 +87,6 @@ const AdminDashboard = () => {
         throw contactsError;
       }
 
-      console.log('Contacts loaded from Supabase:', contactsData?.length || 0, contactsData);
       setContacts(contactsData || []);
       
       // Set up remarks state
@@ -150,7 +97,6 @@ const AdminDashboard = () => {
       setRemarks(remarksState);
       
       setLastRefresh(Date.now());
-      console.log('=== Data loading complete from Supabase ===');
       
     } catch (error) {
       console.error('Error loading data from Supabase:', error);
@@ -162,14 +108,10 @@ const AdminDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, authCheckComplete]);
+  }, [toast]);
 
   // Real-time subscription for bookings and contacts
   useEffect(() => {
-    if (!authCheckComplete) return;
-    
-    console.log('Setting up real-time subscriptions...');
-    
     // Subscribe to bookings changes
     const bookingsSubscription = supabase
       .channel('bookings-channel')
@@ -177,7 +119,7 @@ const AdminDashboard = () => {
         { event: '*', schema: 'public', table: 'bookings' },
         (payload) => {
           console.log('Bookings real-time update:', payload);
-          loadAllData(); // Reload all data when changes occur
+          loadAllData();
         }
       )
       .subscribe();
@@ -189,32 +131,24 @@ const AdminDashboard = () => {
         { event: '*', schema: 'public', table: 'contacts' },
         (payload) => {
           console.log('Contacts real-time update:', payload);
-          loadAllData(); // Reload all data when changes occur
+          loadAllData();
         }
       )
       .subscribe();
 
     return () => {
-      console.log('Cleaning up real-time subscriptions...');
       supabase.removeChannel(bookingsSubscription);
       supabase.removeChannel(contactsSubscription);
     };
-  }, [loadAllData, authCheckComplete]);
+  }, [loadAllData]);
 
   // Initial data load and periodic refresh
   useEffect(() => {
-    if (!authCheckComplete) return;
-    
-    // Initial data load
     loadAllData();
     
-    // Set up periodic refresh (more frequent on mobile)
-    const refreshInterval = isMobile ? 15000 : 30000; // 15s on mobile, 30s on desktop
-    const interval = setInterval(loadAllData, refreshInterval);
+    const interval = setInterval(loadAllData, 30000); // 30 seconds
     
-    // Listen for focus events (reload when returning to tab)
     const handleFocus = () => {
-      console.log('Tab focused, reloading data...');
       loadAllData();
     };
     
@@ -224,22 +158,19 @@ const AdminDashboard = () => {
       clearInterval(interval);
       window.removeEventListener('focus', handleFocus);
     };
-  }, [loadAllData, isMobile, authCheckComplete]);
+  }, [loadAllData]);
 
   const handleRefresh = () => {
-    console.log('Manual refresh triggered...');
     loadAllData();
   };
 
   const handleLogout = () => {
-    console.log('Logging out...');
     localStorage.removeItem('admin_logged_in');
-    window.location.href = '/admin';
+    navigate('/admin');
   };
 
   const handleConfirmBooking = async (bookingId: string) => {
     try {
-      console.log('Confirming booking:', bookingId);
       const { error } = await supabase
         .from('bookings')
         .update({ 
@@ -258,7 +189,7 @@ const AdminDashboard = () => {
         description: "Booking has been confirmed successfully.",
       });
 
-      loadAllData(); // Reload data to reflect changes
+      loadAllData();
     } catch (error) {
       console.error('Error confirming booking:', error);
       toast({
@@ -271,7 +202,6 @@ const AdminDashboard = () => {
 
   const handleSaveRemarks = async (bookingId: string) => {
     try {
-      console.log('Saving remarks for booking:', bookingId);
       const { error } = await supabase
         .from('bookings')
         .update({ admin_remarks: remarks[bookingId] || '' })
@@ -287,7 +217,7 @@ const AdminDashboard = () => {
         description: "Admin remarks have been saved successfully.",
       });
 
-      loadAllData(); // Reload data to reflect changes
+      loadAllData();
     } catch (error) {
       console.error('Error saving remarks:', error);
       toast({
@@ -300,7 +230,6 @@ const AdminDashboard = () => {
 
   const handleMarkContactAsRead = async (contactId: string) => {
     try {
-      console.log('Marking contact as read:', contactId);
       const { error } = await supabase
         .from('contacts')
         .update({ status: 'read' })
@@ -316,7 +245,7 @@ const AdminDashboard = () => {
         description: "Contact message has been marked as read.",
       });
 
-      loadAllData(); // Reload data to reflect changes
+      loadAllData();
     } catch (error) {
       console.error('Error marking contact as read:', error);
       toast({
@@ -326,26 +255,6 @@ const AdminDashboard = () => {
       });
     }
   };
-
-  // Show loading screen until auth check is complete
-  if (!authCheckComplete) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardContent className="text-center py-8">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              <p className="text-gray-500">Checking authentication...</p>
-            </div>
-            <div className="text-xs text-gray-400">
-              <p>Device: {/Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Mobile' : 'Desktop'}</p>
-              <p>Screen: {window.innerWidth}x{window.innerHeight}</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const filteredBookings = bookings.filter(booking => {
     const statusMatch = filter === 'all' || booking.status === filter;
@@ -372,10 +281,6 @@ const AdminDashboard = () => {
                 />
                 <div className="min-w-0 flex-1">
                   <h1 className="text-sm sm:text-lg md:text-2xl font-bold truncate">Capelsound Taxi - Admin</h1>
-                  <div className="flex items-center space-x-2 text-xs text-gray-300">
-                    {isMobile ? <Smartphone className="h-3 w-3" /> : <Monitor className="h-3 w-3" />}
-                    <span>{isMobile ? 'Mobile' : 'Desktop'} View</span>
-                  </div>
                 </div>
               </div>
               <div className="flex items-center space-x-2 w-full sm:w-auto">
@@ -397,7 +302,6 @@ const AdminDashboard = () => {
               </div>
             </div>
             
-            {/* Enhanced status indicator */}
             <div className="text-xs text-gray-300 space-y-1">
               <div>
                 {isLoading ? 'Loading...' : `Last updated: ${new Date(lastRefresh).toLocaleTimeString()}`}
@@ -413,10 +317,10 @@ const AdminDashboard = () => {
       </div>
 
       <div className="container mx-auto p-2 sm:p-3 md:p-6">
-        {/* Enhanced Tabs with Debug tab */}
+        {/* Tabs */}
         <Card className="mb-3 md:mb-6">
           <CardContent className="p-2 sm:p-3 md:p-4">
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:space-x-4">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:space-x-4">
               <Button 
                 variant={activeTab === 'bookings' ? 'default' : 'outline'}
                 onClick={() => setActiveTab('bookings')}
@@ -433,72 +337,11 @@ const AdminDashboard = () => {
                 <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Messages ({newContacts.length})</span>
               </Button>
-              <Button 
-                variant={activeTab === 'debug' ? 'default' : 'outline'}
-                onClick={() => setActiveTab('debug')}
-                className="flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm bg-white text-black border-black hover:bg-gray-100"
-              >
-                <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Debug</span>
-              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Debug Tab */}
-        {activeTab === 'debug' && (
-          <Card className="mb-3 md:mb-6">
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg md:text-xl">Debug Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4 text-xs sm:text-sm">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-semibold mb-2">Device Info</h4>
-                    <pre className="text-xs overflow-auto">{JSON.stringify({
-                      isMobile,
-                      userAgent: navigator.userAgent,
-                      screenWidth: window.innerWidth,
-                      authCheckComplete,
-                      localStorage: typeof localStorage !== 'undefined',
-                      currentUrl: window.location.href
-                    }, null, 2)}</pre>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-semibold mb-2">Authentication & Connection</h4>
-                    <div className="space-y-2">
-                      <p><strong>Auth Complete:</strong> {authCheckComplete ? 'Yes ✅' : 'No ❌'}</p>
-                      <p><strong>Admin Status:</strong> {localStorage.getItem('admin_logged_in') === 'true' ? 'Logged In ✅' : 'Not Logged In ❌'}</p>
-                      <p><strong>Supabase:</strong> Connected ✅</p>
-                      <p><strong>Real-time:</strong> Enabled ✅</p>
-                      <p><strong>Last Refresh:</strong> {new Date(lastRefresh).toLocaleString()}</p>
-                      <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-semibold mb-2">Data Summary</h4>
-                    <div className="space-y-2">
-                      <p><strong>Total Bookings:</strong> {bookings.length}</p>
-                      <p><strong>Pending Bookings:</strong> {pendingBookings.length}</p>
-                      <p><strong>Confirmed Bookings:</strong> {confirmedBookings.length}</p>
-                      <p><strong>Total Contacts:</strong> {contacts.length}</p>
-                      <p><strong>New Messages:</strong> {newContacts.length}</p>
-                    </div>
-                  </div>
-                </div>
-                <Button 
-                  onClick={handleRefresh}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Force Refresh All Data
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Bookings Tab - keeping existing implementation but with Supabase integration */}
+        {/* Bookings Tab */}
         {activeTab === 'bookings' && (
           <>
             {/* Booking Filters */}
@@ -559,7 +402,7 @@ const AdminDashboard = () => {
                 <CardContent className="text-center py-4 sm:py-8">
                   <div className="flex items-center justify-center space-x-2">
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    <p className="text-gray-500 text-xs sm:text-sm">Loading bookings from Supabase...</p>
+                    <p className="text-gray-500 text-xs sm:text-sm">Loading bookings...</p>
                   </div>
                 </CardContent>
               </Card>
@@ -578,15 +421,13 @@ const AdminDashboard = () => {
                   {pendingBookings.map(booking => (
                     <Card key={booking.id} className="border-l-4 border-orange-500">
                       <CardContent className="p-2 sm:p-3 md:p-4">
+                        
                         <div className="space-y-3 sm:space-y-4">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                             <div className="space-y-1">
                               <h4 className="font-semibold text-sm sm:text-base">{booking.contact_name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600">{booking.contact_phone}</p>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contact_email}</p>
-                              {booking.device_info && (
-                                <p className="text-xs text-gray-500">📱 {booking.device_info}</p>
-                              )}
                             </div>
                             <div className="space-y-1">
                               <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickup_location}</p>
@@ -651,15 +492,13 @@ const AdminDashboard = () => {
                   {confirmedBookings.map(booking => (
                     <Card key={booking.id} className="border-l-4 border-green-500">
                       <CardContent className="p-2 sm:p-3 md:p-4">
+                        
                         <div className="space-y-3 sm:space-y-4">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                             <div className="space-y-1">
                               <h4 className="font-semibold text-sm sm:text-base">{booking.contact_name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600">{booking.contact_phone}</p>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contact_email}</p>
-                              {booking.device_info && (
-                                <p className="text-xs text-gray-500">📱 {booking.device_info}</p>
-                              )}
                             </div>
                             <div className="space-y-1">
                               <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickup_location}</p>
@@ -693,7 +532,7 @@ const AdminDashboard = () => {
           </>
         )}
 
-        {/* Contacts Tab - keeping existing implementation but with Supabase integration */}
+        {/* Contacts Tab */}
         {activeTab === 'contacts' && (
           <>
             {/* Loading indicator */}
@@ -702,7 +541,7 @@ const AdminDashboard = () => {
                 <CardContent className="text-center py-4 sm:py-8">
                   <div className="flex items-center justify-center space-x-2">
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    <p className="text-gray-500 text-xs sm:text-sm">Loading contacts from Supabase...</p>
+                    <p className="text-gray-500 text-xs sm:text-sm">Loading contacts...</p>
                   </div>
                 </CardContent>
               </Card>
@@ -721,15 +560,13 @@ const AdminDashboard = () => {
                   {newContacts.map(contact => (
                     <Card key={contact.id} className="border-l-4 border-blue-500">
                       <CardContent className="p-2 sm:p-3 md:p-4">
+                        
                         <div className="space-y-3 sm:space-y-4">
                           <div className="flex flex-col gap-3 sm:gap-4">
                             <div className="flex-1">
                               <h4 className="font-semibold text-sm sm:text-base md:text-lg">{contact.name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{contact.email}</p>
                               {contact.phone && <p className="text-xs sm:text-sm text-gray-600">{contact.phone}</p>}
-                              {contact.device_info && (
-                                <p className="text-xs text-gray-500">📱 {contact.device_info}</p>
-                              )}
                               <p className="text-xs text-gray-500 mt-1">
                                 {new Date(contact.timestamp).toLocaleString()}
                               </p>
@@ -777,15 +614,13 @@ const AdminDashboard = () => {
                   {contacts.filter(c => c.status === 'read').map(contact => (
                     <Card key={contact.id} className="border-l-4 border-gray-300">
                       <CardContent className="p-2 sm:p-3 md:p-4">
+                        
                         <div className="space-y-3 sm:space-y-4">
                           <div className="flex flex-col gap-3 sm:gap-4">
                             <div className="flex-1">
                               <h4 className="font-semibold text-sm sm:text-base md:text-lg">{contact.name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{contact.email}</p>
                               {contact.phone && <p className="text-xs sm:text-sm text-gray-600">{contact.phone}</p>}
-                              {contact.device_info && (
-                                <p className="text-xs text-gray-500">📱 {contact.device_info}</p>
-                              )}
                               <p className="text-xs text-gray-500 mt-1">
                                 {new Date(contact.timestamp).toLocaleString()}
                               </p>
@@ -808,23 +643,6 @@ const AdminDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Empty state when no contacts at all */}
-            {contacts.length === 0 && !isLoading && (
-              <Card>
-                <CardContent className="text-center py-4 sm:py-8">
-                  <p className="text-gray-500 mb-4 text-xs sm:text-sm">No contact messages found</p>
-                  <Button 
-                    onClick={handleRefresh} 
-                    variant="outline" 
-                    className="text-xs sm:text-sm bg-white text-black border-black hover:bg-gray-100"
-                  >
-                    <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                    Refresh Data
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
           </>
         )}
       </div>
