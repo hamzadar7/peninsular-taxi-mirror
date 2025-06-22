@@ -270,7 +270,7 @@ const Fleet = () => {
             <Button asChild className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-3">
               <a href="/booking">Book Online</a>
             </Button>
-            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-3">
+            <Button asChild className="bg-white text-black hover:bg-gray-100 px-8 py-3 font-semibold">
               <a href="tel:+61408202034" className="flex items-center gap-2">
                 <Phone className="h-5 w-5" />
                 <span>+61 408 202 034</span>
