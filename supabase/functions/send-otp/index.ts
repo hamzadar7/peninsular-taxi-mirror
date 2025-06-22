@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('=== PREPARING EMAIL DATA ===');
 
-    // Use your verified domain email address
+    // Use your verified domain email address with proper sender name
     const senderEmail = "contact@capelsoundtaxi.com.au";
     const senderName = "Capel Sound Taxi";
     
@@ -156,6 +156,7 @@ This is an automated message for booking verification. Please do not reply to th
 </body>
 </html>`;
 
+    // Enhanced email data with optimal inbox delivery headers
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
@@ -179,7 +180,19 @@ This is an automated message for booking verification. Please do not reply to th
         },
         {
           header: "X-Mailer",
-          value: "Capel Sound Taxi Booking System v1.0"
+          value: "Capel Sound Taxi Booking System"
+        },
+        {
+          header: "Message-ID",
+          value: `<${Date.now()}.${Math.random().toString(36).substr(2, 9)}@capelsoundtaxi.com.au>`
+        },
+        {
+          header: "MIME-Version",
+          value: "1.0"
+        },
+        {
+          header: "Content-Type",
+          value: "multipart/alternative"
         },
         {
           header: "X-Priority",
@@ -196,8 +209,17 @@ This is an automated message for booking verification. Please do not reply to th
         {
           header: "X-Auto-Response-Suppress",
           value: "OOF, DR, RN, NRN, AutoReply"
+        },
+        {
+          header: "Precedence",
+          value: "bulk"
+        },
+        {
+          header: "X-Spam-Status",
+          value: "No"
         }
       ],
+      // Disable all tracking for better deliverability
       track_opens: false,
       track_clicks: false,
       track_links: false
@@ -209,8 +231,8 @@ This is an automated message for booking verification. Please do not reply to th
       sender: emailData.sender,
       sender_name: emailData.sender_name,
       subject: emailData.subject,
-      custom_headers: emailData.custom_headers,
-      tracking_disabled: 'YES',
+      custom_headers_count: emailData.custom_headers.length,
+      tracking_disabled: 'ALL_TRACKING_OFF',
       api_key: 'HIDDEN'
     });
 
@@ -255,15 +277,16 @@ This is an automated message for booking verification. Please do not reply to th
     const successResponse = {
       success: true,
       result,
-      message: testMode ? 'Test email sent successfully' : 'Verification email sent successfully',
+      message: testMode ? 'Test email sent successfully - Check your inbox!' : 'Verification email sent successfully',
       email_id: result.data?.email_id,
       emails_sent: result.data?.succeeded || 0,
       emails_failed: result.data?.failed || 0,
       sender_email: `${senderName} <${senderEmail}>`,
       recipient_email: email,
       test_mode: testMode,
-      inbox_optimization: 'ENABLED',
-      tracking_disabled: true
+      inbox_optimization: 'ENHANCED',
+      tracking_disabled: true,
+      authentication_required: 'SPF_DKIM_DMARC_NEEDED'
     };
 
     console.log('=== SENDING SUCCESS RESPONSE ===');
