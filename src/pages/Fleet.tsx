@@ -31,7 +31,7 @@ const Fleet = () => {
     },
     {
       type: "SUV", 
-      capacity: "1-4",
+      capacity: "1-6",
       image: "/lovable-uploads/25d6e567-58a2-4884-94e4-e967d0d3d02a.png",
       features: ["Premium comfort", "Professional service", "Business amenities", "Group seating"],
       description: "Luxurious SUV designed with premium comfort for business and leisure travel.",
@@ -55,7 +55,7 @@ const Fleet = () => {
     },
     {
       type: "ACCESSIBLE TAXI",
-      capacity: "2 Wheel Chairs + 4 Passengers",
+      capacity: "2 Wheel Chairs + Passengers",
       image: "/lovable-uploads/9dba1764-3239-4966-a231-e277fe144a76.png",
       features: ["Wheelchair access", "Medical equipment space", "Trained drivers", "Insurance billing"],
       description: "Wheelchair accessible comfortable transportation for all adventures.",
@@ -184,6 +184,14 @@ const Fleet = () => {
                   <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-sm">Confirmation within 30 minutes</span>
                 </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-sm">Additional charges for silver service are $11</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-sm">Peak hour rates may apply on public holidays</span>
+                </li>
               </ul>
             </div>
 
@@ -194,14 +202,10 @@ const Fleet = () => {
               {/* Important Notice */}
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                 <div className="font-semibold text-red-800 mb-1">Important Notice</div>
-                <div className="text-sm text-red-700">No cancellation allowed 2 hours before departure time</div>
+                <div className="text-sm text-red-700">No cancellation allowed 2 hours before departure time and full payment will be charged</div>
               </div>
 
               <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-sm">After 2 hours: full charge applies</span>
-                </li>
                 <li className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
                   <span className="text-sm">No-show bookings will be charged in full</span>

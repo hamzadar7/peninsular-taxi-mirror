@@ -117,6 +117,14 @@ const Booking = () => {
                       <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
                       <span className="text-gray-700">Confirmation within 30 minutes</span>
                     </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">Additional charges for silver service are $11</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-gray-700">Peak hour rates may apply on public holidays</span>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -129,15 +137,11 @@ const Booking = () => {
                   {/* Important Notice */}
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                     <div className="text-lg font-bold text-red-800">Important Notice</div>
-                    <div className="text-red-700">No cancellation allowed 2 hours before departure time</div>
+                    <div className="text-red-700">No cancellation allowed 2 hours before departure time and full payment will be charged</div>
                   </div>
                   
                   {/* Policy List */}
                   <ul className="space-y-3">
-                    <li className="flex items-start">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <span className="text-gray-700">After 2 hours: full charge applies</span>
-                    </li>
                     <li className="flex items-start">
                       <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
                       <span className="text-gray-700">No-show bookings will be charged in full</span>
