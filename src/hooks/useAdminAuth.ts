@@ -8,6 +8,10 @@ interface AdminAuthState {
   error: string | null;
 }
 
+// Simple admin credentials check without external dependencies
+const ADMIN_USERNAME = "backoffice";
+const ADMIN_PASSWORD = "G89x!h5qgj";
+
 export const useAdminAuth = () => {
   const [authState, setAuthState] = useState<AdminAuthState>({
     isAuthenticated: false,
@@ -22,22 +26,33 @@ export const useAdminAuth = () => {
 
   const checkAuthStatus = () => {
     try {
-      // Check multiple storage methods for mobile compatibility
-      const localStorageAuth = localStorage.getItem('admin_logged_in');
-      const sessionStorageAuth = sessionStorage.getItem('admin_logged_in');
+      // Use a more reliable authentication check
+      const sessionKey = 'admin_session_active';
+      const sessionExpiry = 'admin_session_expiry';
       
-      // Also check for a session cookie as fallback
-      const cookieAuth = document.cookie.includes('admin_session=true');
+      const isActive = sessionStorage.getItem(sessionKey);
+      const expiry = sessionStorage.getItem(sessionExpiry);
       
-      const isAuthenticated = localStorageAuth === 'true' || 
-                            sessionStorageAuth === 'true' || 
-                            cookieAuth;
+      let isAuthenticated = false;
+      
+      if (isActive === 'true' && expiry) {
+        const expiryTime = parseInt(expiry);
+        const currentTime = Date.now();
+        
+        if (currentTime < expiryTime) {
+          isAuthenticated = true;
+        } else {
+          // Session expired, clean up
+          sessionStorage.removeItem(sessionKey);
+          sessionStorage.removeItem(sessionExpiry);
+        }
+      }
 
       console.log('Admin auth check:', {
-        localStorage: localStorageAuth,
-        sessionStorage: sessionStorageAuth,
-        cookie: cookieAuth,
-        result: isAuthenticated
+        sessionActive: isActive,
+        sessionExpiry: expiry,
+        currentTime: Date.now(),
+        isAuthenticated
       });
 
       setAuthState({
@@ -46,6 +61,7 @@ export const useAdminAuth = () => {
         error: null
       });
 
+      // Redirect if not authenticated and on dashboard
       if (!isAuthenticated && window.location.pathname.includes('/admin/dashboard')) {
         navigate('/admin');
       }
@@ -64,17 +80,23 @@ export const useAdminAuth = () => {
       setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
 
       // Simulate authentication delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      if (username === "backoffice" && password === "G89x!h5qgj") {
-        // Set authentication in multiple places for mobile compatibility
-        localStorage.setItem('admin_logged_in', 'true');
-        sessionStorage.setItem('admin_logged_in', 'true');
+      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        // Set session with 24-hour expiry
+        const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
         
-        // Set a session cookie as additional fallback
-        const expiryTime = new Date();
-        expiryTime.setHours(expiryTime.getHours() + 24);
-        document.cookie = `admin_session=true; expires=${expiryTime.toUTCString()}; path=/; SameSite=Strict`;
+        // Use sessionStorage for better mobile compatibility
+        sessionStorage.setItem('admin_session_active', 'true');
+        sessionStorage.setItem('admin_session_expiry', expiryTime.toString());
+        
+        // Also set in localStorage as backup
+        try {
+          localStorage.setItem('admin_session_backup', 'true');
+          localStorage.setItem('admin_session_backup_expiry', expiryTime.toString());
+        } catch (e) {
+          console.warn('localStorage not available:', e);
+        }
 
         setAuthState({
           isAuthenticated: true,
@@ -82,8 +104,8 @@ export const useAdminAuth = () => {
           error: null
         });
 
-        // Force navigation with full page reload for mobile compatibility
-        window.location.href = '/admin/dashboard';
+        // Use replace instead of href to avoid potential security issues
+        window.location.replace('/admin/dashboard');
         return { success: true };
       } else {
         throw new Error('Invalid credentials');
@@ -101,10 +123,16 @@ export const useAdminAuth = () => {
 
   const logout = () => {
     try {
-      // Clear all authentication methods
-      localStorage.removeItem('admin_logged_in');
-      sessionStorage.removeItem('admin_logged_in');
-      document.cookie = 'admin_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      // Clear all authentication data
+      sessionStorage.removeItem('admin_session_active');
+      sessionStorage.removeItem('admin_session_expiry');
+      
+      try {
+        localStorage.removeItem('admin_session_backup');
+        localStorage.removeItem('admin_session_backup_expiry');
+      } catch (e) {
+        console.warn('localStorage cleanup failed:', e);
+      }
 
       setAuthState({
         isAuthenticated: false,
@@ -112,12 +140,12 @@ export const useAdminAuth = () => {
         error: null
       });
 
-      // Force navigation with full page reload
-      window.location.href = '/admin';
+      // Use replace to avoid back button issues
+      window.location.replace('/admin');
     } catch (error) {
       console.error('Logout error:', error);
-      // Force reload anyway
-      window.location.href = '/admin';
+      // Force navigation anyway
+      window.location.replace('/admin');
     }
   };
 

@@ -26,14 +26,40 @@ class AdminErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Admin Error Boundary caught an error:', error, errorInfo);
     this.setState({ error, errorInfo });
+    
+    // Log additional debug info for mobile issues
+    console.error('Mobile debug info:', {
+      userAgent: navigator.userAgent,
+      screenSize: `${window.screen.width}x${window.screen.height}`,
+      viewportSize: `${window.innerWidth}x${window.innerHeight}`,
+      isSecureContext: window.isSecureContext,
+      protocol: window.location.protocol,
+      origin: window.location.origin
+    });
   }
 
   handleReload = () => {
+    // Clear any cached auth state before reload
+    try {
+      sessionStorage.clear();
+      localStorage.removeItem('admin_session_backup');
+      localStorage.removeItem('admin_session_backup_expiry');
+    } catch (e) {
+      console.warn('Storage cleanup failed:', e);
+    }
     window.location.reload();
   };
 
   handleGoBack = () => {
-    window.history.back();
+    // Clear auth state and go to login
+    try {
+      sessionStorage.clear();
+      localStorage.removeItem('admin_session_backup');
+      localStorage.removeItem('admin_session_backup_expiry');
+    } catch (e) {
+      console.warn('Storage cleanup failed:', e);
+    }
+    window.location.replace('/admin');
   };
 
   render() {
@@ -69,14 +95,16 @@ class AdminErrorBoundary extends Component<Props, State> {
                   variant="outline"
                   className="w-full"
                 >
-                  Go Back
+                  Go Back to Login
                 </Button>
               </div>
 
-              <div className="text-xs text-gray-500 text-center">
-                <p>Device Info:</p>
+              <div className="text-xs text-gray-500 text-center space-y-1">
+                <p><strong>Device Info:</strong></p>
                 <p>Screen: {window.screen.width}x{window.screen.height}</p>
                 <p>Viewport: {window.innerWidth}x{window.innerHeight}</p>
+                <p>Secure: {window.isSecureContext ? 'Yes' : 'No'}</p>
+                <p>Protocol: {window.location.protocol}</p>
                 <p>User Agent: {navigator.userAgent.slice(0, 50)}...</p>
               </div>
             </CardContent>
