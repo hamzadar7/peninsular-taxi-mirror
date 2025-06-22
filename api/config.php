@@ -32,8 +32,8 @@ try {
 define('ADMIN_USERNAME', 'backoffice');
 define('ADMIN_PASSWORD', 'G89x!h5qgj');
 
-// SMTP2GO configuration
-define('SMTP2GO_API_KEY', 'api-71EE8C4473DD11EF87CF020017C45D43');
+// SMTP2GO configuration - Updated with working API key
+define('SMTP2GO_API_KEY', 'api-296966F2D21B48BA820EADA72B607188');
 define('SMTP2GO_API_URL', 'https://api.smtp2go.com/v3/email/send');
 
 // Helper function to send JSON response
