@@ -61,92 +61,122 @@ const handler = async (req: Request): Promise<Response> => {
     console.log('Sending to:', email);
     console.log('Test mode:', testMode);
 
+    // Create professional, non-spammy email content
+    const subject = testMode 
+      ? "Email System Test - Capel Sound Taxi" 
+      : "Your Booking Verification Code";
+
+    const textBody = `Hello ${name},
+
+${testMode ? 'This is a test email to verify our email delivery system.\n\n' : ''}Your verification code for taxi booking is: ${otp}
+
+This code will expire in 10 minutes.
+
+Please enter this code to confirm your booking.
+
+Best regards,
+Capel Sound Taxi Team
+
+Phone: (03) 5983 1800
+Email: contact@capelsoundtaxi.com.au
+Website: www.capelsoundtaxi.com.au
+
+This is an automated message for your booking verification.`;
+
+    const htmlBody = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Code - Capel Sound Taxi</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa; line-height: 1.6;">
+    <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; background-color: #f8f9fa;">
+        <tr>
+            <td align="center" style="padding: 40px 20px;">
+                <table style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td style="background: #ffc107; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                            <h1 style="color: #000; margin: 0; font-size: 28px; font-weight: bold;">Capel Sound Taxi</h1>
+                            <p style="color: #333; margin: 8px 0 0 0; font-size: 16px;">Professional Taxi Service</p>
+                            ${testMode ? '<div style="color: #d63384; font-weight: bold; background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 10px; border: 1px solid #ffeaa7;">Test Email - System Working!</div>' : ''}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 30px;">
+                            <h2 style="color: #333; margin-top: 0; font-size: 20px;">Hello ${name},</h2>
+                            <p style="color: #555; font-size: 16px; margin-bottom: 20px;">
+                                ${testMode ? 'This test email confirms our email delivery system is working properly.<br><br>' : ''}Your verification code for booking confirmation is:
+                            </p>
+                            <div style="text-align: center; margin: 25px 0;">
+                                <div style="display: inline-block; background: #ffc107; padding: 20px 30px; border-radius: 8px; border: 2px solid #ffb300;">
+                                    <span style="font-size: 32px; font-weight: bold; color: #000; letter-spacing: 6px; font-family: monospace;">${otp}</span>
+                                </div>
+                            </div>
+                            <div style="background: #e3f2fd; border-left: 4px solid #2196F3; border-radius: 4px; padding: 15px; margin: 20px 0;">
+                                <p style="color: #1565C0; margin: 0; font-size: 14px;">
+                                    <strong>Important:</strong> This code expires in 10 minutes for security.
+                                </p>
+                            </div>
+                            <p style="color: #555; font-size: 14px; margin-bottom: 25px;">
+                                ${testMode ? 'If you received this email in your inbox, our system is properly configured!' : 'Please enter this code on the booking form to confirm your taxi reservation.'}
+                            </p>
+                            <hr style="border: none; border-top: 1px solid #eee; margin: 25px 0;">
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; text-align: center;">
+                                <h3 style="color: #ffc107; margin-bottom: 10px; font-size: 18px;">Contact Information</h3>
+                                <p style="color: #555; margin: 5px 0; font-size: 14px;">Phone: (03) 5983 1800</p>
+                                <p style="color: #555; margin: 5px 0; font-size: 14px;">Email: contact@capelsoundtaxi.com.au</p>
+                                <p style="color: #555; margin: 5px 0; font-size: 14px;">Website: www.capelsoundtaxi.com.au</p>
+                            </div>
+                            <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                                <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                                    Capel Sound Taxi - Your reliable transport partner
+                                </p>
+                                <p style="color: #6c757d; font-size: 10px; margin: 5px 0 0 0;">
+                                    This is an automated message for booking verification.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
       sender: senderEmail,
       sender_name: senderName,
-      subject: testMode 
-        ? "TEST - Your Booking Verification Code - Capel Sound Taxi" 
-        : "Your Booking Verification Code - Capel Sound Taxi",
-      text_body: `Hello ${name},\n\n${testMode ? 'This is a TEST email to verify our email delivery system.\n\n' : ''}Your verification code for taxi booking is: ${otp}\n\nThis code will expire in 10 minutes.\n\nPlease enter this code to confirm your booking.\n\nBest regards,\nCapel Sound Taxi Team\n\nPhone: (03) 5983 1800\nEmail: contact@capelsoundtaxi.com.au\nWebsite: www.capelsoundtaxi.com.au\n\nThis is an automated message, please do not reply to this email.`,
-      html_body: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Verification Code - Capel Sound Taxi</title>
-          </head>
-          <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa; line-height: 1.6;">
-            <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; background-color: #f8f9fa;">
-              <tr>
-                <td align="center" style="padding: 40px 20px;">
-                  <table style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden;">
-                    <!-- Header -->
-                    <tr>
-                      <td style="background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 40px; text-align: center;">
-                        <h1 style="color: #000; margin: 0; font-size: 32px; font-weight: bold;">🚕 Capel Sound Taxi</h1>
-                        <p style="color: #333; margin: 8px 0 0 0; font-size: 16px; font-weight: 500;">Professional Taxi Service - Mornington Peninsula</p>
-                        ${testMode ? '<div style="color: #d63384; font-weight: bold; background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px solid #ffeaa7;">⚠️ THIS IS A TEST EMAIL - Email System Working! ⚠️</div>' : ''}
-                      </td>
-                    </tr>
-                    
-                    <!-- Content -->
-                    <tr>
-                      <td style="padding: 40px;">
-                        <h2 style="color: #333; margin-top: 0; font-size: 24px; font-weight: 600;">Hello ${name},</h2>
-                        
-                        <p style="color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-                          ${testMode ? '🎉 <strong>Excellent!</strong> This test email confirms our email delivery system is working properly.<br><br>' : ''}Thank you for choosing Capel Sound Taxi! Your verification code for booking confirmation is:
-                        </p>
-                        
-                        <!-- OTP Code Box -->
-                        <div style="text-align: center; margin: 35px 0;">
-                          <div style="display: inline-block; background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 25px 35px; border-radius: 12px; border: 3px solid #ffb300; box-shadow: 0 8px 16px rgba(255,193,7,0.4);">
-                            <span style="font-size: 42px; font-weight: bold; color: #000; letter-spacing: 8px; font-family: 'Courier New', Consolas, monospace;">${otp}</span>
-                          </div>
-                        </div>
-                        
-                        <!-- Important Notice -->
-                        <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left: 4px solid #2196F3; border-radius: 8px; padding: 20px; margin: 25px 0;">
-                          <p style="color: #1565C0; margin: 0; font-size: 14px; font-weight: 600;">
-                            ⏰ <strong>Important:</strong> This verification code expires in 10 minutes for security reasons.
-                          </p>
-                        </div>
-                        
-                        <p style="color: #555; font-size: 14px; line-height: 1.6; margin-bottom: 30px;">
-                          ${testMode ? '✅ If you received this test email in your <strong>inbox</strong> (not spam), our email system is properly configured!' : 'Please enter this code on the booking form to confirm your taxi reservation. If you didn\'t request this code, please ignore this email.'}
-                        </p>
-                        
-                        <hr style="border: none; border-top: 2px solid #f0f0f0; margin: 30px 0;">
-                        
-                        <!-- Contact Information -->
-                        <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 10px; text-align: center; border: 1px solid #dee2e6;">
-                          <h3 style="color: #ffc107; margin-bottom: 15px; font-size: 20px; font-weight: 700;">📞 Contact Information</h3>
-                          <p style="color: #555; margin: 8px 0; font-size: 14px; font-weight: 600;">📞 Phone: <a href="tel:+61359831800" style="color: #007bff; text-decoration: none;">(03) 5983 1800</a></p>
-                          <p style="color: #555; margin: 8px 0; font-size: 14px; font-weight: 600;">✉️ Email: <a href="mailto:contact@capelsoundtaxi.com.au" style="color: #007bff; text-decoration: none;">contact@capelsoundtaxi.com.au</a></p>
-                          <p style="color: #555; margin: 8px 0; font-size: 14px; font-weight: 600;">🌐 Website: <a href="https://www.capelsoundtaxi.com.au" style="color: #007bff; text-decoration: none;">www.capelsoundtaxi.com.au</a></p>
-                        </div>
-                        
-                        <!-- Footer -->
-                        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                          <p style="color: #6c757d; font-size: 12px; margin: 0; font-style: italic; font-weight: 500;">
-                            Thank you for choosing Capel Sound Taxi - Your reliable transport partner on the Mornington Peninsula
-                          </p>
-                          <p style="color: #6c757d; font-size: 10px; margin: 10px 0 0 0;">
-                            This is an automated message. Please do not reply to this email.
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </body>
-        </html>
-      `
+      subject: subject,
+      text_body: textBody,
+      html_body: htmlBody,
+      custom_headers: [
+        {
+          header: "List-Unsubscribe",
+          value: "<mailto:contact@capelsoundtaxi.com.au?subject=unsubscribe>"
+        },
+        {
+          header: "X-Entity-ID", 
+          value: "capelsoundtaxi"
+        },
+        {
+          header: "X-Entity-Ref-ID",
+          value: `booking-${Date.now()}`
+        },
+        {
+          header: "X-Mailer",
+          value: "Capel Sound Taxi Booking System"
+        },
+        {
+          header: "Reply-To",
+          value: "contact@capelsoundtaxi.com.au"
+        }
+      ],
+      track_opens: false,
+      track_clicks: false
     };
 
     console.log('=== SENDING EMAIL VIA SMTP2GO ===');
@@ -199,7 +229,7 @@ const handler = async (req: Request): Promise<Response> => {
     const successResponse = {
       success: true,
       result,
-      message: testMode ? 'Test OTP email sent successfully' : 'OTP email sent successfully',
+      message: testMode ? 'Test email sent successfully' : 'Verification email sent successfully',
       email_id: result.data?.email_id,
       emails_sent: result.data?.succeeded || 0,
       emails_failed: result.data?.failed || 0,
@@ -226,7 +256,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     const errorResponse = {
       error: error.message,
-      details: 'Failed to send OTP email',
+      details: 'Failed to send email',
       timestamp: new Date().toISOString(),
       debug_info: {
         error_type: error.constructor.name,
