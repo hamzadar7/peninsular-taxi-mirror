@@ -33,11 +33,14 @@ const Footer = () => {
               alt="Capelsound Taxi" 
               className="h-12 w-auto mb-4"
             />
-            <img 
-              src="/lovable-uploads/970b8594-2676-4fdb-9e29-e55000364416.png" 
-              alt="ASIC Registered" 
-              className="h-8 w-auto mb-4"
-            />
+            <div className="mb-4">
+              <img 
+                src="/lovable-uploads/970b8594-2676-4fdb-9e29-e55000364416.png" 
+                alt="ASIC Registered" 
+                className="h-8 w-auto mb-1"
+              />
+              <p className="text-gray-400 text-xs">Registered Business Name</p>
+            </div>
             <p className="text-gray-400 text-sm">
               Reliable taxi service on the Mornington Peninsula. Professional drivers, clean vehicles, and 24/7 availability.
             </p>
