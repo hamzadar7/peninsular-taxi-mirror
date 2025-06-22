@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Shield, Car, Phone, Star, Users, CheckCircle } from "lucide-react";
@@ -170,7 +171,7 @@ const Index = () => {
                 <div className="aspect-[4/3] flex items-center justify-center p-2 sm:p-4">
                   <img 
                     src="/lovable-uploads/25d6e567-58a2-4884-94e4-e967d0d3d02a.png" 
-                    alt="SUV - Spacious vehicle for 1-4 passengers with extra luggage"
+                    alt="SUV - Spacious vehicle for 1-6 passengers with extra luggage"
                     className="max-w-full max-h-full object-contain w-auto h-auto"
                     loading="lazy"
                     decoding="async"
@@ -179,7 +180,7 @@ const Index = () => {
               </div>
               <CardHeader className="text-center pb-2">
                 <CardTitle className="text-lg lg:text-xl font-bold">SUV</CardTitle>
-                <CardDescription className="text-gray-600">1-4 Passengers</CardDescription>
+                <CardDescription className="text-gray-600">1-6 Passengers</CardDescription>
               </CardHeader>
               <CardContent className="text-center pt-2 pb-6">
                 <p className="text-gray-600 mb-4 text-sm lg:text-base">Spacious and comfortable for families with extra luggage</p>
@@ -448,7 +449,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Trusted Partners Section - Better responsiveness */}
+      {/* Trusted Partners Section - Updated TAC to TAC Provider */}
       <section className="py-16 lg:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 lg:mb-16">
@@ -464,17 +465,17 @@ const Index = () => {
                 <div className="h-20 lg:h-24 flex items-center justify-center mb-4 lg:mb-6">
                   <img 
                     src="/lovable-uploads/35917797-eeda-4d67-909b-d62d517ea074.png" 
-                    alt="TAC Partner"
+                    alt="TAC Provider"
                     className="h-12 lg:h-16 w-auto object-contain"
                     loading="lazy"
                     decoding="async"
                   />
                 </div>
-                <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">TAC Partner</CardTitle>
+                <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">TAC Provider</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-gray-600 text-sm leading-relaxed">
-                  Authorized partner with Transport Accident Commission for medical transport services
+                  Authorized provider with Transport Accident Commission for medical transport services
                 </p>
               </CardContent>
             </Card>
