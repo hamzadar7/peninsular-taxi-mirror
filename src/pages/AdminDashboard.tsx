@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -101,12 +100,12 @@ const AdminDashboard = () => {
             <h1 className="text-2xl font-bold">Capelsound Taxi - Admin Dashboard</h1>
           </div>
           <div className="flex items-center space-x-2">
-            <Button onClick={handleRefresh} variant="outline" className="text-white border-white hover:bg-white hover:text-black flex items-center gap-2">
-              <RefreshCw className="h-4 w-4" />
+            <Button onClick={handleRefresh} variant="outline" className="text-white border-white hover:bg-white hover:text-black">
+              <RefreshCw className="h-4 w-4 mr-2" />
               <span>Refresh</span>
             </Button>
-            <Button onClick={handleLogout} variant="outline" className="text-white border-white hover:bg-white hover:text-black flex items-center gap-2">
-              <LogOut className="h-4 w-4" />
+            <Button onClick={handleLogout} variant="outline" className="text-white border-white hover:bg-white hover:text-black">
+              <LogOut className="h-4 w-4 mr-2" />
               <span>Logout</span>
             </Button>
           </div>
@@ -306,34 +305,33 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'contacts' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <MessageSquare className="h-5 w-5 mr-2 text-blue-500" />
-                Contact Messages ({contacts.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {contacts.map(contact => (
-                  <Card key={contact.id} className={`border-l-4 ${contact.status === 'new' ? 'border-blue-500' : 'border-gray-300'}`}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h4 className="font-semibold text-lg">{contact.name}</h4>
-                          <p className="text-sm text-gray-600">{contact.email}</p>
-                          {contact.phone && <p className="text-sm text-gray-600">{contact.phone}</p>}
-                          <p className="text-xs text-gray-500 mt-1">
-                            {new Date(contact.timestamp).toLocaleString()}
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {contact.status === 'new' && (
+          <>
+            {/* Unread Contact Messages */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <MessageSquare className="h-5 w-5 mr-2 text-blue-500" />
+                  Unread Messages ({newContacts.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {newContacts.map(contact => (
+                    <Card key={contact.id} className="border-l-4 border-blue-500">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h4 className="font-semibold text-lg">{contact.name}</h4>
+                            <p className="text-sm text-gray-600">{contact.email}</p>
+                            {contact.phone && <p className="text-sm text-gray-600">{contact.phone}</p>}
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(contact.timestamp).toLocaleString()}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-2">
                             <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
                               New
                             </span>
-                          )}
-                          {contact.status === 'new' && (
                             <Button
                               onClick={() => handleMarkContactAsRead(contact.id)}
                               variant="outline"
@@ -342,28 +340,75 @@ const AdminDashboard = () => {
                               <Eye className="h-4 w-4 mr-1" />
                               Mark as Read
                             </Button>
-                          )}
+                          </div>
                         </div>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded">
-                        <p className="text-sm"><strong>Message:</strong></p>
-                        <p className="text-sm mt-1">{contact.message}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                {contacts.length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500 mb-4">No contact messages found</p>
-                    <Button onClick={handleRefresh} variant="outline">
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh Data
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                        <div className="bg-gray-50 p-3 rounded">
+                          <p className="text-sm"><strong>Message:</strong></p>
+                          <p className="text-sm mt-1">{contact.message}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {newContacts.length === 0 && (
+                    <p className="text-gray-500 text-center py-8">No unread messages</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Read Contact Messages */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <CheckCircle className="h-5 w-5 mr-2 text-gray-500" />
+                  Read Messages ({contacts.filter(c => c.status === 'read').length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {contacts.filter(c => c.status === 'read').map(contact => (
+                    <Card key={contact.id} className="border-l-4 border-gray-300">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h4 className="font-semibold text-lg">{contact.name}</h4>
+                            <p className="text-sm text-gray-600">{contact.email}</p>
+                            {contact.phone && <p className="text-sm text-gray-600">{contact.phone}</p>}
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(contact.timestamp).toLocaleString()}
+                            </p>
+                          </div>
+                          <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2.5 py-0.5 rounded">
+                            Read
+                          </span>
+                        </div>
+                        <div className="bg-gray-50 p-3 rounded">
+                          <p className="text-sm"><strong>Message:</strong></p>
+                          <p className="text-sm mt-1">{contact.message}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {contacts.filter(c => c.status === 'read').length === 0 && (
+                    <p className="text-gray-500 text-center py-8">No read messages</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Empty state when no contacts at all */}
+            {contacts.length === 0 && (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <p className="text-gray-500 mb-4">No contact messages found</p>
+                  <Button onClick={handleRefresh} variant="outline">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Refresh Data
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
       </div>
     </div>

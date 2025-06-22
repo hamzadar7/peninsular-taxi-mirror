@@ -1,8 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Car, Users, Shield, Heart, Clock, Award, User, Luggage, Check } from "lucide-react";
+import { Car, Users, Shield, Heart, Clock, Award, User, Luggage, Check, Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Fleet = () => {
@@ -261,25 +260,22 @@ const Fleet = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-white">
+      <section className="bg-gradient-to-r from-gray-900 to-gray-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-gray-800">Ready to Experience Our Service?</h2>
-          <p className="text-xl mb-8 text-gray-600">
-            Book your ride today and experience the comfort and reliability of our professional fleet
+          <h2 className="text-3xl font-bold mb-4">Ready to Experience Our Service?</h2>
+          <p className="text-xl mb-8 text-gray-300">
+            Book your ride today or call us for immediate service
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={handleBookNowClick}
-              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-md transition-colors"
-            >
-              Book Your Ride
-            </button>
-            <a 
-              href="tel:+61408202034" 
-              className="inline-flex items-center justify-center px-6 py-3 border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white font-semibold rounded-md transition-colors"
-            >
-              Call +61 408 202 034
-            </a>
+            <Button asChild className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-3">
+              <a href="/booking">Book Online</a>
+            </Button>
+            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-black px-8 py-3">
+              <a href="tel:+61408202034" className="flex items-center gap-2">
+                <Phone className="h-5 w-5" />
+                <span>+61 408 202 034</span>
+              </a>
+            </Button>
           </div>
         </div>
       </section>
