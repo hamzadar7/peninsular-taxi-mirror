@@ -7,25 +7,12 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://nlpgylbwbizcbkirawie.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5scGd5bGJ3Yml6Y2JraXJhd2llIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1NTgyOTYsImV4cCI6MjA2NjEzNDI5Nn0.ruadfjd_b1lx0t3M-di77ISqxggYv5Eq_sG7H7rSoKI";
 
-// Create Supabase client with mobile-optimized configuration
+// Simplified client configuration for better mobile compatibility
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce', // Use PKCE flow for better security
-    debug: process.env.NODE_ENV === 'development'
-  },
-  global: {
-    headers: {
-      'X-Client-Info': 'admin-panel-mobile'
-    }
-  },
-  // Ensure secure connections
-  realtime: {
-    params: {
-      eventsPerSecond: 10
-    }
+    detectSessionInUrl: false,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined
   }
 });

@@ -10,7 +10,6 @@ interface Props {
 interface State {
   hasError: boolean;
   error?: Error;
-  errorInfo?: React.ErrorInfo;
 }
 
 class AdminErrorBoundary extends Component<Props, State> {
@@ -25,25 +24,13 @@ class AdminErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Admin Error Boundary caught an error:', error, errorInfo);
-    this.setState({ error, errorInfo });
-    
-    // Log additional debug info for mobile issues
-    console.error('Mobile debug info:', {
-      userAgent: navigator.userAgent,
-      screenSize: `${window.screen.width}x${window.screen.height}`,
-      viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-      isSecureContext: window.isSecureContext,
-      protocol: window.location.protocol,
-      origin: window.location.origin
-    });
+    this.setState({ error });
   }
 
   handleReload = () => {
-    // Clear any cached auth state before reload
+    // Simple cleanup and reload
     try {
-      sessionStorage.clear();
-      localStorage.removeItem('admin_session_backup');
-      localStorage.removeItem('admin_session_backup_expiry');
+      window.sessionStorage?.clear();
     } catch (e) {
       console.warn('Storage cleanup failed:', e);
     }
@@ -51,11 +38,9 @@ class AdminErrorBoundary extends Component<Props, State> {
   };
 
   handleGoBack = () => {
-    // Clear auth state and go to login
+    // Simple cleanup and redirect
     try {
-      sessionStorage.clear();
-      localStorage.removeItem('admin_session_backup');
-      localStorage.removeItem('admin_session_backup_expiry');
+      window.sessionStorage?.clear();
     } catch (e) {
       console.warn('Storage cleanup failed:', e);
     }
@@ -74,7 +59,7 @@ class AdminErrorBoundary extends Component<Props, State> {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-gray-700 text-center">
-                Something went wrong in the admin panel. This might be a mobile compatibility issue.
+                Something went wrong in the admin panel. Please try reloading the page.
               </p>
               
               {this.state.error && (
@@ -97,15 +82,6 @@ class AdminErrorBoundary extends Component<Props, State> {
                 >
                   Go Back to Login
                 </Button>
-              </div>
-
-              <div className="text-xs text-gray-500 text-center space-y-1">
-                <p><strong>Device Info:</strong></p>
-                <p>Screen: {window.screen.width}x{window.screen.height}</p>
-                <p>Viewport: {window.innerWidth}x{window.innerHeight}</p>
-                <p>Secure: {window.isSecureContext ? 'Yes' : 'No'}</p>
-                <p>Protocol: {window.location.protocol}</p>
-                <p>User Agent: {navigator.userAgent.slice(0, 50)}...</p>
               </div>
             </CardContent>
           </Card>

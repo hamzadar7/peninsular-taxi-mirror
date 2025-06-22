@@ -8,7 +8,7 @@ interface AdminAuthState {
   error: string | null;
 }
 
-// Simple admin credentials check without external dependencies
+// Simple admin credentials
 const ADMIN_USERNAME = "backoffice";
 const ADMIN_PASSWORD = "G89x!h5qgj";
 
@@ -21,39 +21,46 @@ export const useAdminAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('Admin auth initializing...');
     checkAuthStatus();
   }, []);
 
   const checkAuthStatus = () => {
     try {
-      // Use a more reliable authentication check
-      const sessionKey = 'admin_session_active';
-      const sessionExpiry = 'admin_session_expiry';
+      console.log('Checking admin auth status...');
       
-      const isActive = sessionStorage.getItem(sessionKey);
-      const expiry = sessionStorage.getItem(sessionExpiry);
-      
+      // Simple check using a memory flag and basic storage
       let isAuthenticated = false;
       
-      if (isActive === 'true' && expiry) {
-        const expiryTime = parseInt(expiry);
-        const currentTime = Date.now();
+      try {
+        // Try to check if user is authenticated
+        const authFlag = window.sessionStorage?.getItem('admin_auth') === 'true';
+        const authTime = window.sessionStorage?.getItem('admin_auth_time');
         
-        if (currentTime < expiryTime) {
-          isAuthenticated = true;
-        } else {
-          // Session expired, clean up
-          sessionStorage.removeItem(sessionKey);
-          sessionStorage.removeItem(sessionExpiry);
+        if (authFlag && authTime) {
+          const loginTime = parseInt(authTime);
+          const currentTime = Date.now();
+          const hoursSinceLogin = (currentTime - loginTime) / (1000 * 60 * 60);
+          
+          // Session valid for 24 hours
+          if (hoursSinceLogin < 24) {
+            isAuthenticated = true;
+          } else {
+            // Clean expired session
+            try {
+              window.sessionStorage?.removeItem('admin_auth');
+              window.sessionStorage?.removeItem('admin_auth_time');
+            } catch (e) {
+              console.warn('Storage cleanup failed:', e);
+            }
+          }
         }
+      } catch (storageError) {
+        console.warn('Storage access failed, proceeding without persistence:', storageError);
+        // If storage fails, just proceed without persistence
       }
 
-      console.log('Admin auth check:', {
-        sessionActive: isActive,
-        sessionExpiry: expiry,
-        currentTime: Date.now(),
-        isAuthenticated
-      });
+      console.log('Admin auth check result:', { isAuthenticated });
 
       setAuthState({
         isAuthenticated,
@@ -78,24 +85,21 @@ export const useAdminAuth = () => {
   const login = async (username: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
+      
+      console.log('Admin login attempt:', { username });
 
       // Simulate authentication delay
       await new Promise(resolve => setTimeout(resolve, 300));
 
       if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        // Set session with 24-hour expiry
-        const expiryTime = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+        console.log('Admin login successful');
         
-        // Use sessionStorage for better mobile compatibility
-        sessionStorage.setItem('admin_session_active', 'true');
-        sessionStorage.setItem('admin_session_expiry', expiryTime.toString());
-        
-        // Also set in localStorage as backup
+        // Try to store session, but don't fail if storage is unavailable
         try {
-          localStorage.setItem('admin_session_backup', 'true');
-          localStorage.setItem('admin_session_backup_expiry', expiryTime.toString());
-        } catch (e) {
-          console.warn('localStorage not available:', e);
+          window.sessionStorage?.setItem('admin_auth', 'true');
+          window.sessionStorage?.setItem('admin_auth_time', Date.now().toString());
+        } catch (storageError) {
+          console.warn('Could not persist session, continuing anyway:', storageError);
         }
 
         setAuthState({
@@ -104,7 +108,8 @@ export const useAdminAuth = () => {
           error: null
         });
 
-        // Use replace instead of href to avoid potential security issues
+        // Navigate to dashboard
+        console.log('Navigating to admin dashboard...');
         window.location.replace('/admin/dashboard');
         return { success: true };
       } else {
@@ -112,6 +117,7 @@ export const useAdminAuth = () => {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      console.error('Admin login error:', errorMessage);
       setAuthState({
         isAuthenticated: false,
         isLoading: false,
@@ -123,15 +129,14 @@ export const useAdminAuth = () => {
 
   const logout = () => {
     try {
-      // Clear all authentication data
-      sessionStorage.removeItem('admin_session_active');
-      sessionStorage.removeItem('admin_session_expiry');
+      console.log('Admin logout initiated');
       
+      // Try to clear storage, but don't fail if unavailable
       try {
-        localStorage.removeItem('admin_session_backup');
-        localStorage.removeItem('admin_session_backup_expiry');
-      } catch (e) {
-        console.warn('localStorage cleanup failed:', e);
+        window.sessionStorage?.removeItem('admin_auth');
+        window.sessionStorage?.removeItem('admin_auth_time');
+      } catch (storageError) {
+        console.warn('Storage cleanup failed during logout:', storageError);
       }
 
       setAuthState({
@@ -140,7 +145,7 @@ export const useAdminAuth = () => {
         error: null
       });
 
-      // Use replace to avoid back button issues
+      // Navigate to login
       window.location.replace('/admin');
     } catch (error) {
       console.error('Logout error:', error);
