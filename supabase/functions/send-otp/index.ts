@@ -34,10 +34,8 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("SMTP2GO_API_KEY not configured");
     }
 
-    // Use proper RFC 5322 format for sender name display
+    // Use simple sender email format that SMTP2GO can validate
     const senderEmail = "contact@capelsoundtaxi.com.au";
-    const senderName = "Capel Sound Taxi";
-    const senderFormatted = `"${senderName}" <${senderEmail}>`;
     
     // Create simple, business-focused email content
     const subject = testMode 
@@ -112,36 +110,32 @@ This is an automated message. Please do not reply.`;
 </body>
 </html>`;
 
-    // Email configuration optimized for deliverability with proper sender name
+    // Simplified email configuration that complies with RFC 5322
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: senderFormatted,
+      sender: senderEmail,
       subject: subject,
       text_body: textBody,
       html_body: htmlBody,
       custom_headers: [
         {
           header: "From",
-          value: senderFormatted
+          value: `Capel Sound Taxi <${senderEmail}>`
         },
         {
-          header: "Reply-To",
+          header: "Reply-To", 
           value: senderEmail
-        },
-        {
-          header: "X-Mailer",
-          value: "Capel Sound Taxi Booking System"
         }
       ],
-      // Disable all tracking for better inbox delivery
+      // Disable tracking for better deliverability
       track_opens: false,
       track_clicks: false,
       track_links: false
     };
 
     console.log('Sending email via SMTP2GO...');
-    console.log('Using sender:', senderFormatted);
+    console.log('Using sender email:', senderEmail);
     
     const response = await fetch("https://api.smtp2go.com/v3/email/send", {
       method: "POST",
@@ -165,7 +159,10 @@ This is an automated message. Please do not reply.`;
       success: true,
       message: testMode ? 'Test email sent successfully!' : 'Verification email sent successfully',
       email_id: result.data?.email_id,
-      emails_sent: result.data?.succeeded || 0
+      emails_sent: result.data?.succeeded || 0,
+      sender_email: senderEmail,
+      recipient_email: email,
+      test_mode: testMode
     }), {
       status: 200,
       headers: {
