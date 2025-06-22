@@ -126,7 +126,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Fleet Section - Improved image and text alignment */}
+      {/* Our Fleet Section - Fixed mobile image display */}
       <section className="py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 lg:mb-16">
@@ -140,12 +140,16 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
             <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-200">
-              <div className="h-40 md:h-48 bg-gray-50 flex items-center justify-center p-4">
-                <img 
-                  src="/lovable-uploads/ada7f635-6c64-4449-a05e-5e9e4c9a9ef4.png" 
-                  alt="Sedan"
-                  className="h-full w-full object-contain"
-                />
+              <div className="relative bg-gray-50 overflow-hidden">
+                <div className="aspect-[4/3] flex items-center justify-center p-2 sm:p-4">
+                  <img 
+                    src="/lovable-uploads/ada7f635-6c64-4449-a05e-5e9e4c9a9ef4.png" 
+                    alt="Sedan - Comfortable car for 1-4 passengers"
+                    className="max-w-full max-h-full object-contain w-auto h-auto"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               </div>
               <CardHeader className="text-center pb-2">
                 <CardTitle className="text-lg lg:text-xl font-bold">SEDAN</CardTitle>
@@ -163,12 +167,16 @@ const Index = () => {
             </Card>
 
             <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-200">
-              <div className="h-40 md:h-48 bg-gray-50 flex items-center justify-center p-4">
-                <img 
-                  src="/lovable-uploads/25d6e567-58a2-4884-94e4-e967d0d3d02a.png" 
-                  alt="SUV"
-                  className="h-full w-full object-contain"
-                />
+              <div className="relative bg-gray-50 overflow-hidden">
+                <div className="aspect-[4/3] flex items-center justify-center p-2 sm:p-4">
+                  <img 
+                    src="/lovable-uploads/25d6e567-58a2-4884-94e4-e967d0d3d02a.png" 
+                    alt="SUV - Spacious vehicle for 1-4 passengers with extra luggage"
+                    className="max-w-full max-h-full object-contain w-auto h-auto"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               </div>
               <CardHeader className="text-center pb-2">
                 <CardTitle className="text-lg lg:text-xl font-bold">SUV</CardTitle>
@@ -186,12 +194,16 @@ const Index = () => {
             </Card>
 
             <Card className="group overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-200">
-              <div className="h-40 md:h-48 bg-gray-50 flex items-center justify-center p-4">
-                <img 
-                  src="/lovable-uploads/db90f5df-7275-40c4-83b4-5ba0247c56ec.png" 
-                  alt="Maxi Taxi"
-                  className="h-full w-full object-contain"
-                />
+              <div className="relative bg-gray-50 overflow-hidden">
+                <div className="aspect-[4/3] flex items-center justify-center p-2 sm:p-4">
+                  <img 
+                    src="/lovable-uploads/db90f5df-7275-40c4-83b4-5ba0247c56ec.png" 
+                    alt="Maxi Taxi - Large vehicle for 1-11 passengers"
+                    className="max-w-full max-h-full object-contain w-auto h-auto"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               </div>
               <CardHeader className="text-center pb-2">
                 <CardTitle className="text-lg lg:text-xl font-bold">MAXI-TAXI</CardTitle>
@@ -235,6 +247,8 @@ const Index = () => {
                   src="/lovable-uploads/846b74e9-ba7a-444b-84eb-c1e6dc7bbadb.png" 
                   alt="Airport transfer service"
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <CardContent className="p-4 lg:p-6">
@@ -279,6 +293,8 @@ const Index = () => {
                   src="/lovable-uploads/9325ff52-d502-4894-811a-7b1eca0eb72f.png" 
                   alt="Corporate travel service"
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <CardContent className="p-4 lg:p-6">
@@ -323,6 +339,8 @@ const Index = () => {
                   src="/lovable-uploads/5c434fcc-5b4a-4dfd-99eb-be1072d4c71e.png" 
                   alt="Hotel transfer service"
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <CardContent className="p-4 lg:p-6">
@@ -387,6 +405,8 @@ const Index = () => {
                     src="/lovable-uploads/e53452ae-5660-4c00-aa4a-ef8355711874.png" 
                     alt="Cab Charge"
                     className="h-10 lg:h-12 w-auto object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Cab Charge</CardTitle>
@@ -405,6 +425,8 @@ const Index = () => {
                     src="/lovable-uploads/ff41b36f-b25f-4bbc-ba58-002437e858dd.png" 
                     alt="EFTPOS"
                     className="h-10 lg:h-12 w-auto object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <CardTitle className="text-base lg:text-lg font-bold text-gray-800">EFTPOS</CardTitle>
@@ -423,6 +445,8 @@ const Index = () => {
                     src="/lovable-uploads/b2d348c8-6274-4e50-b17b-d6b33e1d7265.png" 
                     alt="Visa Mastercard"
                     className="h-10 lg:h-12 w-auto object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Credit & Debit</CardTitle>
@@ -441,6 +465,8 @@ const Index = () => {
                     src="/lovable-uploads/44b8aba6-5bbb-44c3-8404-5a0aced4318d.png" 
                     alt="Motor Pass"
                     className="h-10 lg:h-12 w-auto object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Motor Pass</CardTitle>
@@ -473,6 +499,8 @@ const Index = () => {
                     src="/lovable-uploads/35917797-eeda-4d67-909b-d62d517ea074.png" 
                     alt="TAC Partner"
                     className="h-12 lg:h-16 w-auto object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">TAC Partner</CardTitle>
@@ -491,6 +519,8 @@ const Index = () => {
                     src="/lovable-uploads/6986d0af-dc1d-437a-a921-78b8beaa0c5a.png" 
                     alt="WorkSafe Provider"
                     className="h-12 lg:h-16 w-auto object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">WorkSafe Provider</CardTitle>
@@ -509,6 +539,8 @@ const Index = () => {
                     src="/lovable-uploads/64dbbb09-9d78-4b7b-9f01-f3b93e6c420a.png" 
                     alt="Safe Transport Victoria"
                     className="h-12 lg:h-16 w-auto object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <CardTitle className="text-lg lg:text-xl font-bold text-gray-800 mb-3 lg:mb-4">Safe Transport Victoria</CardTitle>
