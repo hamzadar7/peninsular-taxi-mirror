@@ -22,8 +22,8 @@ export const useGoogleMapsAutocomplete = (
       try {
         console.log('Initializing Google Maps autocomplete...');
         
-        // Use environment variable for API key, with fallback for development
-        const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyCHK0sH0JnLcDtzNCZEekkUHJlPHwAKIH4";
+        // Use your production API key
+        const apiKey = "AIzaSyCHK0sH0JnLcDtzNCZEekkUHJlPHwAKIH4";
         
         const loader = new Loader({
           apiKey: apiKey,

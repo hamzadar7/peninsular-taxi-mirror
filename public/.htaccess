@@ -7,8 +7,8 @@ Header always set X-Frame-Options DENY
 Header always set X-XSS-Protection "1; mode=block"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 
-# Simplified CSP that allows localStorage and local scripts
-Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self';"
+# Simplified CSP that allows Google Maps and external resources
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://maps.googleapis.com https://nlpgylbwbizcbkirawie.supabase.co; font-src 'self' https://fonts.gstatic.com;"
 
 # Block access to sensitive files
 <FilesMatch "\.(env|log|sql|config|ini)$">
@@ -30,10 +30,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/admin/
 RewriteRule . /index.html [L]
-
-# Admin route protection (optional - can be removed if causing issues)
-RewriteRule ^admin/login$ /index.html [L]
-RewriteRule ^admin/dashboard$ /index.html [L]
 
 # Cache static assets for better performance
 <IfModule mod_expires.c>
