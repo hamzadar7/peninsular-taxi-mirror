@@ -11,6 +11,7 @@ interface OTPEmailRequest {
   email: string;
   otp: string;
   name: string;
+  testMode?: boolean;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,27 +21,52 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log('OTP request received:', req.method);
+    console.log('=== OTP EMAIL REQUEST STARTED ===');
+    console.log('Request method:', req.method);
+    console.log('Request URL:', req.url);
+    console.log('Request headers:', Object.fromEntries(req.headers.entries()));
     
-    const { email, otp, name }: OTPEmailRequest = await req.json();
-    console.log('Request data:', { email, otp: otp ? 'present' : 'missing', name });
+    const requestBody = await req.json();
+    console.log('Raw request body:', JSON.stringify(requestBody, null, 2));
+    
+    const { email, otp, name, testMode = false }: OTPEmailRequest = requestBody;
+    console.log('Parsed request data:', { 
+      email: email || 'MISSING', 
+      otp: otp ? 'present' : 'MISSING', 
+      name: name || 'MISSING',
+      testMode 
+    });
+    
+    // Validate required fields
+    if (!email || !otp || !name) {
+      console.error('Missing required fields:', { email: !!email, otp: !!otp, name: !!name });
+      throw new Error('Missing required fields: email, otp, and name are all required');
+    }
     
     const SMTP2GO_API_KEY = Deno.env.get("SMTP2GO_API_KEY");
+    console.log('SMTP2GO_API_KEY check:', SMTP2GO_API_KEY ? 'FOUND' : 'NOT FOUND');
     
     if (!SMTP2GO_API_KEY) {
-      console.error("SMTP2GO_API_KEY not found in environment");
-      throw new Error("SMTP2GO_API_KEY not configured");
+      console.error("SMTP2GO_API_KEY not found in environment variables");
+      throw new Error("SMTP2GO_API_KEY not configured in environment");
     }
 
-    console.log('SMTP2GO_API_KEY found, preparing email...');
+    console.log('=== PREPARING EMAIL DATA ===');
 
-    // Use your configured GoDaddy email
+    // Use your verified domain with contact@ email
+    const senderEmail = "contact@capelsoundtaxi.com.au";
+    console.log('Using sender email:', senderEmail);
+    console.log('Sending to:', email);
+    console.log('Test mode:', testMode);
+
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: "contact@capelsoundtaxi.com.au", // Using your GoDaddy configured email
-      subject: "Your Booking Verification Code - Capel Sound Taxi",
-      text_body: `Hello ${name},\n\nYour verification code for taxi booking is: ${otp}\n\nThis code will expire in 10 minutes.\n\nPlease enter this code to confirm your booking.\n\nBest regards,\nCapel Sound Taxi Team\n\nPhone: (03) 5983 1800\nEmail: contact@capelsoundtaxi.com.au\nWebsite: www.capelsoundtaxi.com.au`,
+      sender: senderEmail,
+      subject: testMode 
+        ? "TEST - Your Booking Verification Code - Capel Sound Taxi" 
+        : "Your Booking Verification Code - Capel Sound Taxi",
+      text_body: `Hello ${name},\n\n${testMode ? 'This is a TEST email.\n\n' : ''}Your verification code for taxi booking is: ${otp}\n\nThis code will expire in 10 minutes.\n\nPlease enter this code to confirm your booking.\n\nBest regards,\nCapel Sound Taxi Team\n\nPhone: (03) 5983 1800\nEmail: contact@capelsoundtaxi.com.au\nWebsite: www.capelsoundtaxi.com.au`,
       html_body: `
         <html>
           <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -48,13 +74,14 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="text-align: center; margin-bottom: 30px;">
                 <h1 style="color: #ffc107; margin: 0; font-size: 28px; font-weight: bold;">Capel Sound Taxi</h1>
                 <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Professional Taxi Service</p>
+                ${testMode ? '<p style="color: #e74c3c; font-weight: bold; background: #fff3cd; padding: 10px; border-radius: 5px;">⚠️ THIS IS A TEST EMAIL ⚠️</p>' : ''}
               </div>
               
               <div style="background-color: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                 <h2 style="color: #333; margin-top: 0; font-size: 24px;">Hello ${name},</h2>
                 
                 <p style="color: #666; font-size: 16px; line-height: 1.5;">
-                  Thank you for choosing Capel Sound Taxi! Your verification code for booking confirmation is:
+                  ${testMode ? 'This is a test email to verify our email delivery system. ' : ''}Thank you for choosing Capel Sound Taxi! Your verification code for booking confirmation is:
                 </p>
                 
                 <div style="text-align: center; margin: 30px 0;">
@@ -70,7 +97,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </div>
                 
                 <p style="color: #666; font-size: 14px; line-height: 1.5;">
-                  Please enter this code on the booking form to confirm your taxi reservation. If you didn't request this code, please ignore this email.
+                  ${testMode ? 'If you received this test email, our email system is working correctly!' : 'Please enter this code on the booking form to confirm your taxi reservation. If you didn\'t request this code, please ignore this email.'}
                 </p>
                 
                 <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
@@ -94,8 +121,13 @@ const handler = async (req: Request): Promise<Response> => {
       `
     };
 
-    console.log('Sending email via SMTP2GO API to:', email);
-    console.log('Using sender:', emailData.sender);
+    console.log('=== SENDING EMAIL VIA SMTP2GO ===');
+    console.log('Email payload (without API key):', {
+      to: emailData.to,
+      sender: emailData.sender,
+      subject: emailData.subject,
+      api_key: 'HIDDEN'
+    });
 
     const response = await fetch("https://api.smtp2go.com/v3/email/send", {
       method: "POST",
@@ -105,40 +137,52 @@ const handler = async (req: Request): Promise<Response> => {
       body: JSON.stringify(emailData),
     });
 
-    console.log('SMTP2GO response status:', response.status);
+    console.log('=== SMTP2GO RESPONSE ===');
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
     const result = await response.json();
-    console.log('SMTP2GO full response:', JSON.stringify(result, null, 2));
+    console.log('Full SMTP2GO response:', JSON.stringify(result, null, 2));
     
     if (!response.ok) {
       console.error('SMTP2GO API error. Status:', response.status);
-      console.error('SMTP2GO API error response:', result);
+      console.error('SMTP2GO API error details:', result);
       throw new Error(`SMTP2GO API error (${response.status}): ${JSON.stringify(result)}`);
     }
 
-    // Check if SMTP2GO reported any failures
+    // Check for failures in the response
     if (result.data && result.data.failed > 0) {
-      console.error('SMTP2GO reported failures:', result.data.failures);
+      console.error('SMTP2GO reported email failures:', result.data.failures);
       throw new Error(`Email failed to send. Failures: ${JSON.stringify(result.data.failures)}`);
     }
 
-    // Check if email was actually sent successfully
+    // Check if email was sent successfully
     if (!result.data || result.data.succeeded === 0) {
       console.error('SMTP2GO did not send any emails successfully:', result);
       throw new Error('Email sending failed - no emails were sent successfully');
     }
 
-    console.log("Email sent successfully via SMTP2GO. Email ID:", result.data?.email_id);
+    console.log("=== EMAIL SENT SUCCESSFULLY ===");
+    console.log("Email ID:", result.data?.email_id);
     console.log("Emails succeeded:", result.data?.succeeded);
     console.log("Emails failed:", result.data?.failed);
 
-    return new Response(JSON.stringify({ 
-      success: true, 
+    const successResponse = {
+      success: true,
       result,
-      message: 'OTP email sent successfully',
+      message: testMode ? 'Test OTP email sent successfully' : 'OTP email sent successfully',
       email_id: result.data?.email_id,
       emails_sent: result.data?.succeeded || 0,
-      emails_failed: result.data?.failed || 0
-    }), {
+      emails_failed: result.data?.failed || 0,
+      sender_email: senderEmail,
+      recipient_email: email,
+      test_mode: testMode
+    };
+
+    console.log('=== SENDING SUCCESS RESPONSE ===');
+    console.log('Success response:', JSON.stringify(successResponse, null, 2));
+
+    return new Response(JSON.stringify(successResponse), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -146,14 +190,26 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error in send-otp function:", error);
+    console.error("=== ERROR IN SEND-OTP FUNCTION ===");
+    console.error("Error message:", error.message);
     console.error("Error stack:", error.stack);
+    console.error("Error details:", error);
+    
+    const errorResponse = {
+      error: error.message,
+      details: 'Failed to send OTP email',
+      timestamp: new Date().toISOString(),
+      debug_info: {
+        error_type: error.constructor.name,
+        error_stack: error.stack
+      }
+    };
+
+    console.log('=== SENDING ERROR RESPONSE ===');
+    console.log('Error response:', JSON.stringify(errorResponse, null, 2));
+
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: 'Failed to send OTP email',
-        timestamp: new Date().toISOString()
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },

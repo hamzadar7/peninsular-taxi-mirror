@@ -10,6 +10,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { sendOTPEmail, generateOTP } from "@/utils/emailService";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import TestEmailButton from "./TestEmailButton";
 
 declare global {
   interface Window {
@@ -227,7 +228,7 @@ const BookingForm = () => {
         setOtpExpiry(expiryTime);
         
         console.log('Attempting to send OTP via SMTP2GO...');
-        await sendOTPEmail(formData.email, otp, formData.fullName);
+        await sendOTPEmail(formData.email, otp, formData.fullName, false); // false = not test mode
         
         setIsOTPSent(true);
         setMessage('✅ OTP sent successfully! Please check your email for the verification code.');
@@ -364,7 +365,7 @@ const BookingForm = () => {
       expiryTime.setMinutes(expiryTime.getMinutes() + 10);
       setOtpExpiry(expiryTime);
       
-      await sendOTPEmail(formData.email, otp, formData.fullName);
+      await sendOTPEmail(formData.email, otp, formData.fullName, false); // false = not test mode
       
       setMessage('✅ New OTP sent to your email.');
       setEnteredOTP('');
@@ -401,6 +402,9 @@ const BookingForm = () => {
               Fill out the form below and we'll confirm your booking shortly
             </p>
           </div>
+
+          {/* Add the test email button */}
+          <TestEmailButton />
 
           <Card id="booking-form" className="shadow-xl">
             <CardHeader className="bg-yellow-400 text-black py-3 sm:py-4 lg:py-6">
