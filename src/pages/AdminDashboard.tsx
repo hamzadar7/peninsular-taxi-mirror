@@ -267,10 +267,10 @@ const AdminDashboard = () => {
   const newContacts = contacts.filter(c => c.status === 'new');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen w-full bg-gray-50">
       {/* Header */}
-      <div className="bg-black text-white p-2 sm:p-3 md:p-4">
-        <div className="container mx-auto">
+      <div className="bg-black text-white p-2 sm:p-3 md:p-4 w-full">
+        <div className="max-w-7xl mx-auto">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
               <div className="flex items-center space-x-2 md:space-x-4 min-w-0 flex-1">
@@ -316,7 +316,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="container mx-auto p-2 sm:p-3 md:p-6">
+      <div className="max-w-7xl mx-auto p-2 sm:p-3 md:p-6 w-full">
         {/* Tabs */}
         <Card className="mb-3 md:mb-6">
           <CardContent className="p-2 sm:p-3 md:p-4">
