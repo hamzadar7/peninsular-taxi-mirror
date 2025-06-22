@@ -113,12 +113,19 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(`SMTP2GO API error: ${JSON.stringify(result)}`);
     }
 
+    // Check if SMTP2GO reported any failures
+    if (result.data && result.data.failed > 0) {
+      console.error('SMTP2GO reported failures:', result.data.failures);
+      throw new Error(`Email failed to send: ${JSON.stringify(result.data.failures)}`);
+    }
+
     console.log("Email sent successfully via SMTP2GO:", result);
 
     return new Response(JSON.stringify({ 
       success: true, 
       result,
-      message: 'OTP email sent successfully'
+      message: 'OTP email sent successfully',
+      email_id: result.data?.email_id
     }), {
       status: 200,
       headers: {

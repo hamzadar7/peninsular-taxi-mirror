@@ -47,6 +47,12 @@ export const sendOTPEmail = async (email: string, otp: string, name: string): Pr
     if (!result.success) {
       throw new Error(result.error || 'Failed to send OTP email');
     }
+
+    // Additional validation to ensure email was actually sent
+    if (result.result && result.result.data && result.result.data.failed > 0) {
+      console.error('SMTP2GO reported email failures:', result.result.data.failures);
+      throw new Error('Email delivery failed - please check your email address and try again');
+    }
     
   } catch (error) {
     console.error('Error sending OTP email:', error);
