@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { contactAPI } from "@/utils/apiService";
 import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
@@ -56,23 +56,14 @@ const Contact = () => {
     try {
       console.log('Submitting contact form:', formData);
       
-      const { data, error } = await supabase
-        .from('contacts')
-        .insert([{
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim() || '',
-          message: formData.message.trim(),
-          device_info: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop'
-        }])
-        .select();
+      const response = await contactAPI.create({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || '',
+        message: formData.message.trim()
+      });
 
-      if (error) {
-        console.error('Supabase insert error:', error);
-        throw error;
-      }
-
-      console.log('Contact form submitted successfully:', data);
+      console.log('Contact form submitted successfully:', response);
       
       // Reset form
       setFormData({

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+import { bookingAPI, contactAPI } from "@/utils/apiService";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw } from "lucide-react";
@@ -56,42 +56,26 @@ const AdminDashboard = () => {
     }
   }, [isAuthenticated, authLoading]);
 
-  // Enhanced data loading function using Supabase
+  // Enhanced data loading function using MySQL API
   const loadAllData = useCallback(async () => {
     if (!isAuthenticated) return;
     
     setIsLoading(true);
     
     try {
-      // Load bookings from Supabase
-      const { data: bookingsData, error: bookingsError } = await supabase
-        .from('bookings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (bookingsError) {
-        console.error('Error loading bookings:', bookingsError);
-        throw bookingsError;
-      }
-
-      setBookings(bookingsData || []);
+      // Load bookings from MySQL
+      const bookingsResponse = await bookingAPI.getAll();
+      const bookingsData = bookingsResponse.bookings || [];
+      setBookings(bookingsData);
       
-      // Load contacts from Supabase
-      const { data: contactsData, error: contactsError } = await supabase
-        .from('contacts')
-        .select('*')
-        .order('timestamp', { ascending: false });
-
-      if (contactsError) {
-        console.error('Error loading contacts:', contactsError);
-        throw contactsError;
-      }
-
-      setContacts(contactsData || []);
+      // Load contacts from MySQL
+      const contactsResponse = await contactAPI.getAll();
+      const contactsData = contactsResponse.contacts || [];
+      setContacts(contactsData);
       
       // Set up remarks state
       const remarksState: { [key: string]: string } = {};
-      (bookingsData || []).forEach(booking => {
+      bookingsData.forEach((booking: BookingData) => {
         remarksState[booking.id] = booking.admin_remarks || '';
       });
       setRemarks(remarksState);
@@ -99,7 +83,7 @@ const AdminDashboard = () => {
       setLastRefresh(Date.now());
       
     } catch (error) {
-      console.error('Error loading data from Supabase:', error);
+      console.error('Error loading data from MySQL:', error);
       toast({
         title: "Data Loading Error",
         description: "Failed to load data from database. Please try refreshing.",
@@ -109,40 +93,6 @@ const AdminDashboard = () => {
       setIsLoading(false);
     }
   }, [toast, isAuthenticated]);
-
-  // Real-time subscription for bookings and contacts
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    // Subscribe to bookings changes
-    const bookingsSubscription = supabase
-      .channel('bookings-channel')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'bookings' },
-        (payload) => {
-          console.log('Bookings real-time update:', payload);
-          loadAllData();
-        }
-      )
-      .subscribe();
-
-    // Subscribe to contacts changes
-    const contactsSubscription = supabase
-      .channel('contacts-channel')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'contacts' },
-        (payload) => {
-          console.log('Contacts real-time update:', payload);
-          loadAllData();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(bookingsSubscription);
-      supabase.removeChannel(contactsSubscription);
-    };
-  }, [loadAllData, isAuthenticated]);
 
   // Initial data load and periodic refresh
   useEffect(() => {
@@ -174,18 +124,7 @@ const AdminDashboard = () => {
 
   const handleConfirmBooking = async (bookingId: string) => {
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ 
-          status: 'confirmed',
-          admin_remarks: remarks[bookingId] || ''
-        })
-        .eq('id', bookingId);
-
-      if (error) {
-        console.error('Error confirming booking:', error);
-        throw error;
-      }
+      await bookingAPI.updateStatus(bookingId, 'confirmed', remarks[bookingId] || '');
 
       toast({
         title: "Booking Confirmed",
@@ -205,15 +144,7 @@ const AdminDashboard = () => {
 
   const handleSaveRemarks = async (bookingId: string) => {
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .update({ admin_remarks: remarks[bookingId] || '' })
-        .eq('id', bookingId);
-
-      if (error) {
-        console.error('Error saving remarks:', error);
-        throw error;
-      }
+      await bookingAPI.saveRemarks(bookingId, remarks[bookingId] || '');
 
       toast({
         title: "Remarks Saved",
@@ -233,15 +164,7 @@ const AdminDashboard = () => {
 
   const handleMarkContactAsRead = async (contactId: string) => {
     try {
-      const { error } = await supabase
-        .from('contacts')
-        .update({ status: 'read' })
-        .eq('id', contactId);
-
-      if (error) {
-        console.error('Error marking contact as read:', error);
-        throw error;
-      }
+      await contactAPI.markAsRead(contactId);
 
       toast({
         title: "Message Marked as Read",
@@ -329,7 +252,7 @@ const AdminDashboard = () => {
               <div className="flex items-center space-x-2 sm:space-x-4 text-xs">
                 <span>📋 {bookings.length} bookings</span>
                 <span>📧 {contacts.length} messages</span>
-                <span className="hidden sm:inline">🔄 Real-time updates enabled</span>
+                <span className="hidden sm:inline">🔄 Auto-refresh enabled</span>
               </div>
             </div>
           </div>

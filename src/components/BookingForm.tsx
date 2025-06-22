@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { bookingAPI } from "@/utils/apiService";
 import { useToast } from "@/hooks/use-toast";
 import { useBookingForm } from "@/hooks/useBookingForm";
 import { useGoogleMapsAutocomplete } from "@/hooks/useGoogleMapsAutocomplete";
@@ -35,37 +35,27 @@ const BookingForm = () => {
     (address) => handleInputChange('destination', address)
   );
 
-  const saveBookingToSupabase = async (bookingData: any) => {
+  const saveBookingToDatabase = async (bookingData: any) => {
     try {
-      console.log('Saving booking to Supabase:', bookingData);
+      console.log('Saving booking to database:', bookingData);
       
-      const { data, error } = await supabase
-        .from('bookings')
-        .insert([{
-          contact_name: bookingData.contactName,
-          contact_phone: bookingData.contactPhone,
-          contact_email: bookingData.contactEmail,
-          pickup_location: bookingData.pickupLocation,
-          destination: bookingData.destination,
-          date: bookingData.date,
-          time: bookingData.time,
-          passengers: bookingData.passengers,
-          vehicle_type: bookingData.vehicleType,
-          special_requests: bookingData.specialRequests || '',
-          device_info: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop',
-          status: 'pending'
-        }])
-        .select();
+      const response = await bookingAPI.create({
+        contact_name: bookingData.contactName,
+        contact_phone: bookingData.contactPhone,
+        contact_email: bookingData.contactEmail,
+        pickup_location: bookingData.pickupLocation,
+        destination: bookingData.destination,
+        date: bookingData.date,
+        time: bookingData.time,
+        passengers: bookingData.passengers,
+        vehicle_type: bookingData.vehicleType,
+        special_requests: bookingData.specialRequests || ''
+      });
 
-      if (error) {
-        console.error('Supabase insert error:', error);
-        throw error;
-      }
-
-      console.log('Booking saved successfully to Supabase:', data);
-      return data;
+      console.log('Booking saved successfully to database:', response);
+      return response;
     } catch (error) {
-      console.error('Error saving booking to Supabase:', error);
+      console.error('Error saving booking to database:', error);
       throw new Error('Failed to save booking to database');
     }
   };
@@ -149,8 +139,8 @@ const BookingForm = () => {
           specialRequests: formData.specialRequests
         };
         
-        console.log('Saving booking to Supabase...');
-        await saveBookingToSupabase(bookingData);
+        console.log('Saving booking to database...');
+        await saveBookingToDatabase(bookingData);
         
         // Reset form
         resetForm();
