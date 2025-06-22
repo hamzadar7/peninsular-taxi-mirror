@@ -34,10 +34,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('SMTP2GO_API_KEY found, preparing email...');
 
+    // Use the verified domain from your SMTP2GO account
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: "contact@capelsoundtaxi.com.au",
+      sender: "noreply@capelsoundtaxi.com.au", // Changed from contact@ to noreply@
       subject: "Your Booking Verification Code - Capel Sound Taxi",
       text_body: `Hello ${name},\n\nYour verification code for taxi booking is: ${otp}\n\nThis code will expire in 10 minutes.\n\nPlease enter this code to confirm your booking.\n\nBest regards,\nCapel Sound Taxi Team\n\nPhone: (03) 5983 1800\nEmail: contact@capelsoundtaxi.com.au\nWebsite: www.capelsoundtaxi.com.au`,
       html_body: `
@@ -93,8 +94,8 @@ const handler = async (req: Request): Promise<Response> => {
       `
     };
 
-    console.log('Sending email via SMTP2GO API...');
-    console.log('Email data prepared for:', email);
+    console.log('Sending email via SMTP2GO API to:', email);
+    console.log('Using sender:', emailData.sender);
 
     const response = await fetch("https://api.smtp2go.com/v3/email/send", {
       method: "POST",
@@ -106,26 +107,37 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('SMTP2GO response status:', response.status);
     const result = await response.json();
-    console.log('SMTP2GO response:', result);
+    console.log('SMTP2GO full response:', JSON.stringify(result, null, 2));
     
     if (!response.ok) {
-      console.error('SMTP2GO API error:', result);
-      throw new Error(`SMTP2GO API error: ${JSON.stringify(result)}`);
+      console.error('SMTP2GO API error. Status:', response.status);
+      console.error('SMTP2GO API error response:', result);
+      throw new Error(`SMTP2GO API error (${response.status}): ${JSON.stringify(result)}`);
     }
 
     // Check if SMTP2GO reported any failures
     if (result.data && result.data.failed > 0) {
       console.error('SMTP2GO reported failures:', result.data.failures);
-      throw new Error(`Email failed to send: ${JSON.stringify(result.data.failures)}`);
+      throw new Error(`Email failed to send. Failures: ${JSON.stringify(result.data.failures)}`);
     }
 
-    console.log("Email sent successfully via SMTP2GO:", result);
+    // Check if email was actually sent successfully
+    if (!result.data || result.data.succeeded === 0) {
+      console.error('SMTP2GO did not send any emails successfully:', result);
+      throw new Error('Email sending failed - no emails were sent successfully');
+    }
+
+    console.log("Email sent successfully via SMTP2GO. Email ID:", result.data?.email_id);
+    console.log("Emails succeeded:", result.data?.succeeded);
+    console.log("Emails failed:", result.data?.failed);
 
     return new Response(JSON.stringify({ 
       success: true, 
       result,
       message: 'OTP email sent successfully',
-      email_id: result.data?.email_id
+      email_id: result.data?.email_id,
+      emails_sent: result.data?.succeeded || 0,
+      emails_failed: result.data?.failed || 0
     }), {
       status: 200,
       headers: {
@@ -135,10 +147,12 @@ const handler = async (req: Request): Promise<Response> => {
     });
   } catch (error: any) {
     console.error("Error in send-otp function:", error);
+    console.error("Error stack:", error.stack);
     return new Response(
       JSON.stringify({ 
         error: error.message,
-        details: 'Failed to send OTP email'
+        details: 'Failed to send OTP email',
+        timestamp: new Date().toISOString()
       }),
       {
         status: 500,
