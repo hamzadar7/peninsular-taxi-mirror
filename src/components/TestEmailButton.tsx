@@ -29,7 +29,7 @@ const TestEmailButton = () => {
       
       toast({
         title: "Test Email Sent Successfully! 📧",
-        description: `Production-ready OTP email sent to ${testEmail}. Check your INBOX first, then spam folder if needed.`,
+        description: `Production email sent from contact@capelsoundtaxi.com.au to ${testEmail}. Check your INBOX first!`,
       });
       
       console.log('Test email sent successfully');
@@ -51,8 +51,8 @@ const TestEmailButton = () => {
     <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 mb-6 shadow-sm">
       <h3 className="text-lg font-bold text-green-800 mb-4">🚀 Production Email System Test</h3>
       <p className="text-green-700 mb-4 text-sm">
-        Test the production-ready email delivery system with enhanced authentication headers and inbox optimization. 
-        This will send a test OTP (123456) to your email with improved deliverability.
+        Test the verified domain email delivery system using your registered domain <strong>contact@capelsoundtaxi.com.au</strong>. 
+        This should now deliver directly to your inbox with proper authentication.
       </p>
       
       <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -85,17 +85,17 @@ const TestEmailButton = () => {
         disabled={isSending}
         className="bg-green-600 hover:bg-green-700 text-white font-semibold"
       >
-        {isSending ? 'Sending Production Test Email...' : 'Send Production Test Email'}
+        {isSending ? 'Sending Verified Domain Email...' : 'Send Verified Domain Test Email'}
       </Button>
       
       <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
         <p className="text-xs text-yellow-800 font-medium">
-          ✅ <strong>Production Settings Applied:</strong>
+          ✅ <strong>Verified Domain Settings:</strong>
         </p>
         <ul className="text-xs text-yellow-700 mt-1 ml-4 list-disc">
-          <li>Enhanced email authentication headers</li>
-          <li>Proper sender name: "Capel Sound Taxi"</li>
-          <li>Inbox-optimized email structure</li>
+          <li>Sender: contact@capelsoundtaxi.com.au (Verified ✓)</li>
+          <li>Domain: capelsoundtaxi.com.au (Verified ✓)</li>
+          <li>Proper email authentication headers</li>
           <li>Test OTP will be: <strong>123456</strong></li>
         </ul>
       </div>

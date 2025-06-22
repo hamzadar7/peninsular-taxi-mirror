@@ -52,8 +52,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('=== PREPARING EMAIL DATA ===');
 
-    // Use a verified sender email that works with SMTP2GO
-    const senderEmail = "noreply@smtp2go.com"; // Using SMTP2GO's verified domain
+    // Use your verified domain email address
+    const senderEmail = "contact@capelsoundtaxi.com.au";
     const senderName = "Capel Sound Taxi";
     
     console.log('Using sender email:', senderEmail);
@@ -77,20 +77,12 @@ const handler = async (req: Request): Promise<Response> => {
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Verification Code - Capel Sound Taxi</title>
-            <style type="text/css">
-              @media only screen and (max-width: 600px) {
-                .container { width: 100% !important; }
-                .content { padding: 20px !important; }
-                .code-box { padding: 20px 25px !important; }
-                .code { font-size: 36px !important; letter-spacing: 6px !important; }
-              }
-            </style>
           </head>
           <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa; line-height: 1.6;">
             <table style="width: 100%; border-collapse: collapse; margin: 0; padding: 0; background-color: #f8f9fa;">
               <tr>
                 <td align="center" style="padding: 40px 20px;">
-                  <table class="container" style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden;">
+                  <table style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); overflow: hidden;">
                     <!-- Header -->
                     <tr>
                       <td style="background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 40px; text-align: center;">
@@ -102,7 +94,7 @@ const handler = async (req: Request): Promise<Response> => {
                     
                     <!-- Content -->
                     <tr>
-                      <td class="content" style="padding: 40px;">
+                      <td style="padding: 40px;">
                         <h2 style="color: #333; margin-top: 0; font-size: 24px; font-weight: 600;">Hello ${name},</h2>
                         
                         <p style="color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
@@ -111,8 +103,8 @@ const handler = async (req: Request): Promise<Response> => {
                         
                         <!-- OTP Code Box -->
                         <div style="text-align: center; margin: 35px 0;">
-                          <div class="code-box" style="display: inline-block; background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 25px 35px; border-radius: 12px; border: 3px solid #ffb300; box-shadow: 0 8px 16px rgba(255,193,7,0.4);">
-                            <span class="code" style="font-size: 42px; font-weight: bold; color: #000; letter-spacing: 8px; font-family: 'Courier New', Consolas, monospace;">${otp}</span>
+                          <div style="display: inline-block; background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); padding: 25px 35px; border-radius: 12px; border: 3px solid #ffb300; box-shadow: 0 8px 16px rgba(255,193,7,0.4);">
+                            <span style="font-size: 42px; font-weight: bold; color: #000; letter-spacing: 8px; font-family: 'Courier New', Consolas, monospace;">${otp}</span>
                           </div>
                         </div>
                         
