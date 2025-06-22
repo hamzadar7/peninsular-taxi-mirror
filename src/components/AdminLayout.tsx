@@ -46,7 +46,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .admin-layout-container {
           position: relative;
           width: 100%;

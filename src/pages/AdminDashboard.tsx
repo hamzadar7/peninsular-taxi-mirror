@@ -585,7 +585,7 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .admin-dashboard-container {
           isolation: isolate;
           touch-action: manipulation;

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -95,7 +94,7 @@ const AdminLogin = () => {
         </Card>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .admin-login-container {
           isolation: isolate;
           touch-action: manipulation;
