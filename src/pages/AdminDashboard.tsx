@@ -1,25 +1,98 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getBookings, updateBookingStatus, BookingData } from "@/utils/bookingStorage";
-import { getContacts, updateContactStatus, ContactData } from "@/utils/contactStorage";
-import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw } from "lucide-react";
+import { getBookings, updateBookingStatus, BookingData, getStorageInfo } from "@/utils/bookingStorage";
+import { getContacts, updateContactStatus, ContactData, getContactStorageInfo } from "@/utils/contactStorage";
+import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw, AlertCircle, Smartphone, Monitor } from "lucide-react";
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState<BookingData[]>([]);
   const [contacts, setContacts] = useState<ContactData[]>([]);
-  const [activeTab, setActiveTab] = useState<'bookings' | 'contacts'>('bookings');
+  const [activeTab, setActiveTab] = useState<'bookings' | 'contacts' | 'debug'>('bookings');
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed'>('all');
   const [dateFilter, setDateFilter] = useState('');
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
+  const [storageInfo, setStorageInfo] = useState<any>(null);
+  const [contactStorageInfo, setContactStorageInfo] = useState<any>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 768 || navigator.userAgent.includes('Mobile');
+      setIsMobile(mobile);
+      console.log('Device type:', mobile ? 'Mobile' : 'Desktop');
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Enhanced data loading function
+  const loadAllData = useCallback(async () => {
+    console.log('=== Loading all data ===');
+    console.log('Device info:', {
+      userAgent: navigator.userAgent,
+      isMobile: navigator.userAgent.includes('Mobile'),
+      screenWidth: window.innerWidth,
+      localStorage: typeof(Storage) !== "undefined"
+    });
+    
+    setIsLoading(true);
+    
+    try {
+      // Add delay for mobile devices to ensure DOM is ready
+      if (isMobile) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      // Load storage info for debugging
+      const bookingStorageInfo = getStorageInfo();
+      const contactStorageInfo = getContactStorageInfo();
+      
+      console.log('Booking storage info:', bookingStorageInfo);
+      console.log('Contact storage info:', contactStorageInfo);
+      
+      setStorageInfo(bookingStorageInfo);
+      setContactStorageInfo(contactStorageInfo);
+      
+      // Load bookings
+      console.log('Loading bookings...');
+      const allBookings = getBookings();
+      console.log('Bookings loaded:', allBookings.length, allBookings);
+      setBookings(allBookings);
+      
+      // Load contacts
+      console.log('Loading contacts...');
+      const allContacts = getContacts();
+      console.log('Contacts loaded:', allContacts.length, allContacts);
+      setContacts(allContacts);
+      
+      // Set up remarks state
+      const remarksState: { [key: string]: string } = {};
+      allBookings.forEach(booking => {
+        remarksState[booking.id] = booking.adminRemarks || '';
+      });
+      setRemarks(remarksState);
+      
+      setLastRefresh(Date.now());
+      console.log('=== Data loading complete ===');
+      
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isMobile]);
+
+  // Initial setup and auth check
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('admin_logged_in');
     if (isLoggedIn !== 'true') {
@@ -27,64 +100,37 @@ const AdminDashboard = () => {
       return;
     }
     
-    // Force initial data load
+    // Initial data load
     loadAllData();
     
-    // Set up periodic refresh for mobile devices
-    const interval = setInterval(() => {
-      loadAllData();
-    }, 30000); // Refresh every 30 seconds
-
-    return () => clearInterval(interval);
-  }, [navigate]);
-
-  const loadAllData = async () => {
-    console.log('Loading all data...');
-    setIsLoading(true);
+    // Set up periodic refresh (more frequent on mobile)
+    const refreshInterval = isMobile ? 15000 : 30000; // 15s on mobile, 30s on desktop
+    const interval = setInterval(loadAllData, refreshInterval);
     
-    try {
-      // Add small delay to ensure localStorage is ready on mobile
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      loadBookings();
-      loadContacts();
-      setLastRefresh(Date.now());
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadBookings = () => {
-    console.log('Loading bookings...');
-    try {
-      const allBookings = getBookings();
-      console.log('Loaded bookings:', allBookings);
-      setBookings(allBookings);
-      
-      const remarksState: { [key: string]: string } = {};
-      allBookings.forEach(booking => {
-        remarksState[booking.id] = booking.adminRemarks || '';
-      });
-      setRemarks(remarksState);
-    } catch (error) {
-      console.error('Error loading bookings:', error);
-      setBookings([]);
-    }
-  };
-
-  const loadContacts = () => {
-    console.log('Loading contacts...');
-    try {
-      const allContacts = getContacts();
-      console.log('Loaded contacts:', allContacts);
-      setContacts(allContacts);
-    } catch (error) {
-      console.error('Error loading contacts:', error);
-      setContacts([]);
-    }
-  };
+    // Listen for storage events (cross-tab synchronization)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'taxi_bookings' || e.key === 'taxi_contacts') {
+        console.log('Storage change detected:', e.key);
+        loadAllData();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for focus events (reload when returning to tab)
+    const handleFocus = () => {
+      console.log('Tab focused, reloading data...');
+      loadAllData();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [navigate, loadAllData, isMobile]);
 
   const handleRefresh = () => {
     console.log('Manual refresh triggered...');
@@ -97,21 +143,33 @@ const AdminDashboard = () => {
   };
 
   const handleConfirmBooking = (bookingId: string) => {
-    updateBookingStatus(bookingId, 'confirmed', remarks[bookingId]);
-    loadBookings();
+    try {
+      updateBookingStatus(bookingId, 'confirmed', remarks[bookingId]);
+      loadAllData(); // Reload to ensure sync
+    } catch (error) {
+      console.error('Error confirming booking:', error);
+    }
   };
 
   const handleSaveRemarks = (bookingId: string) => {
-    const booking = bookings.find(b => b.id === bookingId);
-    if (booking) {
-      updateBookingStatus(bookingId, booking.status, remarks[bookingId]);
-      loadBookings();
+    try {
+      const booking = bookings.find(b => b.id === bookingId);
+      if (booking) {
+        updateBookingStatus(bookingId, booking.status, remarks[bookingId]);
+        loadAllData(); // Reload to ensure sync
+      }
+    } catch (error) {
+      console.error('Error saving remarks:', error);
     }
   };
 
   const handleMarkContactAsRead = (contactId: string) => {
-    updateContactStatus(contactId, 'read');
-    loadContacts();
+    try {
+      updateContactStatus(contactId, 'read');
+      loadAllData(); // Reload to ensure sync
+    } catch (error) {
+      console.error('Error marking contact as read:', error);
+    }
   };
 
   const filteredBookings = bookings.filter(booking => {
@@ -126,6 +184,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <div className="bg-black text-white p-2 sm:p-3 md:p-4">
         <div className="container mx-auto">
           <div className="flex flex-col gap-3 sm:gap-4">
@@ -136,7 +195,13 @@ const AdminDashboard = () => {
                   alt="Capelsound Taxi" 
                   className="h-6 sm:h-8 md:h-12 w-auto flex-shrink-0"
                 />
-                <h1 className="text-sm sm:text-lg md:text-2xl font-bold truncate">Capelsound Taxi - Admin</h1>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-sm sm:text-lg md:text-2xl font-bold truncate">Capelsound Taxi - Admin</h1>
+                  <div className="flex items-center space-x-2 text-xs text-gray-300">
+                    {isMobile ? <Smartphone className="h-3 w-3" /> : <Monitor className="h-3 w-3" />}
+                    <span>{isMobile ? 'Mobile' : 'Desktop'} View</span>
+                  </div>
+                </div>
               </div>
               <div className="flex items-center space-x-2 w-full sm:w-auto">
                 <Button 
@@ -157,19 +222,26 @@ const AdminDashboard = () => {
               </div>
             </div>
             
-            {/* Status indicator */}
-            <div className="text-xs text-gray-300">
-              {isLoading ? 'Loading...' : `Last updated: ${new Date(lastRefresh).toLocaleTimeString()}`}
+            {/* Enhanced status indicator */}
+            <div className="text-xs text-gray-300 space-y-1">
+              <div>
+                {isLoading ? 'Loading...' : `Last updated: ${new Date(lastRefresh).toLocaleTimeString()}`}
+              </div>
+              <div className="flex items-center space-x-4">
+                <span>📋 {bookings.length} bookings</span>
+                <span>📧 {contacts.length} messages</span>
+                <span>🔄 {storageInfo?.storageAvailable ? '✅' : '❌'} Storage</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto p-2 sm:p-3 md:p-6">
-        {/* Tabs */}
+        {/* Enhanced Tabs with Debug tab */}
         <Card className="mb-3 md:mb-6">
           <CardContent className="p-2 sm:p-3 md:p-4">
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:space-x-4">
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:space-x-4">
               <Button 
                 variant={activeTab === 'bookings' ? 'default' : 'outline'}
                 onClick={() => setActiveTab('bookings')}
@@ -184,12 +256,68 @@ const AdminDashboard = () => {
                 className="flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm bg-white text-black border-black hover:bg-gray-100"
               >
                 <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Messages ({newContacts.length} new)</span>
+                <span>Messages ({newContacts.length})</span>
+              </Button>
+              <Button 
+                variant={activeTab === 'debug' ? 'default' : 'outline'}
+                onClick={() => setActiveTab('debug')}
+                className="flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm bg-white text-black border-black hover:bg-gray-100"
+              >
+                <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>Debug</span>
               </Button>
             </div>
           </CardContent>
         </Card>
 
+        {/* Debug Tab */}
+        {activeTab === 'debug' && (
+          <Card className="mb-3 md:mb-6">
+            <CardHeader>
+              <CardTitle className="text-base sm:text-lg md:text-xl">Debug Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 text-xs sm:text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-3 rounded">
+                    <h4 className="font-semibold mb-2">Device Info</h4>
+                    <pre className="text-xs overflow-auto">{JSON.stringify({
+                      isMobile,
+                      userAgent: navigator.userAgent,
+                      screenWidth: window.innerWidth,
+                      storageAvailable: typeof(Storage) !== "undefined"
+                    }, null, 2)}</pre>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded">
+                    <h4 className="font-semibold mb-2">Booking Storage</h4>
+                    <pre className="text-xs overflow-auto">{JSON.stringify(storageInfo, null, 2)}</pre>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded">
+                    <h4 className="font-semibold mb-2">Contact Storage</h4>
+                    <pre className="text-xs overflow-auto">{JSON.stringify(contactStorageInfo, null, 2)}</pre>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded">
+                    <h4 className="font-semibold mb-2">Current Data</h4>
+                    <div className="space-y-2">
+                      <p><strong>Bookings:</strong> {bookings.length}</p>
+                      <p><strong>Contacts:</strong> {contacts.length}</p>
+                      <p><strong>Last Refresh:</strong> {new Date(lastRefresh).toLocaleString()}</p>
+                      <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
+                    </div>
+                  </div>
+                </div>
+                <Button 
+                  onClick={handleRefresh}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Force Refresh All Data
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Rest of the existing code for bookings and contacts tabs */}
         {activeTab === 'bookings' && (
           <>
             {/* Booking Filters */}
@@ -198,6 +326,7 @@ const AdminDashboard = () => {
                 <CardTitle className="text-base sm:text-lg md:text-xl">Filters</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
+                {/* ... keep existing code (filter UI) */}
                 <div className="space-y-3 sm:space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <Button 
@@ -275,6 +404,9 @@ const AdminDashboard = () => {
                               <h4 className="font-semibold text-sm sm:text-base">{booking.contactName}</h4>
                               <p className="text-xs sm:text-sm text-gray-600">{booking.contactPhone}</p>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contactEmail}</p>
+                              {booking.deviceInfo && (
+                                <p className="text-xs text-gray-500">📱 {booking.deviceInfo}</p>
+                              )}
                             </div>
                             <div className="space-y-1">
                               <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickupLocation}</p>
@@ -345,6 +477,9 @@ const AdminDashboard = () => {
                               <h4 className="font-semibold text-sm sm:text-base">{booking.contactName}</h4>
                               <p className="text-xs sm:text-sm text-gray-600">{booking.contactPhone}</p>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contactEmail}</p>
+                              {booking.deviceInfo && (
+                                <p className="text-xs text-gray-500">📱 {booking.deviceInfo}</p>
+                              )}
                             </div>
                             <div className="space-y-1">
                               <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickupLocation}</p>
@@ -411,6 +546,9 @@ const AdminDashboard = () => {
                               <h4 className="font-semibold text-sm sm:text-base md:text-lg">{contact.name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{contact.email}</p>
                               {contact.phone && <p className="text-xs sm:text-sm text-gray-600">{contact.phone}</p>}
+                              {contact.deviceInfo && (
+                                <p className="text-xs text-gray-500">📱 {contact.deviceInfo}</p>
+                              )}
                               <p className="text-xs text-gray-500 mt-1">
                                 {new Date(contact.timestamp).toLocaleString()}
                               </p>
@@ -464,6 +602,9 @@ const AdminDashboard = () => {
                               <h4 className="font-semibold text-sm sm:text-base md:text-lg">{contact.name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{contact.email}</p>
                               {contact.phone && <p className="text-xs sm:text-sm text-gray-600">{contact.phone}</p>}
+                              {contact.deviceInfo && (
+                                <p className="text-xs text-gray-500">📱 {contact.deviceInfo}</p>
+                              )}
                               <p className="text-xs text-gray-500 mt-1">
                                 {new Date(contact.timestamp).toLocaleString()}
                               </p>
