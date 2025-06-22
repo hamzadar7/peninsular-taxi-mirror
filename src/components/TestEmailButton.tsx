@@ -24,15 +24,15 @@ const TestEmailButton = () => {
 
     setIsSending(true);
     try {
-      console.log('Starting email delivery test...');
+      console.log('Starting email delivery test with verified sender...');
       await sendTestOTP(testEmail, testName);
       
       toast({
         title: "✅ Email Sent Successfully!",
-        description: `Email sent from Capel Sound Taxi to ${testEmail}. Check your inbox!`,
+        description: `OTP email sent from contact@capelsoundtaxi.com.au to ${testEmail}. Check your inbox!`,
       });
       
-      console.log('Test email sent successfully');
+      console.log('Test email sent successfully with verified sender');
     } catch (error) {
       console.error('Test email failed:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to send test email';
@@ -48,11 +48,11 @@ const TestEmailButton = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-6 mb-6 shadow-sm">
-      <h3 className="text-lg font-bold text-blue-800 mb-4">📧 Email Delivery Test</h3>
-      <p className="text-blue-700 mb-4 text-sm">
-        Test our email system using <strong>Capel Sound Taxi</strong> sender. 
-        This will help us verify if emails are reaching your inbox properly.
+    <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 mb-6 shadow-sm">
+      <h3 className="text-lg font-bold text-green-800 mb-4">📧 Email Delivery Test</h3>
+      <p className="text-green-700 mb-4 text-sm">
+        Test our email system using verified sender: <strong>contact@capelsoundtaxi.com.au</strong>
+        <br />This should deliver directly to your inbox without spam issues.
       </p>
       
       <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -83,28 +83,28 @@ const TestEmailButton = () => {
       <Button
         onClick={handleTestEmail}
         disabled={isSending}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+        className="bg-green-600 hover:bg-green-700 text-white font-semibold"
       >
         {isSending ? 'Sending Test Email...' : 'Test Email Delivery'}
       </Button>
       
-      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-        <p className="text-sm text-yellow-800 font-medium">
-          💡 <strong>Troubleshooting Email Delivery:</strong>
+      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-sm text-blue-800 font-medium">
+          ✅ <strong>Email Configuration Updated:</strong>
         </p>
-        <ul className="text-sm text-yellow-700 mt-2 ml-4 list-disc space-y-1">
-          <li>Check your spam/junk folder if email doesn't arrive in inbox</li>
-          <li>Add contact@capelsoundtaxi.com.au to your contacts</li>
-          <li>Mark emails as "Not Spam" if they appear in spam folder</li>
+        <ul className="text-sm text-blue-700 mt-2 ml-4 list-disc space-y-1">
+          <li>Using verified sender: <strong>contact@capelsoundtaxi.com.au</strong></li>
+          <li>Professional HTML email template for better deliverability</li>
+          <li>Added email headers to avoid spam filters</li>
           <li>Test OTP will be: <strong>123456</strong></li>
         </ul>
       </div>
       
-      <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-md">
-        <p className="text-xs text-gray-700">
-          <strong>Why emails might go to spam:</strong> Email providers have become stricter. 
-          If emails reach spam initially, marking them as "Not Spam" will help train your email provider 
-          to deliver future emails to your inbox.
+      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
+        <p className="text-xs text-green-700">
+          <strong>Why this will work better:</strong> We're now using your verified domain email 
+          (contact@capelsoundtaxi.com.au) which is properly authenticated with SMTP2GO. This should 
+          significantly improve inbox delivery rates and reduce spam filtering.
         </p>
       </div>
     </div>
