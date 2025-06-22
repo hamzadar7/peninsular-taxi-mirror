@@ -28,8 +28,8 @@ const TestEmailButton = () => {
       await sendTestOTP(testEmail, testName);
       
       toast({
-        title: "Test Email Sent!",
-        description: `Test OTP email sent to ${testEmail}. Check your inbox (and spam folder).`,
+        title: "Test Email Sent Successfully! 📧",
+        description: `Production-ready OTP email sent to ${testEmail}. Check your INBOX first, then spam folder if needed.`,
       });
       
       console.log('Test email sent successfully');
@@ -48,10 +48,11 @@ const TestEmailButton = () => {
   };
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-      <h3 className="text-lg font-bold text-blue-800 mb-4">🧪 Email System Test</h3>
-      <p className="text-blue-700 mb-4 text-sm">
-        Test the email delivery system before using the booking form. This will send a test OTP (123456) to your email.
+    <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 mb-6 shadow-sm">
+      <h3 className="text-lg font-bold text-green-800 mb-4">🚀 Production Email System Test</h3>
+      <p className="text-green-700 mb-4 text-sm">
+        Test the production-ready email delivery system with enhanced authentication headers and inbox optimization. 
+        This will send a test OTP (123456) to your email with improved deliverability.
       </p>
       
       <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -82,14 +83,22 @@ const TestEmailButton = () => {
       <Button
         onClick={handleTestEmail}
         disabled={isSending}
-        className="bg-blue-600 hover:bg-blue-700 text-white"
+        className="bg-green-600 hover:bg-green-700 text-white font-semibold"
       >
-        {isSending ? 'Sending Test Email...' : 'Send Test Email'}
+        {isSending ? 'Sending Production Test Email...' : 'Send Production Test Email'}
       </Button>
       
-      <p className="text-xs text-blue-600 mt-2">
-        ✓ Test OTP will be: <strong>123456</strong> | Check both inbox and spam folder
-      </p>
+      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+        <p className="text-xs text-yellow-800 font-medium">
+          ✅ <strong>Production Settings Applied:</strong>
+        </p>
+        <ul className="text-xs text-yellow-700 mt-1 ml-4 list-disc">
+          <li>Enhanced email authentication headers</li>
+          <li>Proper sender name: "Capel Sound Taxi"</li>
+          <li>Inbox-optimized email structure</li>
+          <li>Test OTP will be: <strong>123456</strong></li>
+        </ul>
+      </div>
     </div>
   );
 };
