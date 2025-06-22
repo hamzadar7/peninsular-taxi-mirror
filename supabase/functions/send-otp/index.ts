@@ -34,9 +34,10 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("SMTP2GO_API_KEY not configured");
     }
 
-    // Use a more inbox-friendly sender configuration
+    // Use proper RFC 5322 format for sender name display
     const senderEmail = "contact@capelsoundtaxi.com.au";
     const senderName = "Capel Sound Taxi";
+    const senderFormatted = `"${senderName}" <${senderEmail}>`;
     
     // Create simple, business-focused email content
     const subject = testMode 
@@ -111,19 +112,22 @@ This is an automated message. Please do not reply.`;
 </body>
 </html>`;
 
-    // Minimal, clean email configuration for better deliverability
+    // Email configuration optimized for deliverability with proper sender name
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: senderEmail,
-      sender_name: senderName,
+      sender: senderFormatted,
       subject: subject,
       text_body: textBody,
       html_body: htmlBody,
       custom_headers: [
         {
+          header: "From",
+          value: senderFormatted
+        },
+        {
           header: "Reply-To",
-          value: "contact@capelsoundtaxi.com.au"
+          value: senderEmail
         },
         {
           header: "X-Mailer",
@@ -137,6 +141,7 @@ This is an automated message. Please do not reply.`;
     };
 
     console.log('Sending email via SMTP2GO...');
+    console.log('Using sender:', senderFormatted);
     
     const response = await fetch("https://api.smtp2go.com/v3/email/send", {
       method: "POST",

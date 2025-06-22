@@ -10,7 +10,6 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { sendOTPEmail, generateOTP } from "@/utils/emailService";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import TestEmailButton from "./TestEmailButton";
 
 declare global {
   interface Window {
@@ -402,9 +401,6 @@ const BookingForm = () => {
               Fill out the form below and we'll confirm your booking shortly
             </p>
           </div>
-
-          {/* Add the test email button */}
-          <TestEmailButton />
 
           <Card id="booking-form" className="shadow-xl">
             <CardHeader className="bg-yellow-400 text-black py-3 sm:py-4 lg:py-6">
