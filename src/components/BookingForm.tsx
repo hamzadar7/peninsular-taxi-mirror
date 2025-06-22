@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -227,14 +226,14 @@ const BookingForm = () => {
         expiryTime.setMinutes(expiryTime.getMinutes() + 10);
         setOtpExpiry(expiryTime);
         
-        console.log('Sending OTP email via SMTP2GO...');
+        console.log('Attempting to send OTP via SMTP2GO...');
         await sendOTPEmail(formData.email, otp, formData.fullName);
         
         setIsOTPSent(true);
-        setMessage('✅ OTP sent to your email. Please check and enter it below to confirm your booking.');
+        setMessage('✅ OTP sent successfully! Please check your email for the verification code.');
         toast({
-          title: "OTP Sent",
-          description: "Please check your email for the verification code.",
+          title: "OTP Sent Successfully",
+          description: "Please check your email for the 6-digit verification code.",
         });
         
       } catch (error) {
@@ -304,6 +303,7 @@ const BookingForm = () => {
           specialRequests: formData.specialRequests
         };
         
+        console.log('Saving booking to Supabase...');
         await saveBookingToSupabase(bookingData);
         
         // Reset form
@@ -332,7 +332,7 @@ const BookingForm = () => {
         setMessage(successMsg);
         toast({
           title: "Booking Confirmed",
-          description: "Your taxi booking has been confirmed successfully!",
+          description: "Your taxi booking has been confirmed and saved to our system!",
         });
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
