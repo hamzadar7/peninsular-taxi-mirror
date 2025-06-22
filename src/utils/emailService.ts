@@ -16,7 +16,7 @@ export const sendOTPEmail = async (email: string, otp: string, name: string): Pr
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5scGd5bGJ3Yml6Y2JraXJhd2llIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1NTgyOTYsImV4cCI6MjA2NjEzNDI5Nn0.ruadfjd_b1lx0t3M-di77ISqxggYv5Eq_sG7H7rSoKI'}`,
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5scGd5bGJ3Yml6Y2JraXJhd2llIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1NTgyOTYsImV4cCI6MjA2NjEzNDI5Nn0.ruadfjd_b1lx0t3M-di77ISqxggYv5Eq_sG7H7rSoKI`,
       },
       body: JSON.stringify({
         email,
