@@ -29,134 +29,167 @@ try {
         error_log("To: " . $email);
         error_log("Name: " . $name);
         error_log("Test Mode: " . ($testMode ? 'true' : 'false'));
-        error_log("API Key: " . substr(SMTP2GO_API_KEY, 0, 10) . "...");
         
-        // Prepare email data for SMTP2GO with verified sender
+        // Prepare email data for SMTP2GO with improved deliverability
         $emailData = [
             'api_key' => SMTP2GO_API_KEY,
             'to' => [$email],
             'sender' => 'Capelsound Taxi <contact@capelsoundtaxi.com.au>',
             'reply_to' => 'contact@capelsoundtaxi.com.au',
-            'subject' => 'Your Booking Verification Code - Capelsound Taxi',
+            'subject' => ($testMode ? '[TEST] ' : '') . 'Booking Verification Code - Capelsound Taxi',
             'html_body' => "
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset='utf-8'>
-                    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-                    <title>Booking Verification - Capelsound Taxi</title>
-                </head>
-                <body style='margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;'>
-                    <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff;'>
-                        <!-- Header -->
-                        <div style='background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 30px; text-align: center;'>
-                            <h1 style='color: #000000; margin: 0; font-size: 28px; font-weight: bold;'>Capelsound Taxi</h1>
-                            <p style='color: #000000; margin: 10px 0 0 0; font-size: 16px;'>Your Trusted Transport Service</p>
-                        </div>
-                        
-                        <!-- Main Content -->
-                        <div style='padding: 40px 30px; background: #ffffff;'>
-                            <h2 style='color: #333333; margin-bottom: 20px; font-size: 24px;'>Hello {$name},</h2>
+<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+<html xmlns=\"http://www.w3.org/1999/xhtml\">
+<head>
+    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
+    <title>Booking Verification - Capelsound Taxi</title>
+    <!--[if mso]>
+    <style type=\"text/css\">
+    table {border-collapse: collapse; border-spacing: 0; margin: 0;}
+    div, td {padding: 0;}
+    div {margin: 0 !important;}
+    </style>
+    <![endif]-->
+</head>
+<body style=\"margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; line-height: 1.6;\">
+    <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\" style=\"background-color: #f8f9fa;\">
+        <tr>
+            <td align=\"center\" style=\"padding: 20px 0;\">
+                <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"600\" style=\"max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);\">
+                    <!-- Header -->
+                    <tr>
+                        <td style=\"background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;\">
+                            <h1 style=\"color: #000000; margin: 0; font-size: 28px; font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\">Capelsound Taxi</h1>
+                            <p style=\"color: #1f2937; margin: 10px 0 0 0; font-size: 16px; font-weight: 500;\">Professional Transport Service</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Content -->
+                    <tr>
+                        <td style=\"padding: 40px 30px; background: #ffffff;\">
+                            <h2 style=\"color: #1f2937; margin: 0 0 20px 0; font-size: 24px; font-weight: 600;\">Hello " . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . ",</h2>
                             
-                            <p style='color: #666666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;'>
-                                Thank you for choosing Capelsound Taxi! To complete your booking, please use the verification code below:
+                            <p style=\"color: #4b5563; font-size: 16px; line-height: 1.6; margin: 0 0 25px 0;\">
+                                Thank you for booking with Capelsound Taxi. Please use the verification code below to confirm your booking:
                             </p>
                             
-                            <!-- OTP Box -->
-                            <div style='background: #f8f9fa; border: 2px solid #fbbf24; border-radius: 8px; padding: 25px; text-align: center; margin: 30px 0;'>
-                                <p style='color: #333333; margin: 0 0 15px 0; font-size: 16px; font-weight: bold;'>Your Verification Code:</p>
-                                <div style='background: #ffffff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px; display: inline-block;'>
-                                    <span style='color: #f59e0b; font-size: 32px; font-weight: bold; letter-spacing: 4px; font-family: monospace;'>{$otp}</span>
-                                </div>
-                            </div>
+                            <!-- OTP Code -->
+                            <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\" style=\"margin: 30px 0;\">
+                                <tr>
+                                    <td align=\"center\" style=\"background: #f3f4f6; border: 2px solid #fbbf24; border-radius: 8px; padding: 25px;\">
+                                        <p style=\"color: #1f2937; margin: 0 0 15px 0; font-size: 16px; font-weight: 600;\">Your Verification Code:</p>
+                                        <div style=\"background: #ffffff; border: 1px solid #d1d5db; border-radius: 6px; padding: 15px 25px; display: inline-block;\">
+                                            <span style=\"color: #f59e0b; font-size: 32px; font-weight: bold; letter-spacing: 6px; font-family: 'Courier New', monospace;\">" . htmlspecialchars($otp, ENT_QUOTES, 'UTF-8') . "</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                             
-                            <!-- Instructions -->
-                            <div style='background: #fff8e1; border-left: 4px solid #fbbf24; padding: 20px; margin: 30px 0;'>
-                                <h3 style='color: #333333; margin: 0 0 15px 0; font-size: 18px;'>Important Instructions:</h3>
-                                <ul style='color: #666666; font-size: 14px; line-height: 1.6; margin: 0; padding-left: 20px;'>
-                                    <li>This code will expire in <strong>10 minutes</strong></li>
-                                    <li>Please enter this code on the booking page to confirm your reservation</li>
-                                    <li>Do not share this code with anyone</li>
-                                    <li>If you didn't request this verification, please ignore this email</li>
-                                </ul>
-                            </div>
+                            <!-- Important Information -->
+                            <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\" style=\"margin: 25px 0;\">
+                                <tr>
+                                    <td style=\"background: #fef3c7; border-left: 4px solid #fbbf24; padding: 20px;\">
+                                        <h3 style=\"color: #1f2937; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;\">Important Information:</h3>
+                                        <ul style=\"color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0; padding-left: 20px;\">
+                                            <li style=\"margin-bottom: 8px;\">This verification code expires in <strong>10 minutes</strong></li>
+                                            <li style=\"margin-bottom: 8px;\">Enter this code on our booking page to confirm your reservation</li>
+                                            <li style=\"margin-bottom: 8px;\">Keep this code private and do not share it with anyone</li>
+                                            <li>If you did not request this booking, please ignore this email</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
                             
                             <!-- Contact Information -->
-                            <div style='border-top: 1px solid #e0e0e0; padding-top: 25px; margin-top: 30px;'>
-                                <h3 style='color: #333333; margin: 0 0 15px 0; font-size: 18px;'>Need Help?</h3>
-                                <p style='color: #666666; font-size: 14px; margin: 0; line-height: 1.6;'>
-                                    📞 Call us: <strong style='color: #f59e0b;'>+61 408 202 034</strong><br>
-                                    ✉️ Email us: <strong style='color: #f59e0b;'>contact@capelsoundtaxi.com.au</strong><br>
-                                    🌐 Visit: <strong style='color: #f59e0b;'>www.capelsoundtaxi.com.au</strong>
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <!-- Footer -->
-                        <div style='background: #f8f9fa; padding: 25px; text-align: center; border-top: 1px solid #e0e0e0;'>
-                            <p style='color: #999999; font-size: 12px; margin: 0 0 10px 0;'>
-                                © " . date('Y') . " Capelsound Taxi. All rights reserved.
+                            <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\" style=\"border-top: 1px solid #e5e7eb; padding-top: 25px; margin-top: 30px;\">
+                                <tr>
+                                    <td>
+                                        <h3 style=\"color: #1f2937; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;\">Need Assistance?</h3>
+                                        <p style=\"color: #4b5563; font-size: 14px; margin: 0; line-height: 1.8;\">
+                                            <strong>Phone:</strong> <a href=\"tel:+61408202034\" style=\"color: #f59e0b; text-decoration: none;\">+61 408 202 034</a><br>
+                                            <strong>Email:</strong> <a href=\"mailto:contact@capelsoundtaxi.com.au\" style=\"color: #f59e0b; text-decoration: none;\">contact@capelsoundtaxi.com.au</a><br>
+                                            <strong>Website:</strong> <a href=\"https://www.capelsoundtaxi.com.au\" style=\"color: #f59e0b; text-decoration: none;\">www.capelsoundtaxi.com.au</a>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style=\"background: #f9fafb; padding: 25px; text-align: center; border-top: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;\">
+                            <p style=\"color: #6b7280; font-size: 12px; margin: 0 0 5px 0;\">
+                                &copy; " . date('Y') . " Capelsound Taxi. All rights reserved.
                             </p>
-                            <p style='color: #999999; font-size: 12px; margin: 0;'>
-                                Serving Capel Sound & Mornington Peninsula with reliable taxi services.
+                            <p style=\"color: #9ca3af; font-size: 11px; margin: 0;\">
+                                This is an automated message for your taxi booking verification.
                             </p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            ",
-            'text_body' => "
-CAPELSOUND TAXI - BOOKING VERIFICATION
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>",
+            'text_body' => "CAPELSOUND TAXI - BOOKING VERIFICATION
 
-Hello {$name},
+Hello " . $name . ",
 
-Thank you for choosing Capelsound Taxi!
+Thank you for booking with Capelsound Taxi.
 
-Your verification code is: {$otp}
+Your verification code is: " . $otp . "
 
-IMPORTANT INSTRUCTIONS:
-• This code will expire in 10 minutes
-• Please enter this code on the booking page to confirm your reservation
-• Do not share this code with anyone
-• If you didn't request this verification, please ignore this email
+IMPORTANT INFORMATION:
+• This code expires in 10 minutes
+• Enter this code on our booking page to confirm your reservation
+• Keep this code private and do not share it with anyone
+• If you did not request this booking, please ignore this email
 
-NEED HELP?
+NEED ASSISTANCE?
 Phone: +61 408 202 034
 Email: contact@capelsoundtaxi.com.au
 Website: www.capelsoundtaxi.com.au
 
 © " . date('Y') . " Capelsound Taxi. All rights reserved.
-Serving Capel Sound & Mornington Peninsula with reliable taxi services.
-            ",
+This is an automated message for your taxi booking verification.",
             'custom_headers' => [
+                [
+                    'header' => 'Message-ID',
+                    'value' => '<' . uniqid() . '@capelsoundtaxi.com.au>'
+                ],
                 [
                     'header' => 'List-Unsubscribe',
                     'value' => '<mailto:contact@capelsoundtaxi.com.au?subject=Unsubscribe>'
                 ],
                 [
+                    'header' => 'X-Mailer',
+                    'value' => 'Capelsound Taxi Booking System v1.0'
+                ],
+                [
                     'header' => 'X-Priority',
-                    'value' => '1'
+                    'value' => '3'
                 ],
                 [
-                    'header' => 'X-MSMail-Priority',
-                    'value' => 'High'
+                    'header' => 'X-Auto-Response-Suppress',
+                    'value' => 'OOF, DR, RN, NRN'
                 ],
                 [
-                    'header' => 'Return-Path',
-                    'value' => 'contact@capelsoundtaxi.com.au'
+                    'header' => 'Precedence',
+                    'value' => 'bulk'
+                ],
+                [
+                    'header' => 'X-Entity-ID',
+                    'value' => 'capelsound-taxi-otp'
                 ]
             ]
         ];
         
-        // Add test mode prefix if needed
-        if ($testMode) {
-            $emailData['subject'] = '[TEST] ' . $emailData['subject'];
-        }
-        
-        // Log the email data being sent (without sensitive info)
+        // Log the email data being sent
         error_log("Email payload prepared for: " . $email);
         error_log("Subject: " . $emailData['subject']);
-        error_log("Sender: " . $emailData['sender']);
         
         // Send email via SMTP2GO
         $ch = curl_init();
@@ -166,20 +199,19 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'X-Smtp2go-Api-Key: ' . SMTP2GO_API_KEY,
-            'User-Agent: CapelsoundTaxi/1.0'
+            'User-Agent: CapelsoundTaxi/1.0',
+            'Accept: application/json'
         ]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
         
         // Execute the request
         error_log("Sending request to SMTP2GO...");
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError = curl_error($ch);
-        $curlInfo = curl_getinfo($ch);
         curl_close($ch);
         
         // Enhanced error logging
@@ -187,7 +219,6 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
         error_log("HTTP Code: " . $httpCode);
         error_log("CURL Error: " . ($curlError ?: 'None'));
         error_log("Response: " . $response);
-        error_log("CURL Info: " . json_encode($curlInfo));
         
         if ($curlError) {
             error_log("SMTP2GO CURL Error: " . $curlError);
@@ -197,7 +228,6 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
         if ($httpCode !== 200) {
             error_log("SMTP2GO HTTP Error: " . $httpCode . " Response: " . $response);
             
-            // Parse response for more details
             $errorDetails = 'HTTP ' . $httpCode;
             if ($response) {
                 $responseData = json_decode($response, true);
@@ -221,7 +251,7 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
         // Log full response for debugging
         error_log("SMTP2GO Full Response: " . json_encode($responseData));
         
-        // Check response structure - SMTP2GO may return different formats
+        // Check response structure
         if (isset($responseData['data'])) {
             $emailResult = $responseData['data'];
         } else {
@@ -230,7 +260,6 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
         
         // Check if email was successfully queued/sent
         if (isset($emailResult['succeeded']) && $emailResult['succeeded'] > 0) {
-            // Success case
             error_log("SMTP2GO Email Success: " . json_encode($emailResult));
             
             sendResponse([
@@ -241,7 +270,6 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
                 'test_mode' => $testMode
             ]);
         } elseif (isset($responseData['request_id'])) {
-            // Alternative success format
             error_log("SMTP2GO Email Queued: " . json_encode($responseData));
             
             sendResponse([
@@ -252,7 +280,6 @@ Serving Capel Sound & Mornington Peninsula with reliable taxi services.
                 'test_mode' => $testMode
             ]);
         } else {
-            // Failure case
             error_log("SMTP2GO Email Failed: " . json_encode($responseData));
             
             $errorMsg = 'Email delivery failed';
