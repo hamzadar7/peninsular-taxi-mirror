@@ -1,13 +1,15 @@
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import { bookingAPI, contactAPI } from "@/utils/apiService";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw, Bell } from "lucide-react";
+import { Calendar, MessageSquare, RefreshCw } from "lucide-react";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { DateFilter } from "@/components/admin/DateFilter";
+import { BookingsList } from "@/components/admin/BookingsList";
+import { ContactsList } from "@/components/admin/ContactsList";
 
 interface BookingData {
   id: string;
@@ -50,32 +52,13 @@ const AdminDashboard = () => {
   const [previousBookingsCount, setPreviousBookingsCount] = useState(0);
   const [previousContactsCount, setPreviousContactsCount] = useState(0);
   const [buzzerEnabled, setBuzzerEnabled] = useState(true);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { logout, isAuthenticated, isLoading: authLoading } = useAdminAuth();
   const { toast } = useToast();
 
-  // Initialize audio for buzzer
-  useEffect(() => {
-    // Create audio context for buzzer sound
-    audioRef.current = new Audio();
-    audioRef.current.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+Dyv2McBjiS1/LMeiwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBj';
-    
-    return () => {
-      if (audioRef.current) {
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
-  // Play buzzer sound
+  // Play buzzer sound using the global function
   const playBuzzer = useCallback(() => {
-    if (buzzerEnabled && audioRef.current) {
-      try {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(e => console.log('Audio play failed:', e));
-      } catch (error) {
-        console.log('Buzzer error:', error);
-      }
+    if (buzzerEnabled && (window as any).playAdminBuzzer) {
+      (window as any).playAdminBuzzer();
     }
   }, [buzzerEnabled]);
 
@@ -236,6 +219,10 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleRemarksChange = (bookingId: string, value: string) => {
+    setRemarks(prev => ({ ...prev, [bookingId]: value }));
+  };
+
   // Show loading if auth is still loading
   if (authLoading) {
     return (
@@ -268,94 +255,24 @@ const AdminDashboard = () => {
     return contactDate === filterDate;
   });
 
-  const pendingBookings = filteredBookings.filter(b => b.status === 'pending');
-  const confirmedBookings = filteredBookings.filter(b => b.status === 'confirmed');
   const newContacts = filteredContacts.filter(c => c.status === 'new');
-  const readContacts = filteredContacts.filter(c => c.status === 'read');
 
   return (
     <div className="admin-dashboard-container min-h-screen w-full bg-gray-50">
-      {/* Header */}
-      <div className="admin-header bg-black text-white p-2 sm:p-3 md:p-4 w-full">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col gap-2 sm:gap-3">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
-              <div className="flex items-center space-x-2 md:space-x-4 min-w-0 flex-1">
-                <img 
-                  src="/lovable-uploads/21e2b738-2d9a-4a6f-a974-5cab6cc47635.png" 
-                  alt="Capelsound Taxi" 
-                  className="h-6 sm:h-8 md:h-12 w-auto flex-shrink-0"
-                />
-                <div className="min-w-0 flex-1">
-                  <h1 className="text-sm sm:text-lg md:text-2xl font-bold truncate">Capelsound Taxi - Admin</h1>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 w-full sm:w-auto">
-                <Button 
-                  onClick={() => setBuzzerEnabled(!buzzerEnabled)}
-                  className={`${buzzerEnabled ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 hover:bg-gray-700'} text-white font-semibold flex-1 sm:flex-none text-xs sm:text-sm`}
-                >
-                  <Bell className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 ${buzzerEnabled ? '' : 'opacity-50'}`} />
-                  <span className="hidden sm:inline">{buzzerEnabled ? 'On' : 'Off'}</span>
-                </Button>
-                <Button 
-                  onClick={handleRefresh} 
-                  disabled={isLoading}
-                  className="bg-white text-black hover:bg-gray-100 font-semibold flex-1 sm:flex-none text-xs sm:text-sm"
-                >
-                  <RefreshCw className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 ${isLoading ? 'animate-spin' : ''}`} />
-                  <span className="hidden sm:inline">Refresh</span>
-                </Button>
-                <Button 
-                  onClick={handleLogout} 
-                  className="bg-white text-black hover:bg-gray-100 font-semibold flex-1 sm:flex-none text-xs sm:text-sm"
-                >
-                  <LogOut className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                  <span className="hidden sm:inline">Logout</span>
-                </Button>
-              </div>
-            </div>
-            
-            <div className="text-xs text-gray-300">
-              <div>
-                {isLoading ? 'Loading...' : `Last updated: ${new Date(lastRefresh).toLocaleTimeString()}`}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AdminHeader
+        isLoading={isLoading}
+        lastRefresh={lastRefresh}
+        buzzerEnabled={buzzerEnabled}
+        setBuzzerEnabled={setBuzzerEnabled}
+        onRefresh={handleRefresh}
+        onLogout={handleLogout}
+      />
 
       <div className="admin-content max-w-7xl mx-auto p-2 sm:p-3 md:p-6 w-full">
-        {/* Date Filter */}
-        <Card className="mb-3 md:mb-6">
-          <CardContent className="p-2 sm:p-3 md:p-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-              <label className="text-sm font-medium whitespace-nowrap">Filter by Date:</label>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 flex-1">
-                <Input 
-                  type="date"
-                  value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
-                  className="flex-1 text-xs sm:text-sm"
-                />
-                <Button 
-                  variant="outline" 
-                  onClick={() => setDateFilter(today)}
-                  className="w-full sm:w-auto text-xs sm:text-sm"
-                >
-                  Today
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setDateFilter('')}
-                  className="w-full sm:w-auto text-xs sm:text-sm"
-                >
-                  All Dates
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <DateFilter 
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+        />
 
         {/* Tabs */}
         <Card className="mb-3 md:mb-6">
@@ -395,256 +312,23 @@ const AdminDashboard = () => {
 
         {/* Content sections based on active tab */}
         {activeTab === 'bookings' && (
-          <div className="space-y-3 md:space-y-6">
-            {/* Filters */}
-            <Card>
-              <CardHeader className="pb-2 sm:pb-3">
-                <CardTitle className="text-base sm:text-lg">Status Filters</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <Button 
-                    variant={filter === 'all' ? 'default' : 'outline'}
-                    onClick={() => setFilter('all')}
-                    className="w-full text-xs sm:text-sm"
-                  >
-                    All ({filteredBookings.length})
-                  </Button>
-                  <Button 
-                    variant={filter === 'pending' ? 'default' : 'outline'}
-                    onClick={() => setFilter('pending')}
-                    className="w-full text-xs sm:text-sm"
-                  >
-                    Pending ({pendingBookings.length})
-                  </Button>
-                  <Button 
-                    variant={filter === 'confirmed' ? 'default' : 'outline'}
-                    onClick={() => setFilter('confirmed')}
-                    className="w-full text-xs sm:text-sm"
-                  >
-                    Confirmed ({confirmedBookings.length})
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pending Bookings */}
-            {(filter === 'all' || filter === 'pending') && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-base sm:text-lg">
-                    <Clock className="h-4 w-4 mr-2 text-orange-500" />
-                    Pending ({pendingBookings.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {pendingBookings.map(booking => (
-                      <Card key={booking.id} className="border-l-4 border-orange-500">
-                        <CardContent className="p-3">
-                          <div className="space-y-3">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                              <div>
-                                <h4 className="font-semibold text-sm">{booking.contact_name}</h4>
-                                <p className="text-xs text-gray-600">{booking.contact_phone}</p>
-                                <p className="text-xs text-gray-600 break-all">{booking.contact_email}</p>
-                              </div>
-                              <div className="space-y-1">
-                                <p className="text-xs"><strong>From:</strong> {booking.pickup_location}</p>
-                                <p className="text-xs"><strong>To:</strong> {booking.destination}</p>
-                                <p className="text-xs"><strong>Date:</strong> {booking.date} at {booking.time}</p>
-                                <p className="text-xs"><strong>Passengers:</strong> {booking.passengers}</p>
-                                <p className="text-xs"><strong>Vehicle:</strong> {booking.vehicle_type}</p>
-                              </div>
-                            </div>
-                            {booking.special_requests && (
-                              <div className="bg-gray-50 p-2 rounded">
-                                <p className="text-xs"><strong>Special Requests:</strong> {booking.special_requests}</p>
-                              </div>
-                            )}
-                            <div className="space-y-2">
-                              <Textarea
-                                placeholder="Admin remarks..."
-                                value={remarks[booking.id] || ''}
-                                onChange={(e) => setRemarks(prev => ({ ...prev, [booking.id]: e.target.value }))}
-                                className="min-h-[60px] text-xs"
-                              />
-                              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                                <Button 
-                                  onClick={() => handleSaveRemarks(booking.id)}
-                                  variant="outline"
-                                  size="sm"
-                                  className="w-full sm:w-auto text-xs"
-                                >
-                                  Save Remarks
-                                </Button>
-                                <Button 
-                                  onClick={() => handleConfirmBooking(booking.id)}
-                                  className="bg-green-600 hover:bg-green-700 w-full sm:w-auto text-xs"
-                                  size="sm"
-                                >
-                                  <CheckCircle className="h-3 w-3 mr-1" />
-                                  Confirm
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                    {pendingBookings.length === 0 && (
-                      <p className="text-gray-500 text-center py-8 text-sm">No pending bookings for selected date</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Confirmed Bookings */}
-            {(filter === 'all' || filter === 'confirmed') && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-base sm:text-lg">
-                    <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                    Confirmed ({confirmedBookings.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {confirmedBookings.map(booking => (
-                      <Card key={booking.id} className="border-l-4 border-green-500">
-                        <CardContent className="p-3">
-                          <div className="space-y-3">
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                              <div>
-                                <h4 className="font-semibold text-sm">{booking.contact_name}</h4>
-                                <p className="text-xs text-gray-600">{booking.contact_phone}</p>
-                                <p className="text-xs text-gray-600 break-all">{booking.contact_email}</p>
-                              </div>
-                              <div className="space-y-1">
-                                <p className="text-xs"><strong>From:</strong> {booking.pickup_location}</p>
-                                <p className="text-xs"><strong>To:</strong> {booking.destination}</p>
-                                <p className="text-xs"><strong>Date:</strong> {booking.date} at {booking.time}</p>
-                                <p className="text-xs"><strong>Passengers:</strong> {booking.passengers}</p>
-                                <p className="text-xs"><strong>Vehicle:</strong> {booking.vehicle_type}</p>
-                              </div>
-                            </div>
-                            {booking.special_requests && (
-                              <div className="bg-gray-50 p-2 rounded">
-                                <p className="text-xs"><strong>Special Requests:</strong> {booking.special_requests}</p>
-                              </div>
-                            )}
-                            {booking.admin_remarks && (
-                              <div className="bg-blue-50 p-2 rounded">
-                                <p className="text-xs"><strong>Admin Remarks:</strong> {booking.admin_remarks}</p>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                    {confirmedBookings.length === 0 && (
-                      <p className="text-gray-500 text-center py-8 text-sm">No confirmed bookings for selected date</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          <BookingsList
+            filteredBookings={filteredBookings}
+            filter={filter}
+            setFilter={setFilter}
+            remarks={remarks}
+            onRemarksChange={handleRemarksChange}
+            onSaveRemarks={handleSaveRemarks}
+            onConfirmBooking={handleConfirmBooking}
+          />
         )}
 
         {/* Contacts Tab */}
         {activeTab === 'contacts' && (
-          <div className="space-y-3 md:space-y-6">
-            {/* New Messages */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center text-base sm:text-lg">
-                  <MessageSquare className="h-4 w-4 mr-2 text-blue-500" />
-                  New Messages ({newContacts.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {newContacts.map(contact => (
-                    <Card key={contact.id} className="border-l-4 border-blue-500">
-                      <CardContent className="p-3">
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-sm">{contact.name}</h4>
-                              <p className="text-xs text-gray-600 break-all">{contact.email}</p>
-                              {contact.phone && <p className="text-xs text-gray-600">{contact.phone}</p>}
-                              <p className="text-xs text-gray-500">
-                                {new Date(contact.timestamp).toLocaleString()}
-                              </p>
-                            </div>
-                            <Button
-                              onClick={() => handleMarkContactAsRead(contact.id)}
-                              variant="outline"
-                              size="sm"
-                              className="text-xs"
-                            >
-                              <Eye className="h-3 w-3 mr-1" />
-                              Read
-                            </Button>
-                          </div>
-                          <div className="bg-gray-50 p-2 rounded">
-                            <p className="text-xs break-words">{contact.message}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {newContacts.length === 0 && (
-                    <p className="text-gray-500 text-center py-8 text-sm">No new messages for selected date</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Read Messages */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center text-base sm:text-lg">
-                  <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                  Read Messages ({readContacts.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {readContacts.map(contact => (
-                    <Card key={contact.id} className="border-l-4 border-green-500 opacity-75">
-                      <CardContent className="p-3">
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-sm">{contact.name}</h4>
-                              <p className="text-xs text-gray-600 break-all">{contact.email}</p>
-                              {contact.phone && <p className="text-xs text-gray-600">{contact.phone}</p>}
-                              <p className="text-xs text-gray-500">
-                                {new Date(contact.timestamp).toLocaleString()}
-                              </p>
-                            </div>
-                            <div className="text-xs text-gray-500 flex items-center">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Read
-                            </div>
-                          </div>
-                          <div className="bg-gray-50 p-2 rounded">
-                            <p className="text-xs break-words">{contact.message}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {readContacts.length === 0 && (
-                    <p className="text-gray-500 text-center py-8 text-sm">No read messages for selected date</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <ContactsList
+            filteredContacts={filteredContacts}
+            onMarkContactAsRead={handleMarkContactAsRead}
+          />
         )}
       </div>
 
