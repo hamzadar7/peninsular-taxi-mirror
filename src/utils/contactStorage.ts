@@ -22,6 +22,7 @@ export const saveContact = (contactData: Omit<ContactData, 'id' | 'timestamp' | 
     contacts.push(newContact);
     localStorage.setItem('taxi_contacts', JSON.stringify(contacts));
     console.log('Contact saved successfully:', newContact);
+    console.log('All contacts in storage:', contacts);
   } catch (error) {
     console.error('Error saving contact:', error);
     throw new Error('Failed to save contact');
@@ -31,7 +32,9 @@ export const saveContact = (contactData: Omit<ContactData, 'id' | 'timestamp' | 
 export const getContacts = (): ContactData[] => {
   try {
     const contacts = localStorage.getItem('taxi_contacts');
-    return contacts ? JSON.parse(contacts) : [];
+    const parsedContacts = contacts ? JSON.parse(contacts) : [];
+    console.log('Retrieved contacts from storage:', parsedContacts);
+    return parsedContacts;
   } catch (error) {
     console.error('Error getting contacts:', error);
     return [];
@@ -47,6 +50,8 @@ export const updateContactStatus = (contactId: string, status: 'new' | 'read'): 
       contacts[contactIndex].status = status;
       localStorage.setItem('taxi_contacts', JSON.stringify(contacts));
       console.log('Contact status updated:', contactId, status);
+    } else {
+      console.error('Contact not found:', contactId);
     }
   } catch (error) {
     console.error('Error updating contact status:', error);

@@ -27,6 +27,8 @@ const Contact = () => {
     }
 
     setIsSubmitting(true);
+    console.log('Submitting contact form with data:', formData);
+    
     try {
       saveContact({
         name: formData.name,
@@ -34,6 +36,8 @@ const Contact = () => {
         phone: formData.phone,
         message: formData.message
       });
+      
+      console.log('Contact form submitted successfully');
       
       setFormData({
         name: "",

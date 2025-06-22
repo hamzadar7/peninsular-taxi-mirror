@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getBookings, updateBookingStatus, BookingData } from "@/utils/bookingStorage";
 import { getContacts, updateContactStatus, ContactData } from "@/utils/contactStorage";
-import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye } from "lucide-react";
+import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw } from "lucide-react";
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState<BookingData[]>([]);
@@ -29,7 +30,9 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   const loadBookings = () => {
+    console.log('Loading bookings...');
     const allBookings = getBookings();
+    console.log('Loaded bookings:', allBookings);
     setBookings(allBookings);
     
     const remarksState: { [key: string]: string } = {};
@@ -40,8 +43,16 @@ const AdminDashboard = () => {
   };
 
   const loadContacts = () => {
+    console.log('Loading contacts...');
     const allContacts = getContacts();
+    console.log('Loaded contacts:', allContacts);
     setContacts(allContacts);
+  };
+
+  const handleRefresh = () => {
+    console.log('Refreshing data...');
+    loadBookings();
+    loadContacts();
   };
 
   const handleLogout = () => {
@@ -87,12 +98,18 @@ const AdminDashboard = () => {
               alt="Capelsound Taxi" 
               className="h-12 w-auto"
             />
-            <h1 className="text-2xl font-bold">Capelsound Taxi</h1>
+            <h1 className="text-2xl font-bold">Capelsound Taxi - Admin Dashboard</h1>
           </div>
-          <Button onClick={handleLogout} variant="outline" className="text-white border-white hover:bg-white hover:text-black flex items-center gap-2">
-            <LogOut className="h-4 w-4" />
-            <span>Logout</span>
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button onClick={handleRefresh} variant="outline" className="text-white border-white hover:bg-white hover:text-black flex items-center gap-2">
+              <RefreshCw className="h-4 w-4" />
+              <span>Refresh</span>
+            </Button>
+            <Button onClick={handleLogout} variant="outline" className="text-white border-white hover:bg-white hover:text-black flex items-center gap-2">
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -336,7 +353,13 @@ const AdminDashboard = () => {
                   </Card>
                 ))}
                 {contacts.length === 0 && (
-                  <p className="text-gray-500 text-center py-8">No contact messages</p>
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 mb-4">No contact messages found</p>
+                    <Button onClick={handleRefresh} variant="outline">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh Data
+                    </Button>
+                  </div>
                 )}
               </div>
             </CardContent>
