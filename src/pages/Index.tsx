@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, Shield, Car, Phone, Star, Users, CheckCircle } from "lucide-react";
@@ -387,7 +386,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Payment Methods Section - Better image sizing */}
+      {/* Payment Methods Section - Images only */}
       <section className="py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 lg:mb-16">
@@ -399,83 +398,51 @@ const Index = () => {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 max-w-6xl mx-auto">
             <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-3 lg:pb-4">
-                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
-                  <img 
-                    src="/lovable-uploads/e53452ae-5660-4c00-aa4a-ef8355711874.png" 
-                    alt="Cab Charge"
-                    className="h-10 lg:h-12 w-auto object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Cab Charge</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-gray-600 text-xs lg:text-sm">
-                  Professional taxi voucher system
-                </p>
-              </CardContent>
+              <div className="h-20 lg:h-24 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/e53452ae-5660-4c00-aa4a-ef8355711874.png" 
+                  alt="Cab Charge"
+                  className="h-12 lg:h-16 w-auto object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </Card>
 
             <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-3 lg:pb-4">
-                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
-                  <img 
-                    src="/lovable-uploads/ff41b36f-b25f-4bbc-ba58-002437e858dd.png" 
-                    alt="EFTPOS"
-                    className="h-10 lg:h-12 w-auto object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">EFTPOS</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-gray-600 text-xs lg:text-sm">
-                  Electronic payment terminal available in all vehicles
-                </p>
-              </CardContent>
+              <div className="h-20 lg:h-24 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/ff41b36f-b25f-4bbc-ba58-002437e858dd.png" 
+                  alt="EFTPOS"
+                  className="h-12 lg:h-16 w-auto object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </Card>
 
             <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-3 lg:pb-4">
-                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
-                  <img 
-                    src="/lovable-uploads/b2d348c8-6274-4e50-b17b-d6b33e1d7265.png" 
-                    alt="Visa Mastercard"
-                    className="h-10 lg:h-12 w-auto object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Credit & Debit</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-gray-600 text-xs lg:text-sm">
-                  All major credit and debit cards accepted
-                </p>
-              </CardContent>
+              <div className="h-20 lg:h-24 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/b2d348c8-6274-4e50-b17b-d6b33e1d7265.png" 
+                  alt="Visa Mastercard"
+                  className="h-12 lg:h-16 w-auto object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </Card>
 
             <Card className="text-center p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
-              <CardHeader className="pb-3 lg:pb-4">
-                <div className="h-16 lg:h-20 flex items-center justify-center mb-3 lg:mb-4">
-                  <img 
-                    src="/lovable-uploads/44b8aba6-5bbb-44c3-8404-5a0aced4318d.png" 
-                    alt="Motor Pass"
-                    className="h-10 lg:h-12 w-auto object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <CardTitle className="text-base lg:text-lg font-bold text-gray-800">Motor Pass</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-gray-600 text-xs lg:text-sm">
-                  Convenient payment solution
-                </p>
-              </CardContent>
+              <div className="h-20 lg:h-24 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/44b8aba6-5bbb-44c3-8404-5a0aced4318d.png" 
+                  alt="Motor Pass"
+                  className="h-12 lg:h-16 w-auto object-contain"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </Card>
           </div>
         </div>
