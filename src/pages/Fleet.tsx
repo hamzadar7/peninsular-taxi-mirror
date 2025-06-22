@@ -1,9 +1,25 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Car, Users, Shield, Heart, Clock, Award, User, Luggage, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Fleet = () => {
+  const navigate = useNavigate();
+
+  const handleBookNowClick = () => {
+    navigate('/booking');
+    setTimeout(() => {
+      const bookingForm = document.querySelector('#booking-form');
+      if (bookingForm) {
+        bookingForm.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   const vehicles = [
     {
       type: "SEDAN",
@@ -106,7 +122,7 @@ const Fleet = () => {
                   </div>
 
                   {/* Features */}
-                  <div className="space-y-2">
+                  <div className="space-y-2 mb-6">
                     <h4 className="font-semibold text-sm text-gray-800 mb-3">Features:</h4>
                     <div className="space-y-2">
                       {vehicle.features.map((feature, featureIndex) => (
@@ -117,6 +133,14 @@ const Fleet = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* Book Now Button */}
+                  <Button 
+                    onClick={handleBookNowClick}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+                  >
+                    Book This Vehicle
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -240,12 +264,12 @@ const Fleet = () => {
             Book your ride today and experience the comfort and reliability of our professional fleet
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="/booking" 
+            <button 
+              onClick={handleBookNowClick}
               className="inline-flex items-center justify-center px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-md transition-colors"
             >
               Book Your Ride
-            </a>
+            </button>
             <a 
               href="tel:+61408202034" 
               className="inline-flex items-center justify-center px-6 py-3 border border-gray-800 text-gray-800 hover:bg-gray-800 hover:text-white font-semibold rounded-md transition-colors"

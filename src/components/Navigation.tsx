@@ -30,6 +30,13 @@ const Navigation = () => {
     }, 100);
   };
 
+  const handleLogoClick = () => {
+    navigate('/');
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
     <>
       {/* Top Yellow Bar - Split between phone and book now - STICKY */}
@@ -55,13 +62,13 @@ const Navigation = () => {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0">
+              <button onClick={handleLogoClick} className="flex-shrink-0">
                 <img 
                   src="/lovable-uploads/21e2b738-2d9a-4a6f-a974-5cab6cc47635.png" 
                   alt="Capelsound Taxi" 
-                  className="h-16 w-auto"
+                  className="h-16 w-auto cursor-pointer hover:opacity-80 transition-opacity"
                 />
-              </Link>
+              </button>
             </div>
 
             {/* Mobile Discount Message - Only visible on mobile */}
