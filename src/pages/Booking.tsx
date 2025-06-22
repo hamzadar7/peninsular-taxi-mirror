@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Clock, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -46,7 +45,13 @@ const Booking = () => {
               <Phone className="h-10 w-10 sm:h-12 sm:w-12 text-yellow-400 mx-auto mb-4" />
               <h3 className="text-lg sm:text-xl font-bold mb-2">Call to Book</h3>
               <p className="text-sm sm:text-base text-gray-600 mb-4">Speak directly with our operators for immediate booking and assistance</p>
-              <div className="text-xl sm:text-2xl font-bold text-yellow-400 mb-4">+61 408 202 034</div>
+              <a 
+                href="tel:+61408202034" 
+                className="inline-flex items-center justify-center text-xl sm:text-2xl font-bold text-yellow-400 mb-4 hover:text-yellow-500 transition-colors"
+              >
+                <Phone className="h-5 w-5 mr-2" />
+                +61 408 202 034
+              </a>
               <p className="text-xs sm:text-sm text-gray-500">Available 24/7</p>
             </Card>
 
@@ -180,6 +185,32 @@ const Booking = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section with always visible phone number */}
+      <section className="py-16 lg:py-20 bg-gradient-to-r from-gray-900 to-black text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6">Ready to Experience Our Service?</h2>
+          <p className="text-lg md:text-xl mb-6 lg:mb-8 text-gray-300 max-w-3xl mx-auto">
+            Book your ride today or call us for immediate service
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center items-center">
+            <button 
+              onClick={handleBookNowClick}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-8 py-4 text-lg rounded-lg transition-colors"
+            >
+              Book Online
+            </button>
+            <a 
+              href="tel:+61408202034"
+              className="inline-flex items-center justify-center border-2 border-white bg-white text-black hover:bg-gray-100 px-8 py-4 text-lg rounded-lg transition-colors font-semibold"
+            >
+              <Phone className="h-5 w-5 mr-2" />
+              +61 408 202 034
+            </a>
           </div>
         </div>
       </section>

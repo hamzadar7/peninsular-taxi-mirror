@@ -1,7 +1,28 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleBookNowClick = () => {
+    navigate('/booking');
+    // Scroll to booking form after navigation
+    setTimeout(() => {
+      const bookingForm = document.querySelector('#booking-form');
+      if (bookingForm) {
+        bookingForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const handleLinkClick = (path: string) => {
+    navigate(path);
+    // Scroll to top after navigation
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
     <footer className="bg-black text-white py-12 mt-auto">
       <div className="container mx-auto px-4">
@@ -25,12 +46,12 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4 text-yellow-400">Quick Links</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-              <li><Link to="/services" className="text-gray-400 hover:text-white transition-colors">Services</Link></li>
-              <li><Link to="/booking" className="text-gray-400 hover:text-white transition-colors">Book Now</Link></li>
-              <li><Link to="/fleet" className="text-gray-400 hover:text-white transition-colors">Our Fleet</Link></li>
-              <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link></li>
+              <li><button onClick={() => handleLinkClick('/')} className="text-gray-400 hover:text-white transition-colors text-left">Home</button></li>
+              <li><button onClick={() => handleLinkClick('/services')} className="text-gray-400 hover:text-white transition-colors text-left">Services</button></li>
+              <li><button onClick={handleBookNowClick} className="text-gray-400 hover:text-white transition-colors text-left">Book Now</button></li>
+              <li><button onClick={() => handleLinkClick('/fleet')} className="text-gray-400 hover:text-white transition-colors text-left">Our Fleet</button></li>
+              <li><button onClick={() => handleLinkClick('/about')} className="text-gray-400 hover:text-white transition-colors text-left">About Us</button></li>
+              <li><button onClick={() => handleLinkClick('/contact')} className="text-gray-400 hover:text-white transition-colors text-left">Contact</button></li>
             </ul>
           </div>
           
