@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -100,11 +101,11 @@ const AdminDashboard = () => {
             <h1 className="text-2xl font-bold">Capelsound Taxi - Admin Dashboard</h1>
           </div>
           <div className="flex items-center space-x-2">
-            <Button onClick={handleRefresh} variant="outline" className="text-white border-white hover:bg-white hover:text-black">
+            <Button onClick={handleRefresh} className="bg-white text-black hover:bg-gray-100 font-semibold">
               <RefreshCw className="h-4 w-4 mr-2" />
               <span>Refresh</span>
             </Button>
-            <Button onClick={handleLogout} variant="outline" className="text-white border-white hover:bg-white hover:text-black">
+            <Button onClick={handleLogout} className="bg-white text-black hover:bg-gray-100 font-semibold">
               <LogOut className="h-4 w-4 mr-2" />
               <span>Logout</span>
             </Button>

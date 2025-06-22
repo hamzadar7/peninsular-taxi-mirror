@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -227,7 +228,7 @@ const Contact = () => {
                     <Clock className="h-12 w-12 text-blue-400 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">Book Online</h3>
                     <p className="text-gray-300 mb-4">Use our booking form for advance reservations with special requirements</p>
-                    <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+                    <Button asChild className="bg-white text-black hover:bg-gray-100 font-semibold">
                       <a href="/booking">Book Online</a>
                     </Button>
                   </div>
@@ -236,7 +237,7 @@ const Contact = () => {
                     <Mail className="h-12 w-12 text-green-400 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">Email Us</h3>
                     <p className="text-gray-300 mb-4">Send us your inquiry or special requests via email for detailed assistance</p>
-                    <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+                    <Button asChild className="bg-white text-black hover:bg-gray-100 font-semibold">
                       <a href="mailto:contact@capelsoundtaxi.com.au">Send Email</a>
                     </Button>
                   </div>
