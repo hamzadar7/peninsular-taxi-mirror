@@ -34,7 +34,7 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("SMTP2GO_API_KEY not configured");
     }
 
-    // Use proper sender configuration with company name
+    // Use a more inbox-friendly sender configuration
     const senderEmail = "contact@capelsoundtaxi.com.au";
     const senderName = "Capel Sound Taxi";
     
@@ -111,22 +111,19 @@ This is an automated message. Please do not reply.`;
 </body>
 </html>`;
 
-    // Enhanced email configuration with proper sender name formatting
+    // Minimal, clean email configuration for better deliverability
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: `"${senderName}" <${senderEmail}>`, // Proper RFC 5322 format for sender name
+      sender: senderEmail,
+      sender_name: senderName,
       subject: subject,
       text_body: textBody,
       html_body: htmlBody,
       custom_headers: [
         {
-          header: "From",
-          value: `"${senderName}" <${senderEmail}>` // Explicit From header with company name
-        },
-        {
           header: "Reply-To",
-          value: `"${senderName}" <${senderEmail}>`
+          value: "contact@capelsoundtaxi.com.au"
         },
         {
           header: "X-Mailer",
@@ -139,7 +136,7 @@ This is an automated message. Please do not reply.`;
       track_links: false
     };
 
-    console.log('Sending email via SMTP2GO with sender:', `"${senderName}" <${senderEmail}>`);
+    console.log('Sending email via SMTP2GO...');
     
     const response = await fetch("https://api.smtp2go.com/v3/email/send", {
       method: "POST",
@@ -157,17 +154,13 @@ This is an automated message. Please do not reply.`;
       throw new Error(`Failed to send email: ${JSON.stringify(result)}`);
     }
 
-    console.log("Email sent successfully with sender name:", senderName);
+    console.log("Email sent successfully");
 
     return new Response(JSON.stringify({
       success: true,
       message: testMode ? 'Test email sent successfully!' : 'Verification email sent successfully',
       email_id: result.data?.email_id,
-      emails_sent: result.data?.succeeded || 0,
-      sender_email: senderEmail,
-      sender_name: senderName,
-      recipient_email: email,
-      test_mode: testMode
+      emails_sent: result.data?.succeeded || 0
     }), {
       status: 200,
       headers: {
