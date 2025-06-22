@@ -34,11 +34,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('SMTP2GO_API_KEY found, preparing email...');
 
-    // Use the verified domain from your SMTP2GO account
+    // Use your configured GoDaddy email
     const emailData = {
       api_key: SMTP2GO_API_KEY,
       to: [email],
-      sender: "noreply@capelsoundtaxi.com.au", // Changed from contact@ to noreply@
+      sender: "contact@capelsoundtaxi.com.au", // Using your GoDaddy configured email
       subject: "Your Booking Verification Code - Capel Sound Taxi",
       text_body: `Hello ${name},\n\nYour verification code for taxi booking is: ${otp}\n\nThis code will expire in 10 minutes.\n\nPlease enter this code to confirm your booking.\n\nBest regards,\nCapel Sound Taxi Team\n\nPhone: (03) 5983 1800\nEmail: contact@capelsoundtaxi.com.au\nWebsite: www.capelsoundtaxi.com.au`,
       html_body: `
