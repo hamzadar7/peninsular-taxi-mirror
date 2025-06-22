@@ -164,7 +164,7 @@ const BookingForm = () => {
     return new Date() > otpExpiry;
   };
 
-  const saveBookingToDatabase = async (bookingData: any) => {
+  const saveBookingToSupabase = async (bookingData: any) => {
     try {
       console.log('Saving booking to Supabase:', bookingData);
       
@@ -180,8 +180,9 @@ const BookingForm = () => {
           time: bookingData.time,
           passengers: bookingData.passengers,
           vehicle_type: bookingData.vehicleType,
-          special_requests: bookingData.specialRequests,
-          device_info: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop'
+          special_requests: bookingData.specialRequests || '',
+          device_info: navigator.userAgent.includes('Mobile') ? 'mobile' : 'desktop',
+          status: 'pending'
         }])
         .select();
 
@@ -190,10 +191,10 @@ const BookingForm = () => {
         throw error;
       }
 
-      console.log('Booking saved successfully:', data);
+      console.log('Booking saved successfully to Supabase:', data);
       return data;
     } catch (error) {
-      console.error('Error saving booking:', error);
+      console.error('Error saving booking to Supabase:', error);
       throw new Error('Failed to save booking to database');
     }
   };
@@ -201,10 +202,8 @@ const BookingForm = () => {
   const handleVerifyAndBook = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Clear previous messages
     setMessage('');
     
-    // If OTP not sent yet, validate form and send OTP
     if (!isOTPSent) {
       console.log('Step 1: Validating form and sending OTP');
       
@@ -224,12 +223,11 @@ const BookingForm = () => {
         const otp = generateOTP();
         setGeneratedOTP(otp);
         
-        // Set OTP expiry to 10 minutes from now
         const expiryTime = new Date();
         expiryTime.setMinutes(expiryTime.getMinutes() + 10);
         setOtpExpiry(expiryTime);
         
-        console.log('Sending OTP email...');
+        console.log('Sending OTP email via SMTP2GO...');
         await sendOTPEmail(formData.email, otp, formData.fullName);
         
         setIsOTPSent(true);
@@ -252,7 +250,6 @@ const BookingForm = () => {
         setIsSubmitting(false);
       }
     } else {
-      // Step 2: Verify OTP and complete booking
       console.log('Step 2: Verifying OTP and completing booking');
       
       if (!enteredOTP.trim()) {
@@ -292,7 +289,6 @@ const BookingForm = () => {
         return;
       }
 
-      // OTP verified, complete booking
       setIsSubmitting(true);
       try {
         const bookingData = {
@@ -308,8 +304,7 @@ const BookingForm = () => {
           specialRequests: formData.specialRequests
         };
         
-        // Save to Supabase database
-        await saveBookingToDatabase(bookingData);
+        await saveBookingToSupabase(bookingData);
         
         // Reset form
         setFormData({
@@ -340,7 +335,6 @@ const BookingForm = () => {
           description: "Your taxi booking has been confirmed successfully!",
         });
         
-        // Scroll to top to show success message
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
       } catch (error) {
@@ -366,7 +360,6 @@ const BookingForm = () => {
       const otp = generateOTP();
       setGeneratedOTP(otp);
       
-      // Set new OTP expiry
       const expiryTime = new Date();
       expiryTime.setMinutes(expiryTime.getMinutes() + 10);
       setOtpExpiry(expiryTime);
@@ -374,7 +367,7 @@ const BookingForm = () => {
       await sendOTPEmail(formData.email, otp, formData.fullName);
       
       setMessage('✅ New OTP sent to your email.');
-      setEnteredOTP(''); // Clear previous OTP entry
+      setEnteredOTP('');
       toast({
         title: "OTP Resent",
         description: "A new verification code has been sent to your email.",
@@ -394,7 +387,6 @@ const BookingForm = () => {
     }
   };
 
-  // Get tomorrow's date as minimum date
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split('T')[0];
@@ -461,7 +453,7 @@ const BookingForm = () => {
                   />
                 </div>
 
-                {/* Trip Details */}
+                {/* Trip Details with Google Maps Autocomplete */}
                 <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                   <div className="space-y-1 sm:space-y-2">
                     <Label htmlFor="pickup" className="text-sm sm:text-base lg:text-lg font-medium flex items-center">

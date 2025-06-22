@@ -4,9 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getBookings, updateBookingStatus, BookingData, getStorageInfo } from "@/utils/bookingStorage";
-import { getContacts, updateContactStatus, ContactData, getContactStorageInfo } from "@/utils/contactStorage";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { LogOut, CheckCircle, Clock, Calendar, MessageSquare, Eye, RefreshCw, AlertCircle, Smartphone, Monitor } from "lucide-react";
+
+interface BookingData {
+  id: string;
+  contact_name: string;
+  contact_phone: string;
+  contact_email: string;
+  pickup_location: string;
+  destination: string;
+  date: string;
+  time: string;
+  passengers: string;
+  vehicle_type: string;
+  special_requests: string | null;
+  status: string;
+  admin_remarks: string | null;
+  device_info: string | null;
+  created_at: string;
+}
+
+interface ContactData {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  status: string;
+  device_info: string | null;
+  timestamp: string;
+}
 
 const AdminDashboard = () => {
   const [bookings, setBookings] = useState<BookingData[]>([]);
@@ -17,10 +46,9 @@ const AdminDashboard = () => {
   const [remarks, setRemarks] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
-  const [storageInfo, setStorageInfo] = useState<any>(null);
-  const [contactStorageInfo, setContactStorageInfo] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Check if device is mobile
   useEffect(() => {
@@ -35,68 +63,110 @@ const AdminDashboard = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Enhanced data loading function
+  // Enhanced data loading function using Supabase
   const loadAllData = useCallback(async () => {
-    console.log('=== Loading all data ===');
+    console.log('=== Loading all data from Supabase ===');
     console.log('Device info:', {
       userAgent: navigator.userAgent,
       isMobile: navigator.userAgent.includes('Mobile'),
-      screenWidth: window.innerWidth,
-      localStorage: typeof(Storage) !== "undefined"
+      screenWidth: window.innerWidth
     });
     
     setIsLoading(true);
     
     try {
-      // Add delay for mobile devices to ensure DOM is ready
-      if (isMobile) {
-        await new Promise(resolve => setTimeout(resolve, 200));
+      // Load bookings from Supabase
+      console.log('Loading bookings from Supabase...');
+      const { data: bookingsData, error: bookingsError } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (bookingsError) {
+        console.error('Error loading bookings:', bookingsError);
+        throw bookingsError;
       }
+
+      console.log('Bookings loaded from Supabase:', bookingsData?.length || 0, bookingsData);
+      setBookings(bookingsData || []);
       
-      // Load storage info for debugging
-      const bookingStorageInfo = getStorageInfo();
-      const contactStorageInfo = getContactStorageInfo();
-      
-      console.log('Booking storage info:', bookingStorageInfo);
-      console.log('Contact storage info:', contactStorageInfo);
-      
-      setStorageInfo(bookingStorageInfo);
-      setContactStorageInfo(contactStorageInfo);
-      
-      // Load bookings
-      console.log('Loading bookings...');
-      const allBookings = getBookings();
-      console.log('Bookings loaded:', allBookings.length, allBookings);
-      setBookings(allBookings);
-      
-      // Load contacts
-      console.log('Loading contacts...');
-      const allContacts = getContacts();
-      console.log('Contacts loaded:', allContacts.length, allContacts);
-      setContacts(allContacts);
+      // Load contacts from Supabase
+      console.log('Loading contacts from Supabase...');
+      const { data: contactsData, error: contactsError } = await supabase
+        .from('contacts')
+        .select('*')
+        .order('timestamp', { ascending: false });
+
+      if (contactsError) {
+        console.error('Error loading contacts:', contactsError);
+        throw contactsError;
+      }
+
+      console.log('Contacts loaded from Supabase:', contactsData?.length || 0, contactsData);
+      setContacts(contactsData || []);
       
       // Set up remarks state
       const remarksState: { [key: string]: string } = {};
-      allBookings.forEach(booking => {
-        remarksState[booking.id] = booking.adminRemarks || '';
+      (bookingsData || []).forEach(booking => {
+        remarksState[booking.id] = booking.admin_remarks || '';
       });
       setRemarks(remarksState);
       
       setLastRefresh(Date.now());
-      console.log('=== Data loading complete ===');
+      console.log('=== Data loading complete from Supabase ===');
       
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Error loading data from Supabase:', error);
+      toast({
+        title: "Data Loading Error",
+        description: "Failed to load data from database. Please try refreshing.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [isMobile]);
+  }, [toast]);
+
+  // Real-time subscription for bookings and contacts
+  useEffect(() => {
+    console.log('Setting up real-time subscriptions...');
+    
+    // Subscribe to bookings changes
+    const bookingsSubscription = supabase
+      .channel('bookings-channel')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'bookings' },
+        (payload) => {
+          console.log('Bookings real-time update:', payload);
+          loadAllData(); // Reload all data when changes occur
+        }
+      )
+      .subscribe();
+
+    // Subscribe to contacts changes
+    const contactsSubscription = supabase
+      .channel('contacts-channel')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'contacts' },
+        (payload) => {
+          console.log('Contacts real-time update:', payload);
+          loadAllData(); // Reload all data when changes occur
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Cleaning up real-time subscriptions...');
+      supabase.removeChannel(bookingsSubscription);
+      supabase.removeChannel(contactsSubscription);
+    };
+  }, [loadAllData]);
 
   // Initial setup and auth check
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('admin_logged_in');
     if (isLoggedIn !== 'true') {
-      navigate('/admin/login');
+      navigate('/admin');
       return;
     }
     
@@ -106,16 +176,6 @@ const AdminDashboard = () => {
     // Set up periodic refresh (more frequent on mobile)
     const refreshInterval = isMobile ? 15000 : 30000; // 15s on mobile, 30s on desktop
     const interval = setInterval(loadAllData, refreshInterval);
-    
-    // Listen for storage events (cross-tab synchronization)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'taxi_bookings' || e.key === 'taxi_contacts') {
-        console.log('Storage change detected:', e.key);
-        loadAllData();
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
     
     // Listen for focus events (reload when returning to tab)
     const handleFocus = () => {
@@ -127,7 +187,6 @@ const AdminDashboard = () => {
     
     return () => {
       clearInterval(interval);
-      window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', handleFocus);
     };
   }, [navigate, loadAllData, isMobile]);
@@ -139,36 +198,96 @@ const AdminDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('admin_logged_in');
-    navigate('/admin/login');
+    navigate('/admin');
   };
 
-  const handleConfirmBooking = (bookingId: string) => {
+  const handleConfirmBooking = async (bookingId: string) => {
     try {
-      updateBookingStatus(bookingId, 'confirmed', remarks[bookingId]);
-      loadAllData(); // Reload to ensure sync
+      console.log('Confirming booking:', bookingId);
+      const { error } = await supabase
+        .from('bookings')
+        .update({ 
+          status: 'confirmed',
+          admin_remarks: remarks[bookingId] || ''
+        })
+        .eq('id', bookingId);
+
+      if (error) {
+        console.error('Error confirming booking:', error);
+        throw error;
+      }
+
+      toast({
+        title: "Booking Confirmed",
+        description: "Booking has been confirmed successfully.",
+      });
+
+      loadAllData(); // Reload data to reflect changes
     } catch (error) {
       console.error('Error confirming booking:', error);
+      toast({
+        title: "Error",
+        description: "Failed to confirm booking. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
-  const handleSaveRemarks = (bookingId: string) => {
+  const handleSaveRemarks = async (bookingId: string) => {
     try {
-      const booking = bookings.find(b => b.id === bookingId);
-      if (booking) {
-        updateBookingStatus(bookingId, booking.status, remarks[bookingId]);
-        loadAllData(); // Reload to ensure sync
+      console.log('Saving remarks for booking:', bookingId);
+      const { error } = await supabase
+        .from('bookings')
+        .update({ admin_remarks: remarks[bookingId] || '' })
+        .eq('id', bookingId);
+
+      if (error) {
+        console.error('Error saving remarks:', error);
+        throw error;
       }
+
+      toast({
+        title: "Remarks Saved",
+        description: "Admin remarks have been saved successfully.",
+      });
+
+      loadAllData(); // Reload data to reflect changes
     } catch (error) {
       console.error('Error saving remarks:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save remarks. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
-  const handleMarkContactAsRead = (contactId: string) => {
+  const handleMarkContactAsRead = async (contactId: string) => {
     try {
-      updateContactStatus(contactId, 'read');
-      loadAllData(); // Reload to ensure sync
+      console.log('Marking contact as read:', contactId);
+      const { error } = await supabase
+        .from('contacts')
+        .update({ status: 'read' })
+        .eq('id', contactId);
+
+      if (error) {
+        console.error('Error marking contact as read:', error);
+        throw error;
+      }
+
+      toast({
+        title: "Message Marked as Read",
+        description: "Contact message has been marked as read.",
+      });
+
+      loadAllData(); // Reload data to reflect changes
     } catch (error) {
       console.error('Error marking contact as read:', error);
+      toast({
+        title: "Error",
+        description: "Failed to mark message as read. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -230,7 +349,7 @@ const AdminDashboard = () => {
               <div className="flex items-center space-x-4">
                 <span>📋 {bookings.length} bookings</span>
                 <span>📧 {contacts.length} messages</span>
-                <span>🔄 {storageInfo?.storageAvailable ? '✅' : '❌'} Storage</span>
+                <span>🔄 Real-time updates enabled</span>
               </div>
             </div>
           </div>
@@ -284,25 +403,26 @@ const AdminDashboard = () => {
                     <pre className="text-xs overflow-auto">{JSON.stringify({
                       isMobile,
                       userAgent: navigator.userAgent,
-                      screenWidth: window.innerWidth,
-                      storageAvailable: typeof(Storage) !== "undefined"
+                      screenWidth: window.innerWidth
                     }, null, 2)}</pre>
                   </div>
                   <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-semibold mb-2">Booking Storage</h4>
-                    <pre className="text-xs overflow-auto">{JSON.stringify(storageInfo, null, 2)}</pre>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-semibold mb-2">Contact Storage</h4>
-                    <pre className="text-xs overflow-auto">{JSON.stringify(contactStorageInfo, null, 2)}</pre>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded">
-                    <h4 className="font-semibold mb-2">Current Data</h4>
+                    <h4 className="font-semibold mb-2">Supabase Connection</h4>
                     <div className="space-y-2">
-                      <p><strong>Bookings:</strong> {bookings.length}</p>
-                      <p><strong>Contacts:</strong> {contacts.length}</p>
+                      <p><strong>Status:</strong> Connected ✅</p>
+                      <p><strong>Real-time:</strong> Enabled ✅</p>
                       <p><strong>Last Refresh:</strong> {new Date(lastRefresh).toLocaleString()}</p>
                       <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded">
+                    <h4 className="font-semibold mb-2">Data Summary</h4>
+                    <div className="space-y-2">
+                      <p><strong>Total Bookings:</strong> {bookings.length}</p>
+                      <p><strong>Pending Bookings:</strong> {pendingBookings.length}</p>
+                      <p><strong>Confirmed Bookings:</strong> {confirmedBookings.length}</p>
+                      <p><strong>Total Contacts:</strong> {contacts.length}</p>
+                      <p><strong>New Messages:</strong> {newContacts.length}</p>
                     </div>
                   </div>
                 </div>
@@ -317,7 +437,7 @@ const AdminDashboard = () => {
           </Card>
         )}
 
-        {/* Rest of the existing code for bookings and contacts tabs */}
+        {/* Bookings Tab - keeping existing implementation but with Supabase integration */}
         {activeTab === 'bookings' && (
           <>
             {/* Booking Filters */}
@@ -326,7 +446,6 @@ const AdminDashboard = () => {
                 <CardTitle className="text-base sm:text-lg md:text-xl">Filters</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                {/* ... keep existing code (filter UI) */}
                 <div className="space-y-3 sm:space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <Button 
@@ -379,7 +498,7 @@ const AdminDashboard = () => {
                 <CardContent className="text-center py-4 sm:py-8">
                   <div className="flex items-center justify-center space-x-2">
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    <p className="text-gray-500 text-xs sm:text-sm">Loading bookings...</p>
+                    <p className="text-gray-500 text-xs sm:text-sm">Loading bookings from Supabase...</p>
                   </div>
                 </CardContent>
               </Card>
@@ -401,19 +520,19 @@ const AdminDashboard = () => {
                         <div className="space-y-3 sm:space-y-4">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                             <div className="space-y-1">
-                              <h4 className="font-semibold text-sm sm:text-base">{booking.contactName}</h4>
-                              <p className="text-xs sm:text-sm text-gray-600">{booking.contactPhone}</p>
-                              <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contactEmail}</p>
-                              {booking.deviceInfo && (
-                                <p className="text-xs text-gray-500">📱 {booking.deviceInfo}</p>
+                              <h4 className="font-semibold text-sm sm:text-base">{booking.contact_name}</h4>
+                              <p className="text-xs sm:text-sm text-gray-600">{booking.contact_phone}</p>
+                              <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contact_email}</p>
+                              {booking.device_info && (
+                                <p className="text-xs text-gray-500">📱 {booking.device_info}</p>
                               )}
                             </div>
                             <div className="space-y-1">
-                              <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickupLocation}</p>
+                              <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickup_location}</p>
                               <p className="text-xs sm:text-sm"><strong>To:</strong> {booking.destination}</p>
                               <p className="text-xs sm:text-sm"><strong>Date:</strong> {booking.date} at {booking.time}</p>
                               <p className="text-xs sm:text-sm"><strong>Passengers:</strong> {booking.passengers}</p>
-                              <p className="text-xs sm:text-sm"><strong>Vehicle:</strong> {booking.vehicleType}</p>
+                              <p className="text-xs sm:text-sm"><strong>Vehicle:</strong> {booking.vehicle_type}</p>
                             </div>
                           </div>
                           <div className="space-y-2 sm:space-y-3">
@@ -442,9 +561,9 @@ const AdminDashboard = () => {
                               </Button>
                             </div>
                           </div>
-                          {booking.specialRequests && (
+                          {booking.special_requests && (
                             <div className="pt-2 sm:pt-3 border-t">
-                              <p className="text-xs sm:text-sm"><strong>Special Requests:</strong> {booking.specialRequests}</p>
+                              <p className="text-xs sm:text-sm"><strong>Special Requests:</strong> {booking.special_requests}</p>
                             </div>
                           )}
                         </div>
@@ -474,30 +593,30 @@ const AdminDashboard = () => {
                         <div className="space-y-3 sm:space-y-4">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                             <div className="space-y-1">
-                              <h4 className="font-semibold text-sm sm:text-base">{booking.contactName}</h4>
-                              <p className="text-xs sm:text-sm text-gray-600">{booking.contactPhone}</p>
-                              <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contactEmail}</p>
-                              {booking.deviceInfo && (
-                                <p className="text-xs text-gray-500">📱 {booking.deviceInfo}</p>
+                              <h4 className="font-semibold text-sm sm:text-base">{booking.contact_name}</h4>
+                              <p className="text-xs sm:text-sm text-gray-600">{booking.contact_phone}</p>
+                              <p className="text-xs sm:text-sm text-gray-600 break-all">{booking.contact_email}</p>
+                              {booking.device_info && (
+                                <p className="text-xs text-gray-500">📱 {booking.device_info}</p>
                               )}
                             </div>
                             <div className="space-y-1">
-                              <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickupLocation}</p>
+                              <p className="text-xs sm:text-sm"><strong>From:</strong> {booking.pickup_location}</p>
                               <p className="text-xs sm:text-sm"><strong>To:</strong> {booking.destination}</p>
                               <p className="text-xs sm:text-sm"><strong>Date:</strong> {booking.date} at {booking.time}</p>
                               <p className="text-xs sm:text-sm"><strong>Passengers:</strong> {booking.passengers}</p>
-                              <p className="text-xs sm:text-sm"><strong>Vehicle:</strong> {booking.vehicleType}</p>
+                              <p className="text-xs sm:text-sm"><strong>Vehicle:</strong> {booking.vehicle_type}</p>
                             </div>
                           </div>
-                          {booking.adminRemarks && (
+                          {booking.admin_remarks && (
                             <div className="bg-gray-50 p-2 sm:p-3 rounded">
                               <p className="text-xs sm:text-sm"><strong>Remarks:</strong></p>
-                              <p className="text-xs sm:text-sm">{booking.adminRemarks}</p>
+                              <p className="text-xs sm:text-sm">{booking.admin_remarks}</p>
                             </div>
                           )}
-                          {booking.specialRequests && (
+                          {booking.special_requests && (
                             <div className="pt-2 sm:pt-3 border-t">
-                              <p className="text-xs sm:text-sm"><strong>Special Requests:</strong> {booking.specialRequests}</p>
+                              <p className="text-xs sm:text-sm"><strong>Special Requests:</strong> {booking.special_requests}</p>
                             </div>
                           )}
                         </div>
@@ -513,6 +632,7 @@ const AdminDashboard = () => {
           </>
         )}
 
+        {/* Contacts Tab - keeping existing implementation but with Supabase integration */}
         {activeTab === 'contacts' && (
           <>
             {/* Loading indicator */}
@@ -521,7 +641,7 @@ const AdminDashboard = () => {
                 <CardContent className="text-center py-4 sm:py-8">
                   <div className="flex items-center justify-center space-x-2">
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    <p className="text-gray-500 text-xs sm:text-sm">Loading contacts...</p>
+                    <p className="text-gray-500 text-xs sm:text-sm">Loading contacts from Supabase...</p>
                   </div>
                 </CardContent>
               </Card>
@@ -546,8 +666,8 @@ const AdminDashboard = () => {
                               <h4 className="font-semibold text-sm sm:text-base md:text-lg">{contact.name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{contact.email}</p>
                               {contact.phone && <p className="text-xs sm:text-sm text-gray-600">{contact.phone}</p>}
-                              {contact.deviceInfo && (
-                                <p className="text-xs text-gray-500">📱 {contact.deviceInfo}</p>
+                              {contact.device_info && (
+                                <p className="text-xs text-gray-500">📱 {contact.device_info}</p>
                               )}
                               <p className="text-xs text-gray-500 mt-1">
                                 {new Date(contact.timestamp).toLocaleString()}
@@ -602,8 +722,8 @@ const AdminDashboard = () => {
                               <h4 className="font-semibold text-sm sm:text-base md:text-lg">{contact.name}</h4>
                               <p className="text-xs sm:text-sm text-gray-600 break-all">{contact.email}</p>
                               {contact.phone && <p className="text-xs sm:text-sm text-gray-600">{contact.phone}</p>}
-                              {contact.deviceInfo && (
-                                <p className="text-xs text-gray-500">📱 {contact.deviceInfo}</p>
+                              {contact.device_info && (
+                                <p className="text-xs text-gray-500">📱 {contact.device_info}</p>
                               )}
                               <p className="text-xs text-gray-500 mt-1">
                                 {new Date(contact.timestamp).toLocaleString()}
