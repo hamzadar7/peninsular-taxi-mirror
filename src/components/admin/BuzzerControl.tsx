@@ -11,10 +11,19 @@ interface BuzzerControlProps {
 export const BuzzerControl = ({ buzzerEnabled, setBuzzerEnabled }: BuzzerControlProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Initialize audio for buzzer
+  // Initialize audio for buzzer with enhanced settings
   useEffect(() => {
     audioRef.current = new Audio();
     audioRef.current.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBjiS1/LNeSsFJHfH8N2QQAoUXrTp66hVFApGn+Dyv2McBjiS1/LMeiwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmMcBj';
+    
+    // Enable audio to work even when tab is minimized
+    audioRef.current.preload = 'auto';
+    audioRef.current.volume = 0.8;
+    
+    // Request permission for notifications (helps with background audio)
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
     
     return () => {
       if (audioRef.current) {
@@ -23,12 +32,40 @@ export const BuzzerControl = ({ buzzerEnabled, setBuzzerEnabled }: BuzzerControl
     };
   }, []);
 
-  // Play buzzer sound
+  // Play buzzer sound with enhanced reliability
   const playBuzzer = useCallback(() => {
     if (buzzerEnabled && audioRef.current) {
       try {
+        // Reset audio to beginning
         audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(e => console.log('Audio play failed:', e));
+        
+        // Create a promise to handle play with retry logic
+        const playPromise = audioRef.current.play();
+        
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('Buzzer played successfully');
+            })
+            .catch(error => {
+              console.log('Audio play failed, retrying...', error);
+              // Retry after user interaction
+              setTimeout(() => {
+                if (audioRef.current) {
+                  audioRef.current.play().catch(e => console.log('Retry failed:', e));
+                }
+              }, 100);
+            });
+        }
+        
+        // Show browser notification as backup
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('New booking/contact received!', {
+            icon: '/favicon.ico',
+            tag: 'admin-notification'
+          });
+        }
+        
       } catch (error) {
         console.log('Buzzer error:', error);
       }

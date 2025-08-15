@@ -19,6 +19,11 @@ export const useAdminAuth = () => {
 
   useEffect(() => {
     console.log('Admin auth initializing...');
+    // Check for stored admin session on load
+    const storedAuth = localStorage.getItem('admin_authenticated');
+    if (storedAuth === 'true') {
+      setAuthState(prev => ({ ...prev, isAuthenticated: true, isLoading: false }));
+    }
     checkAuthStatus();
   }, []);
 
@@ -36,6 +41,13 @@ export const useAdminAuth = () => {
         isLoading: false,
         error: null
       });
+
+      // Store authentication state persistently
+      if (isAuthenticated) {
+        localStorage.setItem('admin_authenticated', 'true');
+      } else {
+        localStorage.removeItem('admin_authenticated');
+      }
 
       // Redirect if not authenticated and on dashboard
       if (!isAuthenticated && window.location.pathname.includes('/admin/dashboard')) {
@@ -68,6 +80,9 @@ export const useAdminAuth = () => {
           error: null
         });
 
+        // Store authentication state persistently
+        localStorage.setItem('admin_authenticated', 'true');
+
         // Navigate to dashboard
         console.log('Navigating to admin dashboard...');
         window.location.replace('/admin/dashboard');
@@ -98,6 +113,9 @@ export const useAdminAuth = () => {
         isLoading: false,
         error: null
       });
+
+      // Clear stored authentication
+      localStorage.removeItem('admin_authenticated');
 
       // Navigate to login
       window.location.replace('/admin');
